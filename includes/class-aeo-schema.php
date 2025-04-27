@@ -99,6 +99,7 @@ class AEO_Schema {
                         $steps[] = array(
                             '@type' => 'HowToStep',
                             'text' => wp_strip_all_tags($item),
+                            // translators: %d is the step number in a how-to guide.
                             'name' => sprintf(__('Step %d', 'answer-engine-optimization'), $step_count),
                             'url' => get_permalink($post) . '#step-' . $step_count
                         );
@@ -149,6 +150,7 @@ class AEO_Schema {
                 $definition_schema = array(
                     '@context' => 'https://schema.org',
                     '@type' => 'DefinedTermSet',
+                    // translators: %s is the terms defined guide.
                     'name' => sprintf(__('Terms defined in %s', 'answer-engine-optimization'), get_the_title($post)),
                     'description' => __('Key terms and their definitions from this article', 'answer-engine-optimization'),
                     'hasDefinedTerm' => $definitions

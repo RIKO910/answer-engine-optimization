@@ -1,70 +1,87 @@
 === Answer Engine Optimization ===
 Contributors: riko910
-Tags: answer engine optimization, seo, featured snippets, faq schema, structured data
-Requires at least: 5.0
-Tested up to: 6.5
-Requires PHP: 7.4
-Stable tag: 1.0
+Tags: seo, optimization, answer engine, featured snippets, voice search, schema markup
+Requires at least: 6.5
+Tested up to: 6.8
+Requires PHP: 7.2
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Easily optimize your WordPress content for Answer Engines like Google, ChatGPT, Perplexity, and others with question and answer schema markup.
+Optimize your content for answer engines like Google's featured snippets, voice search, and AI-powered answer systems.
 
 == Description ==
 
-**Answer Engine Optimization** helps you get your content featured as direct answers by AI systems and search engines.
+Answer Engine Optimization (AEO) is the next evolution of SEO. This plugin helps you optimize your content specifically for answer engines, featured snippets, and voice search results.
 
-This plugin allows you to:
-- Add custom "Question" and "Answer" fields to posts and pages.
-- Automatically generate FAQPage JSON-LD Schema in the page head.
-- Improve your chances to be selected for Featured Snippets, ChatGPT results, Google Search Generative Experience (SGE), and more.
+**Key Features:**
 
-Answer Engine Optimization (AEO) is the future of SEO. Make sure your website is ready!
+* Automatic question detection and FAQ generation
+* Structured data markup for rich results
+* Direct answer optimization for voice search
+* HowTo and Definition schema support
+* Target question identification
+* Content analysis for answer opportunities
 
-= Features =
-* Add Question and Answer metadata to any post or page
-* Output FAQPage structured data (JSON-LD) automatically
-* Increase chances for Featured Snippets and Voice Search results
-* Lightweight and fast (no bloat)
+With the rise of voice search and AI-powered answer engines, traditional SEO isn't enough anymore. This plugin gives you the tools to:
+
+* Increase your chances of appearing in featured snippets
+* Optimize for voice search queries
+* Structure your content for better machine understanding
+* Track and target specific questions
+* Improve your content's answer potential
 
 == Installation ==
 
-1. Upload the plugin folder to the `/wp-content/plugins/` directory or install directly through the WordPress plugins screen.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post or page. Scroll down to the **Answer Engine Optimization** meta box.
-4. Enter a **Question** and **Answer** for the content.
-5. Save/Update the post.
-6. Done! JSON-LD schema will be injected automatically.
+1. Upload the plugin files to the `/wp-content/plugins/answer-engine-optimization` directory, or install the plugin through the WordPress plugins screen directly.
+2. Activate the plugin through the 'Plugins' screen in WordPress
+3. Configure the plugin settings under Settings > AEO Settings
+4. Use the meta boxes on post edit screens to optimize your content
 
 == Frequently Asked Questions ==
 
-= How many Q&A can I add per page? =
-Currently, this version supports **one Question and Answer** per post/page. Multi-FAQ support is planned for future versions.
+= What is Answer Engine Optimization? =
+AEO focuses on optimizing content specifically for systems that provide direct answers, like Google's featured snippets, voice assistants, and AI chatbots.
 
-= Will this affect my page speed? =
-No. It adds a small JSON-LD script into the page head. Very lightweight.
+= How is this different from regular SEO? =
+While traditional SEO focuses on ranking for keywords, AEO focuses on providing the best possible answer to specific questions.
 
-= Can I customize the schema? =
-Not yet in this version. Customization features are planned.
+= Do I need technical knowledge to use this plugin? =
+No! The plugin provides simple interfaces and automatic optimizations that work out of the box.
+
+= Will this plugin conflict with my SEO plugin? =
+No, it works alongside standard SEO plugins, adding additional optimization layers.
 
 == Screenshots ==
-
-1. Meta box to add Question and Answer in post editor
-2. Example of generated JSON-LD schema in source code
-3. Result appearing in Google rich results (if picked)
+1. The AEO settings panel where you configure global optimization settings
+2. The post editor meta box for optimizing individual content
+3. Example of question suggestions generated from your content
+4. Frontend display of optimized FAQ content
 
 == Changelog ==
 
-= 1.0 =
-* Initial release: Add Question/Answer meta box
-* Output FAQPage schema JSON-LD automatically
+= 1.0.0 =
+* Initial release
 
 == Upgrade Notice ==
 
-= 1.0 =
-First version. Stable release.
+= 1.0.0 =
+Initial release of Answer Engine Optimization plugin.
 
-== License ==
+== Roadmap ==
 
-This plugin is licensed under the GPLv2 or later.
+* Integration with Google's People Also Ask data
+* Voice search performance analytics
+* AI-powered answer quality scoring
+* Content gap analysis for unanswered questions
+* Multilingual support
 
+== Additional Information ==
+
+For support, visit [https://tarikul.blog](https://tarikul.blog) or contact via [support@tarikul.blog](mailto:support@tarikul.blog).
+
+== Credits ==
+
+* Inspired by the growing importance of answer engines
+* Uses WordPress core functionality for maximum compatibility
+* Schema.org standards for structured data

@@ -1,5 +1,5 @@
 === Answer Engine Optimization ===
-Contributors: yourusername
+Contributors: riko910
 Tags: answer engine optimization, seo, featured snippets, faq schema, structured data
 Requires at least: 5.0
 Tested up to: 6.5

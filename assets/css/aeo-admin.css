@@ -1,0 +1,136 @@
+/* Main admin styles */
+.aeo-meta-box {
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.aeo-field {
+    margin-bottom: 20px;
+}
+
+.aeo-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.aeo-field .description {
+    color: #666;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+/* FAQ items */
+.aeo-faq-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+}
+
+.aeo-faq-item input[type="text"],
+.aeo-faq-item textarea {
+    margin-bottom: 8px;
+}
+
+.aeo-remove-faq {
+    background: #dc3232;
+    color: white;
+    border-color: #dc3232;
+}
+
+.aeo-remove-faq:hover {
+    background: #a00;
+    border-color: #a00;
+    color: white;
+}
+
+/* Questions modal */
+.aeo-modal {
+    display: none;
+    position: fixed;
+    z-index: 100000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.aeo-modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.aeo-modal-header {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.aeo-modal-header h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+}
+
+.aeo-modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.aeo-modal-close:hover {
+    color: black;
+}
+
+.aeo-modal-body {
+    padding: 10px 0;
+    margin-bottom: 15px;
+}
+
+.aeo-modal-footer {
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+    text-align: right;
+}
+
+/* Questions list */
+.aeo-question-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.aeo-question-item:last-child {
+    border-bottom: none;
+}
+
+.aeo-question-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.aeo-question-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Settings page */
+.settings_page_answer-engine-optimization textarea {
+    width: 100%;
+    max-width: 600px;
+}
+
+.aeo-example-questions {
+    margin-left: 10px;
+}

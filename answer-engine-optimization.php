@@ -1,15 +1,14 @@
 <?php
 /**
  * Plugin Name: Answer Engine Optimization
- * Plugin URI: https://example.com/answer-engine-optimization
+ * Plugin URI: https://tarikul.blog/uncategorized/answer-engine-optimization/
  * Description: Optimize your content for answer engines and featured snippets.
  * Version: 1.0.0
  * Author: Your Name
- * Author URI: https://example.com
+ * Author URI: https://tarikul.blog/
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: answer-engine-optimization
- * Domain Path: /languages
  */
 
 // If this file is called directly, abort.

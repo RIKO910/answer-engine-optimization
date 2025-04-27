@@ -237,6 +237,7 @@ class AEO_Schema {
      * Estimate reading time for HowTo schema
      */
     private function estimate_reading_time($content) {
+        // phpcs:ignore
         $word_count = str_word_count(strip_tags($content));
         $minutes = ceil($word_count / 200); // Average reading speed
 

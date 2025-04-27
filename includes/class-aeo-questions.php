@@ -46,22 +46,22 @@ class AEO_Questions {
         <div id="aeo-questions-modal" class="aeo-modal" style="display:none;">
             <div class="aeo-modal-content">
                 <div class="aeo-modal-header">
-                    <h2><?php _e('Suggested Questions', 'answer-engine-optimization'); ?></h2>
+                    <h2><?php esc_html_e('Suggested Questions', 'answer-engine-optimization'); ?></h2>
                     <span class="aeo-modal-close">&times;</span>
                 </div>
                 <div class="aeo-modal-body">
-                    <p><?php _e('Here are some questions we detected in your content that you might want to explicitly answer:', 'answer-engine-optimization'); ?></p>
+                    <p><?php esc_html_e('Here are some questions we detected in your content that you might want to explicitly answer:', 'answer-engine-optimization'); ?></p>
                     <div id="aeo-questions-list"></div>
                     <button id="aeo-generate-questions" class="button button-primary">
-                        <?php _e('Generate More Questions', 'answer-engine-optimization'); ?>
+                        <?php esc_html_e('Generate More Questions', 'answer-engine-optimization'); ?>
                     </button>
                 </div>
                 <div class="aeo-modal-footer">
                     <button id="aeo-apply-selected" class="button button-primary">
-                        <?php _e('Add Selected to FAQ', 'answer-engine-optimization'); ?>
+                        <?php esc_html_e('Add Selected to FAQ', 'answer-engine-optimization'); ?>
                     </button>
                     <button id="aeo-close-modal" class="button">
-                        <?php _e('Close', 'answer-engine-optimization'); ?>
+                        <?php esc_html_e('Close', 'answer-engine-optimization'); ?>
                     </button>
                 </div>
             </div>

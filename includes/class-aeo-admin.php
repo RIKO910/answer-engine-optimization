@@ -204,6 +204,7 @@ class AEO_Admin {
 
         // phpcs:ignore
         if (isset($_POST['aeo_target_question'])) {
+
             // phpcs:ignore
             update_post_meta($post_id, '_aeo_target_question', sanitize_text_field($_POST['aeo_target_question']));
         }

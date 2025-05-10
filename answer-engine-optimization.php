@@ -41,9 +41,3 @@ function aeo_init() {
     register_deactivation_hook(__FILE__, array($admin, 'deactivate'));
 }
 add_action('plugins_loaded', 'aeo_init');
-
-// Load text domain for internationalization
-function aeo_load_textdomain() {
-    load_plugin_textdomain('answer-engine-optimization', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-}
-add_action('init', 'aeo_load_textdomain');

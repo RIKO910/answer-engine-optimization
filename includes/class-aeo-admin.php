@@ -5,7 +5,6 @@ class AEO_Admin {
         add_action('admin_init', array($this, 'settings_init'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
-        add_action('save_post', array($this, 'save_meta_box_data'));
     }
 
     public function activate() {
@@ -37,8 +36,13 @@ class AEO_Admin {
     }
 
     public function settings_init() {
-        // phpcs:ignore
-        register_setting('aeo_settings_group', 'aeo_settings');
+        register_setting(
+            'aeo_settings_group',
+            'aeo_settings',
+            array(
+                'sanitize_callback' => array($this, 'sanitize_settings')
+            )
+        );
 
         add_settings_section(
             'aeo_general_section',
@@ -82,6 +86,38 @@ class AEO_Admin {
             'aeo_general_section',
             array('name' => 'aeo_voice_optimization', 'label' => __('Optimize for voice search and assistants', 'answer-engine-optimization'))
         );
+    }
+
+    /**
+     * Sanitize the plugin settings
+     *
+     * @param array $input The unsanitized settings
+     * @return array Sanitized settings
+     */
+    public function sanitize_settings($input) {
+        $sanitized = array();
+
+        // Sanitize checkbox fields (should be 1 or 0)
+        if (isset($input['aeo_enable_schema'])) {
+            $sanitized['aeo_enable_schema'] = $input['aeo_enable_schema'] ? 1 : 0;
+        }
+
+        if (isset($input['aeo_auto_questions'])) {
+            $sanitized['aeo_auto_questions'] = $input['aeo_auto_questions'] ? 1 : 0;
+        }
+
+        if (isset($input['aeo_voice_optimization'])) {
+            $sanitized['aeo_voice_optimization'] = $input['aeo_voice_optimization'] ? 1 : 0;
+        }
+
+        // Sanitize textarea field (one question per line)
+        if (isset($input['aeo_target_questions'])) {
+            $questions = explode("\n", $input['aeo_target_questions']);
+            $questions = array_map('sanitize_text_field', $questions);
+            $sanitized['aeo_target_questions'] = implode("\n", $questions);
+        }
+
+        return $sanitized;
     }
 
     public function general_section_callback() {
@@ -145,8 +181,8 @@ class AEO_Admin {
         wp_nonce_field('aeo_meta_box', 'aeo_meta_box_nonce');
 
         $target_question = get_post_meta($post->ID, '_aeo_target_question', true);
-        $direct_answer = get_post_meta($post->ID, '_aeo_direct_answer', true);
-        $faq_items = get_post_meta($post->ID, '_aeo_faq_items', true);
+        $direct_answer   = get_post_meta($post->ID, '_aeo_direct_answer', true);
+        $faq_items       = get_post_meta($post->ID, '_aeo_faq_items', true);
 
         ?>
         <div class="aeo-meta-box">
@@ -184,57 +220,5 @@ class AEO_Admin {
             </div>
         </div>
         <?php
-    }
-
-    public function save_meta_box_data($post_id) {
-        // phpcs:ignore
-        if (!isset($_POST['aeo_meta_box_nonce']) || !wp_verify_nonce($_POST['aeo_meta_box_nonce'], 'aeo_meta_box')) {
-            return;
-        }
-
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-            return;
-        }
-
-        if (!current_user_can('edit_post', $post_id)) {
-            return;
-        }
-
-        // Save target question
-
-        // phpcs:ignore
-        if (isset($_POST['aeo_target_question'])) {
-
-            // phpcs:ignore
-            update_post_meta($post_id, '_aeo_target_question', sanitize_text_field($_POST['aeo_target_question']));
-        }
-
-        // Save direct answer
-        // phpcs:ignore
-        if (isset($_POST['aeo_direct_answer'])) {
-            // phpcs:ignore
-            update_post_meta($post_id, '_aeo_direct_answer', sanitize_textarea_field($_POST['aeo_direct_answer']));
-        }
-
-        // Save FAQ items
-        $faq_items = array();
-        // phpcs:ignore
-        if (isset($_POST['aeo_faq_question']) && isset($_POST['aeo_faq_answer'])) {
-            // phpcs:ignore
-            $questions = $_POST['aeo_faq_question'];
-            // phpcs:ignore
-            $answers = $_POST['aeo_faq_answer'];
-
-            for ($i = 0; $i < count($questions); $i++) {
-                if (!empty($questions[$i]) && !empty($answers[$i])) {
-                    $faq_items[] = array(
-                        'question' => sanitize_text_field($questions[$i]),
-                        'answer' => sanitize_textarea_field($answers[$i])
-                    );
-                }
-            }
-        }
-
-        update_post_meta($post_id, '_aeo_faq_items', $faq_items);
     }
 }

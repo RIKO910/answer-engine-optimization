@@ -89,7 +89,7 @@ class AEO_Admin {
     }
 
     /**
-     * Sanitize the plugin settings
+     * Sanitize the plugin settings.
      *
      * @param array $input The unsanitized settings
      * @return array Sanitized settings

@@ -31,10 +31,10 @@ require_once AEO_PLUGIN_DIR . 'includes/class-aeo-schema.php';
 
 // Initialize the plugin
 function aeo_init() {
-    $admin = new AEO_Admin();
-    $frontend = new AEO_Frontend();
+    $admin     = new AEO_Admin();
+    $frontend  = new AEO_Frontend();
     $questions = new AEO_Questions();
-    $schema = new AEO_Schema();
+    $schema    = new AEO_Schema();
 
     // Register activation/deactivation hooks
     register_activation_hook(__FILE__, array($admin, 'activate'));

@@ -89,7 +89,7 @@ jQuery(document).ready(function($) {
                     <div class="aeo-faq-item">
                         <input type="text" name="aeo_faq_question[]" value="${question}" class="widefat">
                         <textarea name="aeo_faq_answer[]" rows="2" class="widefat"></textarea>
-                        <button type="button" class="button aeo-remove-faq"><?php _e('Remove', 'answer-engine-optimization'); ?></button>
+                        <button type="button" class="button aeo-remove-faq">Remove</button>
                     </div>
                 `;
                 $('#aeo-faq-items').append(faqItem);

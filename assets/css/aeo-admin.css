@@ -10,24 +10,36 @@
     margin-bottom: 20px;
 }
 
+.aeo-field:last-child {
+    margin-bottom: 0;
+}
+
 .aeo-field label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
+    font-size: 14px;
 }
 
 .aeo-field .description {
     color: #666;
     font-style: italic;
     margin-top: 5px;
+    font-size: 13px;
+}
+
+.aeo-field input[type="text"],
+.aeo-field textarea {
+    width: 100%;
 }
 
 /* FAQ items */
 .aeo-faq-item {
     margin-bottom: 15px;
-    padding: 10px;
+    padding: 15px;
     background: #fff;
     border: 1px solid #e5e5e5;
+    border-radius: 3px;
     box-shadow: 0 1px 1px rgba(0,0,0,0.04);
 }
 
@@ -36,16 +48,26 @@
     margin-bottom: 8px;
 }
 
+.aeo-faq-item input[type="text"] {
+    font-weight: 600;
+}
+
 .aeo-remove-faq {
     background: #dc3232;
     color: white;
     border-color: #dc3232;
+    margin-top: 5px;
 }
 
-.aeo-remove-faq:hover {
+.aeo-remove-faq:hover,
+.aeo-remove-faq:focus {
     background: #a00;
     border-color: #a00;
     color: white;
+}
+
+#aeo-add-faq {
+    margin-right: 10px;
 }
 
 /* Questions modal */
@@ -57,58 +79,99 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.5);
+    overflow: auto;
 }
 
 .aeo-modal-content {
     background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
+    margin: 50px auto;
+    padding: 0;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 800px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border-radius: 3px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .aeo-modal-header {
-    padding: 10px 0;
+    padding: 20px;
     border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
+    background: #f9f9f9;
+    position: relative;
 }
 
 .aeo-modal-header h2 {
     margin: 0;
     padding: 0;
     font-size: 20px;
+    line-height: 1.4;
 }
 
 .aeo-modal-close {
-    color: #aaa;
-    float: right;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #666;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
 }
 
-.aeo-modal-close:hover {
-    color: black;
+.aeo-modal-close:hover,
+.aeo-modal-close:focus {
+    color: #000;
 }
 
 .aeo-modal-body {
-    padding: 10px 0;
-    margin-bottom: 15px;
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.aeo-modal-body > p:first-child {
+    margin-top: 0;
 }
 
 .aeo-modal-footer {
-    padding: 10px 0;
+    padding: 15px 20px;
     border-top: 1px solid #ddd;
     text-align: right;
+    background: #f9f9f9;
+}
+
+.aeo-modal-footer .button {
+    margin-left: 10px;
 }
 
 /* Questions list */
+#aeo-questions-list {
+    margin: 15px 0;
+    padding: 0;
+}
+
 .aeo-question-item {
-    padding: 8px 0;
+    padding: 10px;
     border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.aeo-question-item:hover {
+    background-color: #f9f9f9;
 }
 
 .aeo-question-item:last-child {
@@ -117,20 +180,48 @@
 
 .aeo-question-item label {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     cursor: pointer;
+    margin: 0;
+    font-weight: normal;
 }
 
 .aeo-question-item input[type="checkbox"] {
     margin-right: 10px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+#aeo-generate-questions {
+    margin-top: 15px;
+}
+
+#aeo-generate-questions:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Settings page */
 .settings_page_answer-engine-optimization textarea {
-    width: 100%;
-    max-width: 600px;
+    font-family: monospace;
 }
 
 .aeo-example-questions {
-    margin-left: 10px;
+    margin-top: 5px;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .aeo-modal-content {
+        width: 95%;
+        margin: 20px auto;
+    }
+
+    .aeo-modal-body {
+        max-height: 300px;
+    }
+
+    .aeo-faq-item {
+        padding: 10px;
+    }
 }

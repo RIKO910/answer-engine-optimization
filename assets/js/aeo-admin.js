@@ -3,9 +3,9 @@ jQuery(document).ready(function($) {
     $('#aeo-add-faq').on('click', function() {
         var faqItem = `
             <div class="aeo-faq-item">
-                <input type="text" name="aeo_faq_question[]" placeholder="<?php _e('Question', 'answer-engine-optimization'); ?>" class="widefat">
-                <textarea name="aeo_faq_answer[]" rows="2" placeholder="<?php _e('Answer', 'answer-engine-optimization'); ?>" class="widefat"></textarea>
-                <button type="button" class="button aeo-remove-faq"><?php _e('Remove', 'answer-engine-optimization'); ?></button>
+                <input type="text" name="aeo_faq_question[]" placeholder="Question" class="widefat">
+                <textarea name="aeo_faq_answer[]" rows="2" placeholder="Answer" class="widefat"></textarea>
+                <button type="button" class="button aeo-remove-faq">Remove</button>
             </div>
         `;
         $('#aeo-faq-items').append(faqItem);
@@ -110,7 +110,7 @@ jQuery(document).ready(function($) {
                         <div class="aeo-faq-item">
                             <input type="text" name="aeo_faq_question[]" value="${question}" class="widefat">
                             <textarea name="aeo_faq_answer[]" rows="2" class="widefat"></textarea>
-                            <button type="button" class="button aeo-remove-faq"><?php _e('Remove', 'answer-engine-optimization'); ?></button>
+                            <button type="button" class="button aeo-remove-faq">Remove</button>
                         </div>
                     `;
                     $('#aeo-faq-items').append(faqItem);

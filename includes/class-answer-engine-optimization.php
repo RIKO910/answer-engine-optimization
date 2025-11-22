@@ -49,6 +49,14 @@ class Answer_Engine_Optimization {
     public $admin;
 
     /**
+     * Meta handler
+     * @var AEO_Meta_Box
+     *
+     * @since 1.0.0
+     */
+    public $meta_box;
+
+    /**
      * File.
      *
      * @var string $file File
@@ -163,8 +171,9 @@ class Answer_Engine_Optimization {
      */
     private function includes() {
         require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-admin.php';
-        require_once AEO_PLUGIN_DIR . 'includes/frontend/class-aeo-frontend.php';
         require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-questions.php';
+        require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-meta-box.php';
+        require_once AEO_PLUGIN_DIR . 'includes/frontend/class-aeo-frontend.php';
         require_once AEO_PLUGIN_DIR . 'includes/frontend/class-aeo-schema.php';
     }
 
@@ -187,6 +196,7 @@ class Answer_Engine_Optimization {
     public function init() {
         if ( is_admin() ) {
             $this->admin    = new AEO_Admin();
+            $this->meta_box = new AEO_Meta_Box();
             $this->question = new AEO_Questions();
         } else {
             $this->frontend = new AEO_Frontend();

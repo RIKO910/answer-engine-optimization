@@ -165,7 +165,7 @@ class Answer_Engine_Optimization {
         require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-admin.php';
         require_once AEO_PLUGIN_DIR . 'includes/frontend/class-aeo-frontend.php';
         require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-questions.php';
-        require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-schema.php';
+        require_once AEO_PLUGIN_DIR . 'includes/frontend/class-aeo-schema.php';
     }
 
     /**

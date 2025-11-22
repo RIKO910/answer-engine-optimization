@@ -1,6 +1,11 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
+
 /**
- * Frontend display functionality
+ * Frontend Handler Class
+ *
+ * @since 1.0.0
  */
 class AEO_Frontend {
     public function __construct() {

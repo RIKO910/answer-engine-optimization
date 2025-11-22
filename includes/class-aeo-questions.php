@@ -1,4 +1,11 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Questions Handler Class
+ *
+ * @since 1.0.0
+ */
 class AEO_Questions {
     public function __construct() {
         add_action('admin_init', array($this, 'setup_question_suggestions'));

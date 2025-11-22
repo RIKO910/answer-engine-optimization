@@ -1,10 +1,18 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Admin Handler Class
+ *
+ * @since 1.0.0
+ */
 class AEO_Admin {
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'settings_init'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
+        add_action('save_post', array($this, 'aeo_save_post_meta'), 10, 2);
     }
 
     public function activate() {
@@ -220,5 +228,58 @@ class AEO_Admin {
             </div>
         </div>
         <?php
+    }
+
+
+    public function aeo_save_post_meta($post_id, $post) {
+        // Check if nonce is set
+        if (!isset($_POST['aeo_meta_box_nonce'])) {
+            return $post_id;
+        }
+
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['aeo_meta_box_nonce'], 'aeo_meta_box')) {
+            return $post_id;
+        }
+
+        // Check autosave
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return $post_id;
+        }
+
+        // Check permissions
+        if (!current_user_can('edit_post', $post_id)) {
+            return $post_id;
+        }
+
+        // Save target question
+        if (isset($_POST['aeo_target_question'])) {
+            update_post_meta($post_id, '_aeo_target_question', sanitize_text_field($_POST['aeo_target_question']));
+        }
+
+        // Save direct answer
+        if (isset($_POST['aeo_direct_answer'])) {
+            update_post_meta($post_id, '_aeo_direct_answer', sanitize_textarea_field($_POST['aeo_direct_answer']));
+        }
+
+        // Save FAQ items
+        if (isset($_POST['aeo_faq_question']) && isset($_POST['aeo_faq_answer'])) {
+            $faq_items = array();
+            $questions = $_POST['aeo_faq_question'];
+            $answers = $_POST['aeo_faq_answer'];
+
+            for ($i = 0; $i < count($questions); $i++) {
+                if (!empty($questions[$i]) && !empty($answers[$i])) {
+                    $faq_items[] = array(
+                        'question' => sanitize_text_field($questions[$i]),
+                        'answer' => sanitize_textarea_field($answers[$i])
+                    );
+                }
+            }
+
+            update_post_meta($post_id, '_aeo_faq_items', $faq_items);
+        } else {
+            delete_post_meta($post_id, '_aeo_faq_items');
+        }
     }
 }

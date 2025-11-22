@@ -1,4 +1,11 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Schema Handler Class
+ *
+ * @since 1.0.0
+ */
 class AEO_Schema {
     public function __construct() {
         add_action('wp_head', array($this, 'output_schema_markup'), 2);

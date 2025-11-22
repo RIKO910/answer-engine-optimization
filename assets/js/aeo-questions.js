@@ -56,7 +56,7 @@ jQuery(document).ready(function($) {
             },
             complete: function() {
                 $('#aeo-generate-questions').prop('disabled', false)
-                    .text('<?php _e("Generate More Questions", "answer-engine-optimization"); ?>');
+                    .text('Generate More Questions');
             }
         });
     }

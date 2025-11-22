@@ -16,6 +16,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/includes/class-answer-engine-optimization.php';
+
 /**
  * Initializing Plugin.
  *

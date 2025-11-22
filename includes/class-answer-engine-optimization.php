@@ -162,10 +162,10 @@ class Answer_Engine_Optimization {
      * @since 1.0.0
      */
     private function includes() {
-        require_once AEO_PLUGIN_DIR . 'includes/class-aeo-admin.php';
-        require_once AEO_PLUGIN_DIR . 'includes/class-aeo-frontend.php';
-        require_once AEO_PLUGIN_DIR . 'includes/class-aeo-questions.php';
-        require_once AEO_PLUGIN_DIR . 'includes/class-aeo-schema.php';
+        require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-admin.php';
+        require_once AEO_PLUGIN_DIR . 'includes/frontend/class-aeo-frontend.php';
+        require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-questions.php';
+        require_once AEO_PLUGIN_DIR . 'includes/admin/class-aeo-schema.php';
     }
 
     /**
@@ -186,11 +186,11 @@ class Answer_Engine_Optimization {
      */
     public function init() {
         if ( is_admin() ) {
-            $this->admin = new AEO_Admin();
-            $this->schema = new AEO_Schema();
+            $this->admin    = new AEO_Admin();
+            $this->question = new AEO_Questions();
         } else {
             $this->frontend = new AEO_Frontend();
-            $this->question = new AEO_Questions();
+            $this->schema   = new AEO_Schema();
         }
     }
 }

@@ -72,7 +72,7 @@ class Answer_Engine_Optimization {
      *
      * @since 1.0.0
      */
-    public string $version = '1.0.0';
+    public string $version = '1.0.1';
 
     /**
      * Get instance

@@ -2,9 +2,9 @@
 Contributors: riko910
 Tags: seo, optimization, answer engine, featured snippets, voice search, schema markup
 Requires at least: 6.5
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,7 +78,7 @@ Initial release of Answer Engine Optimization plugin.
 
 == Additional Information ==
 
-For support, visit [https://tarikul.blog](https://tarikul.blog) or contact via [support@tarikul.blog](mailto:support@tarikul.blog).
+For support, visit [https://tarikul.top](https://tarikul.top) or contact via [hello@tarikul.top](mailto:hello@tarikul.top).
 
 == Credits ==
 

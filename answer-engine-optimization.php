@@ -3,7 +3,7 @@
  * Plugin Name:       Answer Engine Optimization
  * Plugin URI:        https://tarikul.top/plugins/answer-engine-optimization/
  * Description:       Optimize your content for answer engines and featured snippets.
- * Version:           1.0.1
+ * Version:           1.0.0
  * Requires at least: 6.5
  * Requires PHP:      7.2
  * Author:            Tarikul Islam Riko

@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#aeo-genius-root {
+  margin: 16px 20px 20px 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#aeo-genius-root * {
+  box-sizing: border-box;
+}
+
+@layer components {
+  .aeo-shell {
+    @apply flex min-h-[calc(100vh-48px)] rounded-2xl overflow-hidden shadow-card border border-slate-200/80 bg-surface-muted;
+  }
+
+  .aeo-card {
+    @apply bg-white rounded-2xl border border-slate-200/70 shadow-card p-6 transition-shadow duration-200;
+  }
+
+  .aeo-card-hover {
+    @apply aeo-card hover:shadow-card-hover hover:border-aeo-200/50;
+  }
+
+  .aeo-card-glass {
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl border border-white/60 shadow-card p-6;
+  }
+
+  .aeo-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .aeo-btn-primary {
+    @apply aeo-btn bg-gradient-brand text-white shadow-sm hover:shadow-glow hover:brightness-105 focus:ring-aeo-500 active:scale-[0.98];
+  }
+
+  .aeo-btn-secondary {
+    @apply aeo-btn bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus:ring-slate-300;
+  }
+
+  .aeo-btn-ghost {
+    @apply aeo-btn text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  .aeo-btn-danger {
+    @apply aeo-btn bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 focus:ring-red-300;
+  }
+
+  .aeo-input {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-aeo-400 focus:outline-none focus:ring-2 focus:ring-aeo-500/20;
+  }
+
+  .aeo-select {
+    @apply aeo-input appearance-none pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-size: 1.25rem;
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+  }
+
+  .aeo-textarea {
+    @apply aeo-input resize-y min-h-[100px];
+  }
+
+  .aeo-label {
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+
+  .aeo-badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+
+  .aeo-score-green {
+    @apply text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200/60;
+  }
+
+  .aeo-score-orange {
+    @apply text-amber-700 bg-amber-50 ring-1 ring-amber-200/60;
+  }
+
+  .aeo-score-red {
+    @apply text-rose-700 bg-rose-50 ring-1 ring-rose-200/60;
+  }
+
+  .aeo-nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200;
+  }
+
+  .aeo-nav-item-active {
+    @apply aeo-nav-item bg-white/10 text-white shadow-sm;
+  }
+
+  .aeo-nav-item-inactive {
+    @apply aeo-nav-item text-indigo-200/80 hover:bg-white/5 hover:text-white;
+  }
+
+  .aeo-table {
+    @apply w-full text-sm;
+  }
+
+  .aeo-table th {
+    @apply text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50/80 border-b border-slate-100;
+  }
+
+  .aeo-table td {
+    @apply px-5 py-4 border-b border-slate-50 text-slate-700;
+  }
+
+  .aeo-table tr:hover td {
+    @apply bg-slate-50/50;
+  }
+
+  .aeo-page-enter {
+    @apply animate-slide-up;
+  }
+
+  .aeo-gradient-text {
+    @apply bg-gradient-brand bg-clip-text text-transparent;
+  }
+
+  .aeo-icon-box {
+    @apply flex items-center justify-center rounded-xl p-2.5;
+  }
+
+  .aeo-skeleton {
+    @apply animate-pulse rounded-lg bg-slate-200/70;
+  }
+}
+
+/* Custom scrollbar */
+#aeo-genius-root ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+#aeo-genius-root ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#aeo-genius-root ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+#aeo-genius-root ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

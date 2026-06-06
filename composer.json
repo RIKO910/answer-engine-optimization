@@ -1,0 +1,20 @@
+{
+    "name": "tarikulislamriko/answer-engine-optimization",
+    "description": "AI-Powered Answer Engine Optimization WordPress Plugin",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Tarikul Islam Riko",
+            "homepage": "https://tarikul.top"
+        }
+    ],
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "AEO\\": "src/"
+        }
+    }
+}

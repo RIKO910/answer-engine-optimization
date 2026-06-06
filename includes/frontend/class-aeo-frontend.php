@@ -9,7 +9,9 @@ defined( 'ABSPATH' ) || exit;
  */
 class AEO_Frontend {
     public function __construct() {
-        add_action('wp_head', array($this, 'add_structured_data'), 1);
+        if ( ! defined( 'AEO_NEW_SYSTEM' ) || ! AEO_NEW_SYSTEM ) {
+            add_action('wp_head', array($this, 'add_structured_data'), 1);
+        }
         add_filter('the_content', array($this, 'enhance_content'), 15);
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
     }

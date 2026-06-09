@@ -109,7 +109,11 @@ class Citation_Service {
 				'schema_types'  => array( 'FAQPage', 'HowTo', 'Product' ),
 				'missing_types' => array( 'FAQPage', 'LocalBusiness' ),
 				'faq_gaps'      => array(
-					sprintf( __( 'What services does %s offer?', 'answer-engine-optimization' ), $domain ),
+					sprintf(
+						/* translators: %s: competitor domain */
+						__( 'What services does %s offer?', 'answer-engine-optimization' ),
+						$domain
+					),
 				),
 				'entity_gaps'   => array( $domain, 'industry terms' ),
 			);

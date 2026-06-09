@@ -125,6 +125,33 @@ class Settings {
 			$sanitized['aeo_target_questions'] = implode( "\n", $questions );
 		}
 
+		if ( isset( $input['notifications'] ) && is_array( $input['notifications'] ) ) {
+			$sanitized['notifications'] = array(
+				'email_citations' => ! empty( $input['notifications']['email_citations'] ),
+				'email_audit'     => ! empty( $input['notifications']['email_audit'] ),
+			);
+		}
+
+		if ( isset( $input['crawler_settings'] ) && is_array( $input['crawler_settings'] ) ) {
+			$allowed_bots = array( 'gptbot', 'perplexitybot', 'claudebot', 'googlebot_ai' );
+			$crawlers     = array();
+			foreach ( $allowed_bots as $bot ) {
+				if ( isset( $input['crawler_settings'][ $bot ] ) ) {
+					$crawlers[ $bot ] = 'block' === $input['crawler_settings'][ $bot ] ? 'block' : 'allow';
+				}
+			}
+			if ( ! empty( $crawlers ) ) {
+				$sanitized['crawler_settings'] = $crawlers;
+			}
+		}
+
+		if ( isset( $input['agency'] ) && is_array( $input['agency'] ) ) {
+			$sanitized['agency'] = array(
+				'white_label_name' => sanitize_text_field( $input['agency']['white_label_name'] ?? '' ),
+				'white_label_logo' => esc_url_raw( $input['agency']['white_label_logo'] ?? '' ),
+			);
+		}
+
 		return $sanitized;
 	}
 

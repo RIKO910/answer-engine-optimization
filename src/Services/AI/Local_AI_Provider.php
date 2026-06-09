@@ -24,6 +24,7 @@ class Local_AI_Provider implements AI_Provider_Interface {
 
 		foreach ( array_slice( $keywords, 0, $count ) as $keyword ) {
 			$faqs[] = array(
+				/* translators: %s: extracted keyword */
 				'question' => sprintf( __( 'What is %s?', 'answer-engine-optimization' ), $keyword ),
 				'answer'   => $this->find_context( $text, $keyword ),
 			);
@@ -57,8 +58,11 @@ class Local_AI_Provider implements AI_Provider_Interface {
 		return array(
 			'topic'           => $topic,
 			'target_questions' => array(
+				/* translators: %s: brief topic */
 				sprintf( __( 'What is %s?', 'answer-engine-optimization' ), $topic ),
+				/* translators: %s: brief topic */
 				sprintf( __( 'How to use %s?', 'answer-engine-optimization' ), $topic ),
+				/* translators: %s: brief topic */
 				sprintf( __( 'Why is %s important?', 'answer-engine-optimization' ), $topic ),
 			),
 			'entities'        => array( $topic ),

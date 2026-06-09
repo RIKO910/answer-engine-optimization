@@ -33,7 +33,9 @@ class Encryption {
 		$iv     = openssl_random_pseudo_bytes( 16 );
 		$cipher = openssl_encrypt( $value, 'AES-256-CBC', $key, 0, $iv );
 
-		return base64_encode( $iv . '::' . $cipher ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		// Base64-encode the IV separately so its raw bytes can never collide with
+		// the "::" delimiter (the OpenSSL ciphertext is already base64, no colons).
+		return base64_encode( $iv ) . '::' . $cipher; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	}
 
 	/**
@@ -51,13 +53,17 @@ class Encryption {
 			return base64_decode( $encrypted ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		}
 
-		$decoded = base64_decode( $encrypted ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-		if ( false === strpos( $decoded, '::' ) ) {
+		if ( false === strpos( $encrypted, '::' ) ) {
 			return '';
 		}
 
-		list( $iv, $cipher ) = explode( '::', $decoded, 2 );
+		list( $iv_b64, $cipher ) = explode( '::', $encrypted, 2 );
+		$iv  = base64_decode( $iv_b64 ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		$key = self::get_key();
+
+		if ( strlen( $iv ) !== 16 ) {
+			return '';
+		}
 
 		return openssl_decrypt( $cipher, 'AES-256-CBC', $key, 0, $iv ) ?: '';
 	}

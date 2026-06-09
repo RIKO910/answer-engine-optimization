@@ -77,7 +77,8 @@ class Score_Engine {
 			"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
 			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
 			WHERE pm.meta_key = '_aeo_score'
-			AND p.post_status = 'publish'"
+			AND p.post_status = 'publish'
+			AND p.post_type IN ('post','page')"
 		);
 
 		return array(

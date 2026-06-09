@@ -380,6 +380,15 @@ class Rest_Api {
 		}
 
 		$sanitized = Settings::sanitize( $data );
+
+		// Re-attach already-encrypted API keys: sanitize() intentionally whitelists
+		// fields, so the encrypted keys must be preserved here or they are lost.
+		foreach ( array( 'openai_api_key', 'anthropic_api_key', 'gemini_api_key' ) as $key_field ) {
+			if ( ! empty( $data[ $key_field ] ) ) {
+				$sanitized[ $key_field ] = $data[ $key_field ];
+			}
+		}
+
 		Settings::update( $sanitized );
 
 		return new WP_REST_Response( Settings::get_public() );

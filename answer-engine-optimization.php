@@ -3,7 +3,7 @@
  * Plugin Name:       Answer Engine Optimization
  * Plugin URI:        https://tarikul.top/plugins/answer-engine-optimization/
  * Description:       AI-Powered Answer Engine Optimization — optimize for ChatGPT, Perplexity, Google SGE, and all AI answer engines.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 6.5
  * Requires PHP:      7.2
  * Author:            Tarikul Islam Riko

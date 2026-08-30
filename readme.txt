@@ -3,9 +3,9 @@ Contributors: riko910
 Donate link: https://tarikul.top/
 Tags: seo, schema, faq, ai, chatgpt
 Requires at least: 6.5
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -230,6 +230,9 @@ Yes. Agency Tools let you replace the plugin name and logo in WordPress admin, u
 8. Settings — module toggles, API keys, tracked keywords, and competitor domains
 
 == Changelog ==
+
+= 1.0.2 =
+* Tested updatd
 
 = 1.0.1 =
 * Modern UI/UX redesign with gradient sidebar, React dashboard, and polished components

@@ -5,107 +5,53 @@ Tags: seo, schema, faq, ai, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Free Answer Engine Optimization (AEO) plugin for WordPress. Schema markup, AI FAQ generator, JSON-LD, ChatGPT & Google AI Overviews optimization.
+Help ChatGPT, Perplexity and Google AI Overviews understand and cite your site: JSON-LD, FAQs, llms.txt, AI crawler rules and citation tracking.
 
 == Description ==
 
-**Answer Engine Optimization** is the most complete free AEO and AI SEO plugin for WordPress. Optimize your website for **ChatGPT Search**, **Perplexity AI**, **Google AI Overviews** (SGE), **Bing Copilot**, and **Claude** — so AI answer engines cite, understand, and surface your content.
+**Answer Engine Optimization** helps AI answer engines such as **ChatGPT Search**, **Perplexity**, **Google AI Overviews**, **Copilot** and **Claude** understand and cite your WordPress site.
 
-Traditional SEO plugins focus on blue links. Search is changing. Millions of users now get answers directly from AI — without clicking. This plugin gives you structured data, FAQ schema, content scoring, and AI visibility tools built specifically for that new reality.
+It adds clean structured data, a visible FAQ and direct-answer block, an `llms.txt` index, AI crawler controls, a per-post AEO score and a site audit. It works on its own or next to Yoast SEO, Rank Math, All in One SEO, SEOPress and The SEO Framework.
 
-= Why Answer Engine Optimization? =
+= What it does =
 
-* **Rank in AI answers** — Increase chances of being cited by ChatGPT, Perplexity, and Google AI Overviews
-* **Automated schema markup** — 40+ Schema.org types including FAQPage, HowTo, Product, LocalBusiness, Article
-* **AI FAQ generator** — Create optimized question-and-answer pairs in seconds (highest-impact AEO signal)
-* **AEO Score (0–100)** — Proprietary readiness score per post with actionable recommendations
-* **Site audit & auto-fix** — Scan your entire site and fix 80% of issues with one click
-* **100% free forever** — No Pro tier, no paywall, no upsells. Every feature included.
+* **Structured data (JSON-LD)** - one connected `@graph` with WebSite, Organization, Article/WebPage, FAQPage, Speakable and LocalBusiness/Hotel nodes. When an SEO plugin is active it lets that plugin output the base graph and only adds what's missing, so there are no duplicate entities.
+* **FAQs and direct answers** - add a target question, a short direct answer and FAQ items per post. They are shown on the page (FAQ uses accessible `<details>` elements) and marked up as FAQPage and Speakable.
+* **Question suggestions** - "Suggest questions" in the editor proposes questions and answers from your content (your AI key, or the post's own headings when no key is set).
+* **AEO score (0-100)** - per post, from content structure, schema completeness, FAQs, readability and citation signals. Works with any language, including Bengali, Arabic and CJK scripts.
+* **Site audit** - flags thin content, missing images, FAQs, direct answers and configuration problems. Some issues can be fixed in one click.
+* **llms.txt** - an automatic `/llms.txt` index of your public content in the llmstxt.org format. Password-protected and noindex pages are left out.
+* **AI crawler controls** - block GPTBot, ClaudeBot, PerplexityBot or Google-Extended in robots.txt.
+* **AI citation tracking (Perplexity)** - checks your tracked keywords on Perplexity's Sonar API and records which answers link to your site. Needs your own Perplexity API key. Nothing is estimated or simulated.
+* **Competitor check** - reads competitors' homepage structured data and checks for an llms.txt file, and shows schema types they use that you don't.
+* **Local business** - multiple locations with PostalAddress, opening hours, geo coordinates and business type (Hotel, Restaurant, Store and more).
+* **WooCommerce** - adds brand and GTIN to WooCommerce's own Product schema instead of printing a second Product.
+* **Open Graph and Twitter cards** - when no SEO plugin is handling them.
+* **Content briefs** - target questions, entities and schema type for a topic, plus an opportunity score based on how much of your own content already covers it.
+* **Weekly email** - optional audit and citation summary.
+* **White-label** - replace the plugin name and logo in the admin menu and dashboard.
 
-= Who Is This Plugin For? =
+= AI providers (optional) =
 
-* **Bloggers & content creators** — Get featured in AI summaries and voice search results
-* **Small business owners** — LocalBusiness schema, NAP data, and local FAQ templates
-* **WooCommerce stores** — Automatic Product schema with price, stock, ratings, and variants
-* **SEO agencies** — White-label tools, REST API, WP-CLI, bulk schema, client reports
-* **Developers** — Full REST API, hooks, and programmatic control
+Bring your own API key for OpenAI, Anthropic (Claude) or Google Gemini to improve FAQ generation, rewriting and briefs. You can pick the model in Settings. Keys are stored encrypted. Without a key, the plugin uses built-in rules based on your content.
 
-= 11 Powerful Modules — All Free =
+Citation tracking uses a separate Perplexity API key.
 
-**1. AI Content Optimizer**
-Calculate a 0–100 AEO Score for every post and page. AI content rewriter improves machine readability. Semantic keyword suggestions and readability analysis included.
+= Developers =
 
-**2. Universal Schema Builder**
-Visual JSON-LD editor with 40+ Schema.org types: Article, FAQPage, HowTo, Product, LocalBusiness, Organization, WebSite, Recipe, JobPosting, Event, and more. Real-time validation. Auto-schema based on post type.
+* REST API under `/wp-json/aeo-genius/v1/` (cookie or Application Password auth).
+* WP-CLI: `wp aeo audit`, `wp aeo score`, `wp aeo fix <issue_id>`, `wp aeo scan`.
+* Filters: `aeo_post_types`, `aeo_post_schema_nodes`, `aeo_auto_schema`, `aeo_location_schema`, `aeo_llms_txt`, `aeo_llms_txt_limit`, `aeo_defer_to_seo_plugin`, `aeo_is_noindex`, `aeo_ai_model`, `aeo_woocommerce_product_schema`, `aeo_digest_recipient`.
+* Multisite: network activation sets up every site, including sites created later.
+* Deleting the plugin removes its data. Define `AEO_KEEP_DATA` as `true` to keep it.
 
-**3. FAQ & Q&A Automation**
-AI-powered FAQ generator creates 5–15 relevant Q&A pairs from any content. Global FAQ library. FAQPage schema auto-deployed. Voice search optimization with speakable markup signals.
+= Privacy =
 
-**4. AI Visibility Analytics**
-Track AI citation trends. Monitor Perplexity, Bing Copilot, and Google SGE appearances. Competitor AEO gap analysis for up to 5 domains. Performance charts and keyword tracking.
-
-**5. Local Business AEO**
-Multi-location NAP management. LocalBusiness schema with geo coordinates, opening hours, and area served. Local FAQ templates for "near me" queries.
-
-**6. WooCommerce Product AEO**
-Automatic Product + Offer + AggregateRating schema on every product page. Real-time price, availability, SKU, GTIN, brand, and variant markup for AI shopping assistants.
-
-**7. Technical AEO Infrastructure**
-AI crawler management (GPTBot, PerplexityBot, ClaudeBot). Auto-generated llms.txt. Open Graph and Twitter Card tags. robots.txt optimization for AI discovery.
-
-**8. Content Briefs & Opportunity Finder**
-AI content brief generator. Topic gap analysis. "People Also Ask" clustering. AI Answer Opportunity Score per topic.
-
-**9. Site Audit & Auto-Fix Engine**
-Full-site AEO crawler. Issues classified as Critical, Warning, or Opportunity. One-click auto-fix for missing schema, FAQs, and configuration gaps.
-
-**10. Social & Open Graph AEO**
-og:title, og:description, og:image on all pages. Twitter/X Cards. LinkedIn and WhatsApp preview optimization.
-
-**11. Agency & White-Label Tools**
-Replace plugin branding with your agency name. REST API full access. WP-CLI commands. Bulk schema operations across 100+ posts.
-
-= Schema Markup & Structured Data =
-
-Add rich JSON-LD structured data without writing code:
-
-* FAQPage and QAPage schema for featured snippets and AI citations
-* Article, BlogPosting, NewsArticle, TechArticle
-* Product, Offer, AggregateRating, Review (WooCommerce)
-* LocalBusiness, Restaurant, MedicalBusiness
-* HowTo with step-by-step markup
-* Organization, Person, WebSite, BreadcrumbList
-* Recipe, Course, JobPosting, Event, VideoObject
-* And 30+ more Schema.org types
-
-Compatible alongside **Yoast SEO**, **Rank Math**, and other SEO plugins — adds an AEO layer without conflicts.
-
-= AI Integration (Optional) =
-
-Connect your own API key for enhanced AI features:
-
-* **OpenAI** (GPT-4o) — Content rewriting, FAQ generation, briefs
-* **Anthropic** (Claude 3.5) — Long-form AEO optimization
-* **Google Gemini** (1.5 Pro) — Research-focused content briefs
-
-**No API key required.** Schema, scoring, audit, and FAQ tools work fully without any AI subscription.
-
-= Modern Admin Experience =
-
-Beautiful React-based dashboard with setup wizard (under 10 minutes), real-time charts, drag-and-drop schema editor, and Gutenberg sidebar support. Works on desktop and tablet.
-
-= Developer Features =
-
-* REST API: `wp-json/aeo-genius/v1/`
-* WP-CLI: `wp aeo audit`, `wp aeo score`, `wp aeo fix`
-* GPL v2 open source — fork, modify, contribute
-* Multisite compatible
-
-**Stop optimizing only for Google crawlers. Start optimizing for every AI answer engine — free, forever.**
+The plugin adds no cookies or visitor tracking. When you use AI features, post content (never visitor data) is sent to the provider you configured. Citation scans send your tracked keywords to Perplexity. Competitor checks fetch the competitor's public homepage and llms.txt.
 
 == Installation ==
 
@@ -115,7 +61,7 @@ Beautiful React-based dashboard with setup wizard (under 10 minutes), real-time 
 2. Search for **Answer Engine Optimization**
 3. Click **Install Now**, then **Activate**
 4. Open **AEO** in the left admin menu
-5. Complete the 5-step setup wizard (takes under 10 minutes)
+5. Complete the short setup wizard
 
 = Manual Installation =
 
@@ -123,14 +69,14 @@ Beautiful React-based dashboard with setup wizard (under 10 minutes), real-time 
 2. Activate the plugin through the **Plugins** screen
 3. Navigate to **AEO → Dashboard**
 4. Run the onboarding wizard to configure schema, FAQs, and site type
-5. (Optional) Add OpenAI, Anthropic, or Gemini API keys under **AEO → Settings**
+5. (Optional) Add an OpenAI, Anthropic or Gemini key, and a Perplexity key for citation tracking, under **AEO → Settings**
 
 = After Installation =
 
 * Run your first **Site Audit** (AEO → Site Audit → Run Audit)
 * Review your **AEO Score** on the dashboard
 * Add FAQ schema to top posts using the **FAQ Manager** or post editor meta box
-* Add tracked keywords in Settings to monitor AI citations
+* Add tracked keywords and a Perplexity API key in Settings to track AI citations
 
 = For Developers =
 
@@ -152,84 +98,102 @@ Yoast and Rank Math are excellent traditional SEO plugins. Answer Engine Optimiz
 
 = Is this plugin really 100% free? =
 
-Yes. Every feature in this plugin is free with no Pro tier, no feature locks, and no upsell prompts. AI-powered features use your own API key (OpenAI, Anthropic, or Gemini) so there are no hidden subscription costs from us.
+Yes. There is no Pro version. AI features use your own API key (OpenAI, Anthropic, Gemini, or Perplexity for citation tracking), so you only pay the provider for what you use.
 
 = Do I need an OpenAI or AI API key? =
 
-No. Core features — schema markup, AEO scoring, site audit, FAQ management, Open Graph tags, llms.txt, and local business schema — work completely without any API key. API keys only unlock AI content rewriting, AI FAQ generation, and content briefs.
+No. Schema, scoring, the site audit, FAQs, Open Graph, llms.txt and local business schema work without any key. An AI key improves FAQ generation, rewriting and briefs. Citation tracking needs a Perplexity key.
 
 = Does this plugin add schema markup / JSON-LD? =
 
-Yes. The plugin automatically outputs Article, FAQPage, WebSite, Organization, and post-specific JSON-LD schema. You can also build custom schema with the visual Schema Builder supporting 40+ Schema.org types including Product, HowTo, LocalBusiness, Recipe, and Event.
+Yes. It outputs one connected JSON-LD graph (WebSite, Organization, Article/WebPage, FAQPage, Speakable, LocalBusiness). The Schema Builder lets you replace a post's schema with your own JSON-LD for about 60 Schema.org types, with templates and required-property checks.
 
 = How does the FAQ schema help with SEO and AI search? =
 
-FAQPage schema is one of the strongest signals for AI answer engines and Google featured snippets. When you mark up questions and answers with structured data, AI systems can extract and cite your answers directly. The plugin auto-generates FAQs with AI and deploys FAQPage schema on every page with FAQ content.
+Clear question-and-answer content is easy for AI systems to extract and quote, and FAQPage markup helps them identify it. Google no longer shows FAQ rich results for most sites, but it still reads the markup. The plugin shows FAQs on the page and marks them up only where you add them.
 
 = Will this help me rank in ChatGPT and Perplexity? =
 
-The plugin optimizes the signals AI engines use: structured data, clear Q&A format, direct answers, semantic clarity, and crawlability (llms.txt, AI bot directives). While no plugin can guarantee citations, sites with strong FAQ schema, high AEO scores, and comprehensive structured data consistently perform better in AI answer results.
+No plugin can guarantee citations. This plugin improves the things you control: clear answers, structured data and crawlability. With a Perplexity key you can check whether Perplexity actually cites your pages for the keywords you track.
 
 = Does it work with WooCommerce? =
 
-Yes. When WooCommerce is active, the plugin automatically generates Product schema with price, currency, availability (InStock/OutOfStock), aggregate ratings, SKU, brand, and product images on every product page.
+Yes. WooCommerce already outputs Product schema (price, availability, ratings, SKU). This plugin adds brand and GTIN to it rather than printing a duplicate Product.
 
 = Does it support voice search optimization? =
 
-Yes. The plugin adds direct answer blocks, conversational FAQ formatting, speakable schema signals, and flags answers over 40 words for voice search trimming — all designed to improve performance in Google Assistant and voice-based AI queries.
+It adds a visible direct-answer block at the top of a post and Speakable schema that points to it.
 
 = Can I use this for local SEO and Google Business Profile? =
 
-Yes. The Local Business module supports multiple locations with NAP (Name, Address, Phone), opening hours, geo coordinates, area served, and LocalBusiness JSON-LD schema — optimized for "near me" and local AI queries.
+It supports multiple locations with name, full postal address, phone, opening hours, price range, geo coordinates and business type (for example Hotel). It does not connect to Google Business Profile.
 
 = Is it compatible with Gutenberg and the Classic Editor? =
 
-Yes. The plugin includes a post editor meta box for target questions, direct answers, and FAQ items. It works with Gutenberg, Classic Editor, and does not conflict with page builders like Elementor.
+Yes. The AEO box appears below the editor in both the block editor and the Classic Editor.
 
 = Does it conflict with other SEO plugins? =
 
-No. Answer Engine Optimization is designed to complement Yoast SEO, Rank Math, All in One SEO, and SEOPress. It adds AEO-specific schema, scoring, and analytics without overriding their core SEO settings.
+No. When Yoast SEO, Rank Math, All in One SEO, SEOPress, The SEO Framework or Squirrly is active, the plugin lets it handle WebSite, Organization, Article and Open Graph output and only adds FAQPage, Speakable and LocalBusiness markup. You can turn this off in Settings.
 
 = What is the AEO Score? =
 
-The AEO Score is a proprietary 0–100 rating per post measuring readiness for AI citation. It evaluates content structure (20%), schema coverage (25%), FAQ presence (15%), semantic clarity (20%), and citation signals (20%). Scores update automatically on publish.
+A 0-100 rating per post: content structure (20%), schema completeness (25%), FAQs (15%), readability (20%) and citation signals such as a target question, featured image, freshness and indexability (20%). It updates when you save a post.
 
 = How does the site audit work? =
 
-The audit scans all published posts and pages for missing schema, absent FAQs, thin content, missing direct answers, and configuration gaps. Issues are rated Critical, Warning, or Opportunity. Most issues can be fixed automatically with one click.
+It checks published content for thin text, missing featured images, FAQs and direct answers, plus site settings. Issues are rated Critical, Warning or Opportunity. FAQs, Open Graph, schema output and the organization name can be fixed in one click; content issues need a manual edit.
 
 = Is there a REST API for developers? =
 
-Yes. Full REST API at `/wp-json/aeo-genius/v1/` with endpoints for schema, AEO scores, FAQ generation, site audit, analytics, content briefs, bulk schema, and settings. Application Passwords and cookie auth supported.
+Yes, at `/wp-json/aeo-genius/v1/`, covering schema, scores, FAQs, the audit, analytics, briefs, bulk schema and settings. Cookie and Application Password authentication are supported.
 
 = Does it support WP-CLI? =
 
-Yes. Commands include `wp aeo audit` (run site audit), `wp aeo score` (calculate all post scores), and `wp aeo fix <issue_id>` (auto-fix audit issues).
+Yes: `wp aeo audit`, `wp aeo score`, `wp aeo fix <issue_id>` and `wp aeo scan`.
 
 = What AI crawlers does it manage? =
 
-The plugin lets you allow or block GPTBot (OpenAI), PerplexityBot, ClaudeBot (Anthropic), and Google-Extended individually via robots.txt. It also auto-generates an llms.txt file for AI content discovery.
+You can block GPTBot (OpenAI), ClaudeBot (Anthropic), PerplexityBot and Google-Extended individually in robots.txt. Allowed bots simply follow your normal robots.txt rules.
 
 = Is the plugin GDPR compliant? =
 
-The plugin does not add tracking cookies by default. Content sent to AI APIs is site content only (not visitor PII). API keys are encrypted in the database. GDPR export and deletion hooks are registered.
+The plugin stores no visitor personal data and sets no cookies, so there is nothing to export or erase. Content sent to AI providers is your site content only. API keys are encrypted in the database.
 
 = Can agencies white-label this plugin? =
 
-Yes. Agency Tools let you replace the plugin name and logo in WordPress admin, use the REST API for client dashboards, run bulk operations, and generate performance reports — all free.
+Yes. Set an agency name and logo under Agency; they replace the plugin name in the admin menu and dashboard.
 
 == Screenshots ==
 
 1. AEO Dashboard — site-wide score, schema coverage, FAQ coverage, and quick actions
-2. Content Optimizer — per-post AEO scores and AI content rewriting with side-by-side diff
-3. Schema Builder — visual JSON-LD editor with 40+ Schema.org types and live preview
+2. Content — per-post AEO scores and AI rewrite preview
+3. Schema Builder — JSON-LD editor with templates and validation
 4. FAQ Manager — AI FAQ generator and global FAQ library across your site
 5. Site Audit — full-site scan with Critical, Warning, and Opportunity issues plus auto-fix
-6. AI Analytics — citation trends, engine breakdown, and competitor gap analysis
-7. Onboarding Wizard — 5-step setup for site type, business info, and AI provider
+6. Analytics — Perplexity citation results and competitor schema check
+7. Setup wizard — short setup for site type, business info, and AI provider
 8. Settings — module toggles, API keys, tracked keywords, and competitor domains
 
 == Changelog ==
+
+= 1.1.0 =
+* Fixed: activation never ran (tables and defaults were not created) because the hook was registered too late.
+* Fixed: /llms.txt returned 404 until permalinks were re-saved.
+* Fixed: AI citation and competitor data were simulated. Citation tracking now uses Perplexity's API; competitor checks read real homepage schema. Old simulated rows are removed on upgrade.
+* Fixed: duplicate WebSite, Organization, Article, Product and Open Graph output next to SEO plugins and WooCommerce.
+* Fixed: posts with FAQs lost their Article schema. Schema is now one connected @graph with Speakable support.
+* Fixed: a crafted FAQ answer could break out of the JSON-LD script tag (XSS). Output is now escaped.
+* Fixed: contributors could edit schema, scores and FAQs of posts they cannot edit through the REST API.
+* Fixed: question suggestions could inject HTML into the editor; the modal no longer opens by itself.
+* Fixed: robots.txt "Allow" groups made AI bots ignore your other rules, and an invalid Sitemap line pointed to llms.txt.
+* Fixed: settings and features that read an old option name (direct answer block, question suggestions).
+* Fixed: word counts and scores were 0 for non-Latin languages such as Bengali.
+* Fixed: "Missing schema" auto-fix replaced full schema with a stub; FAQ auto-fix inserted placeholder text.
+* Fixed: random opportunity scores; keywords textarea dropped new lines; API keys could not be removed.
+* Added: Perplexity citation scans, weekly email digest, multisite support, uninstall cleanup, model picker, AI crawler settings, Hotel/lodging schema types, location address fields, WP-CLI `wp aeo scan`.
+* Changed: current default AI models; all custom post types are supported.
+* Changed: minimal admin redesign.
 
 = 1.0.2 =
 * Tested updatd
@@ -256,6 +220,9 @@ Yes. Agency Tools let you replace the plugin name and logo in WordPress admin, u
 * Custom database tables: schema cache, audit log, citations
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Important bug and security fixes. Removes simulated citation data. Safe to update.
 
 = 1.0.1 =
 UI refresh and documentation improvements. Safe to update — no database migration required.

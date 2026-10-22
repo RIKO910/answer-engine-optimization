@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Save, Settings as SettingsIcon, Check } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -7,57 +7,162 @@ import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import type { AeoSettings } from '@/types';
+import { cn } from '@/lib/utils';
 
 const moduleLabels: Record<string, string> = {
   content_optimizer: 'Content optimizer',
   schema_builder: 'Schema builder',
-  faq_automation: 'FAQ automation',
+  faq_automation: 'FAQs (visible section + FAQPage schema)',
   analytics: 'Analytics',
   local_business: 'Local business',
   woocommerce: 'WooCommerce',
-  technical: 'Technical (llms.txt, AI crawlers)',
+  technical: 'llms.txt & AI crawler rules',
   social_og: 'Open Graph & social cards',
   content_briefs: 'Content briefs',
   site_audit: 'Site audit',
   agency: 'Agency tools',
 };
 
-type SettingsForm = Partial<AeoSettings> & {
-  openai_api_key?: string;
-  anthropic_api_key?: string;
-  gemini_api_key?: string;
-};
+const providers = [
+  { id: 'openai', label: 'OpenAI', keyField: 'openai_api_key', hasKey: 'has_openai_key', placeholder: 'sk-…' },
+  { id: 'anthropic', label: 'Anthropic (Claude)', keyField: 'anthropic_api_key', hasKey: 'has_anthropic_key', placeholder: 'sk-ant-…' },
+  { id: 'gemini', label: 'Google Gemini', keyField: 'gemini_api_key', hasKey: 'has_gemini_key', placeholder: 'AIza…' },
+] as const;
+
+const bots = [
+  { key: 'gptbot', label: 'GPTBot', owner: 'OpenAI' },
+  { key: 'claudebot', label: 'ClaudeBot', owner: 'Anthropic' },
+  { key: 'perplexitybot', label: 'PerplexityBot', owner: 'Perplexity' },
+  { key: 'googlebot_ai', label: 'Google-Extended', owner: 'Gemini training' },
+];
+
+type Form = Partial<AeoSettings> & Record<string, unknown>;
+
+function Switch({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={onChange}
+      className={cn(
+        'relative w-8 h-[18px] p-0 m-0 border-0 rounded-full cursor-pointer transition-colors flex-shrink-0',
+        checked ? 'bg-aeo-600' : 'bg-slate-200'
+      )}
+    >
+      <span
+        className={cn(
+          'absolute top-[2px] w-[14px] h-[14px] bg-white rounded-full transition-[left] duration-150',
+          checked ? 'left-[16px]' : 'left-[2px]'
+        )}
+      />
+    </button>
+  );
+}
 
 export default function Settings() {
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ['settings'],
     queryFn: () => api.getSettings() as unknown as Promise<AeoSettings>,
   });
 
-  const [form, setForm] = useState<SettingsForm>({});
+  const [form, setForm] = useState<Form>({});
+  // Keep raw textarea text so Enter/new lines work while typing; parse on save.
+  const [keywordsText, setKeywordsText] = useState('');
+  const [competitorsText, setCompetitorsText] = useState('');
+  const [keys, setKeys] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (data) setForm(data as SettingsForm);
+    if (!data) return;
+    setForm(data as Form);
+    setKeywordsText((data.tracked_keywords ?? []).join('\n'));
+    setCompetitorsText((data.competitors ?? []).join('\n'));
+    setKeys({});
   }, [data]);
 
   const saveMutation = useMutation({
-    mutationFn: () => api.updateSettings(form as Record<string, unknown>),
-    onSuccess: () => toast.success('Settings saved'),
-    onError: () => toast.error('Failed to save settings'),
+    mutationFn: (extra: Record<string, unknown> = {}) => {
+      const lines = (t: string) => t.split('\n').map((l) => l.trim()).filter(Boolean);
+      const payload: Record<string, unknown> = {
+        ai_provider: form.ai_provider,
+        modules: form.modules,
+        notifications: form.notifications,
+        crawler_settings: form.crawler_settings,
+        defer_to_seo_plugin: form.defer_to_seo_plugin ? 1 : 0,
+        aeo_enable_schema: form.aeo_enable_schema ? 1 : 0,
+        aeo_voice_optimization: form.aeo_voice_optimization ? 1 : 0,
+        aeo_auto_questions: form.aeo_auto_questions ? 1 : 0,
+        openai_model: form.openai_model ?? '',
+        anthropic_model: form.anthropic_model ?? '',
+        gemini_model: form.gemini_model ?? '',
+        perplexity_model: form.perplexity_model ?? '',
+        tracked_keywords: lines(keywordsText),
+        competitors: lines(competitorsText),
+        ...keys,
+        ...extra,
+      };
+      return api.updateSettings(payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
+      toast.success('Settings saved');
+    },
+    onError: (e: Error) => toast.error(e.message || 'Failed to save settings'),
   });
 
   if (isLoading) return <LoadingState message="Loading settings…" />;
 
   const modules = (form.modules || {}) as Record<string, boolean>;
+  const crawlers = (form.crawler_settings || {}) as Record<string, string>;
+  const notifications = (form.notifications || { email_audit: false, email_citations: false }) as {
+    email_audit: boolean;
+    email_citations: boolean;
+  };
+  const defaults = (form.default_models || {}) as Record<string, string>;
+  const provider = providers.find((p) => p.id === (form.ai_provider || 'openai')) ?? providers[0];
+  const set = (patch: Form) => setForm((f) => ({ ...f, ...patch }));
+
+  const keyInput = (field: string, label: string, configured: boolean, placeholder: string) => (
+    <div key={field}>
+      <label className="aeo-label flex items-center justify-between" htmlFor={`aeo-${field}`}>
+        <span>{label}</span>
+        {configured && (
+          <span className="inline-flex items-center gap-2 text-xs font-normal">
+            <span className="inline-flex items-center gap-1 text-emerald-600">
+              <Check size={12} /> Saved
+            </span>
+            <button
+              type="button"
+              className="p-0 m-0 bg-transparent border-0 text-slate-500 hover:text-red-600 cursor-pointer text-xs"
+              onClick={() => saveMutation.mutate({ [`clear_${field}`]: true })}
+            >
+              Remove
+            </button>
+          </span>
+        )}
+      </label>
+      <input
+        id={`aeo-${field}`}
+        type="password"
+        autoComplete="off"
+        value={keys[field] ?? ''}
+        placeholder={configured ? '•••••••••••• (leave empty to keep)' : placeholder}
+        onChange={(e) => setKeys((k) => ({ ...k, [field]: e.target.value }))}
+        className="aeo-input"
+      />
+    </div>
+  );
 
   return (
     <div>
       <PageHeader
         title="Settings"
-        description="AI provider, modules and tracking."
+        description="AI provider, modules, crawlers and tracking."
         icon={SettingsIcon}
         actions={
-          <button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="aeo-btn-primary">
+          <button onClick={() => saveMutation.mutate({})} disabled={saveMutation.isPending} className="aeo-btn-primary">
             <Save size={14} /> {saveMutation.isPending ? 'Saving…' : 'Save changes'}
           </button>
         }
@@ -65,43 +170,69 @@ export default function Settings() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
-          <CardHeader
-            title="AI provider"
-            description="Optional. Core features work without an API key."
-          />
+          <CardHeader title="AI provider" description="Optional. Core features work without an API key." />
           <div className="space-y-4">
             <div>
-              <label className="aeo-label">Provider</label>
+              <label className="aeo-label" htmlFor="aeo-provider">Provider</label>
               <select
-                value={form.ai_provider || 'openai'}
-                onChange={(e) => setForm({ ...form, ai_provider: e.target.value })}
+                id="aeo-provider"
+                value={provider.id}
+                onChange={(e) => set({ ai_provider: e.target.value })}
                 className="aeo-select"
               >
-                <option value="openai">OpenAI (GPT-4o)</option>
-                <option value="anthropic">Anthropic (Claude 3.5)</option>
-                <option value="gemini">Google Gemini 1.5 Pro</option>
+                {providers.map((p) => (
+                  <option key={p.id} value={p.id}>{p.label}</option>
+                ))}
               </select>
             </div>
-            {[
-              { key: 'openai_api_key', label: 'OpenAI API key', placeholder: 'sk-...', configured: form.has_openai_key },
-              { key: 'anthropic_api_key', label: 'Anthropic API key', placeholder: 'sk-ant-...', configured: form.has_anthropic_key },
-              { key: 'gemini_api_key', label: 'Gemini API key', placeholder: 'AIza...', configured: form.has_gemini_key },
-            ].map(({ key, label, placeholder, configured }) => (
-              <div key={key}>
-                <label className="aeo-label flex items-center justify-between">
-                  <span>{label}</span>
-                  {configured && (
-                    <span className="inline-flex items-center gap-1 text-xs font-normal text-emerald-600">
-                      <Check size={12} /> Saved
-                    </span>
-                  )}
-                </label>
-                <input
-                  type="password"
-                  autoComplete="off"
-                  placeholder={configured ? '••••••••••••' : placeholder}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="aeo-input"
+            {keyInput(provider.keyField, `${provider.label} API key`, !!form[provider.hasKey], provider.placeholder)}
+            <div>
+              <label className="aeo-label" htmlFor="aeo-model">Model</label>
+              <input
+                id="aeo-model"
+                type="text"
+                value={(form[`${provider.id}_model`] as string) ?? ''}
+                placeholder={defaults[provider.id] || ''}
+                onChange={(e) => set({ [`${provider.id}_model`]: e.target.value })}
+                className="aeo-input font-mono"
+              />
+              <p className="aeo-hint">Leave empty to use the default ({defaults[provider.id]}).</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="AI citation tracking"
+            description="Checks your tracked keywords on Perplexity and records answers that cite your site."
+          />
+          <div className="space-y-4">
+            {keyInput('perplexity_api_key', 'Perplexity API key', !!form.has_perplexity_key, 'pplx-…')}
+            <div>
+              <label className="aeo-label" htmlFor="aeo-keywords">Tracked keywords</label>
+              <textarea
+                id="aeo-keywords"
+                value={keywordsText}
+                onChange={(e) => setKeywordsText(e.target.value)}
+                rows={4}
+                placeholder={'One question or keyword per line\nbest hotel near cox\'s bazar beach'}
+                className="aeo-textarea"
+              />
+              <p className="aeo-hint">Up to 10 are checked per scan.</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
+          <CardHeader title="Modules" description="Turn individual features on or off" />
+          <div className="-mx-2">
+            {Object.entries(modules).map(([key, enabled]) => (
+              <div key={key} className="flex items-center justify-between gap-4 px-2 h-10 rounded-md hover:bg-slate-50">
+                <span className="text-sm text-slate-800">{moduleLabels[key] || key.replace(/_/g, ' ')}</span>
+                <Switch
+                  checked={!!enabled}
+                  label={moduleLabels[key] || key}
+                  onChange={() => set({ modules: { ...modules, [key]: !enabled } })}
                 />
               </div>
             ))}
@@ -109,58 +240,91 @@ export default function Settings() {
         </Card>
 
         <Card>
-          <CardHeader
-            title="Modules"
-            description="Turn individual features on or off"
-          />
+          <CardHeader title="Output" description="What the plugin adds to your pages" />
           <div className="-mx-2">
-            {Object.entries(modules).map(([key, enabled]) => (
-              <label
-                key={key}
-                className="flex items-center justify-between px-2 h-10 rounded-md hover:bg-slate-50 cursor-pointer transition-colors"
-              >
-                <span className="text-sm text-slate-800">{moduleLabels[key] || key.replace(/_/g, ' ')}</span>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={!!enabled}
-                  onClick={() => setForm({ ...form, modules: { ...modules, [key]: !enabled } })}
-                  aria-label={key.replace(/_/g, ' ')}
-                  className={`relative w-8 h-[18px] p-0 m-0 border-0 rounded-full cursor-pointer transition-colors ${enabled ? 'bg-aeo-600' : 'bg-slate-200'}`}
-                >
-                  <span className={`absolute top-[2px] w-[14px] h-[14px] bg-white rounded-full transition-[left] duration-150 ${enabled ? 'left-[16px]' : 'left-[2px]'}`} />
-                </button>
-              </label>
+            {[
+              { key: 'aeo_enable_schema', label: 'Structured data (JSON-LD)' },
+              { key: 'aeo_voice_optimization', label: 'Show direct answer + Speakable schema' },
+              { key: 'aeo_auto_questions', label: '"Suggest questions" in the post editor' },
+            ].map(({ key, label }) => (
+              <div key={key} className="flex items-center justify-between gap-4 px-2 h-10 rounded-md hover:bg-slate-50">
+                <span className="text-sm text-slate-800">{label}</span>
+                <Switch checked={!!form[key]} label={label} onChange={() => set({ [key]: form[key] ? 0 : 1 })} />
+              </div>
             ))}
+            <div className="flex items-center justify-between gap-4 px-2 py-2 rounded-md hover:bg-slate-50">
+              <div>
+                <span className="text-sm text-slate-800">Let my SEO plugin handle base schema & Open Graph</span>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {form.seo_plugin
+                    ? `${form.seo_plugin} detected. Avoids duplicate WebSite, Organization and Article markup.`
+                    : 'No SEO plugin detected, so this plugin outputs everything.'}
+                </p>
+              </div>
+              <Switch
+                checked={!!form.defer_to_seo_plugin}
+                label="Defer to SEO plugin"
+                onChange={() => set({ defer_to_seo_plugin: form.defer_to_seo_plugin ? 0 : 1 })}
+              />
+            </div>
           </div>
         </Card>
 
-        <Card className="lg:col-span-2">
-          <CardHeader
-            title="Tracking"
-            description="Keywords to monitor and competitor domains to compare against"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="aeo-label">Keywords</label>
-              <textarea
-                value={(form.tracked_keywords ?? []).join('\n')}
-                onChange={(e) => setForm({ ...form, tracked_keywords: e.target.value.split('\n').filter(Boolean) })}
-                rows={5}
-                placeholder="One keyword per line"
-                className="aeo-textarea"
-              />
-            </div>
-            <div>
-              <label className="aeo-label">Competitor domains <span className="font-normal text-slate-400">· max 5</span></label>
-              <textarea
-                value={(form.competitors ?? []).join('\n')}
-                onChange={(e) => setForm({ ...form, competitors: e.target.value.split('\n').filter(Boolean).slice(0, 5) })}
-                rows={5}
-                placeholder="competitor.com"
-                className="aeo-textarea"
-              />
-            </div>
+        <Card>
+          <CardHeader title="AI crawlers" description="Blocked crawlers get a Disallow rule in robots.txt" />
+          <div className="-mx-2">
+            {bots.map(({ key, label, owner }) => {
+              const allowed = (crawlers[key] ?? 'allow') !== 'block';
+              return (
+                <div key={key} className="flex items-center justify-between gap-4 px-2 h-10 rounded-md hover:bg-slate-50">
+                  <span className="text-sm text-slate-800">
+                    {label} <span className="text-slate-400">· {owner}</span>
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className={cn('text-xs', allowed ? 'text-slate-500' : 'text-red-600')}>
+                      {allowed ? 'Allowed' : 'Blocked'}
+                    </span>
+                    <Switch
+                      checked={allowed}
+                      label={`Allow ${label}`}
+                      onChange={() => set({ crawler_settings: { ...crawlers, [key]: allowed ? 'block' : 'allow' } as Record<string, 'allow' | 'block'> })}
+                    />
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card>
+          <CardHeader title="Weekly email" description="Sent to the site admin email" />
+          <div className="-mx-2">
+            {[
+              { key: 'email_audit' as const, label: 'Site audit summary' },
+              { key: 'email_citations' as const, label: 'AI citation summary (needs Perplexity key)' },
+            ].map(({ key, label }) => (
+              <div key={key} className="flex items-center justify-between gap-4 px-2 h-10 rounded-md hover:bg-slate-50">
+                <span className="text-sm text-slate-800">{label}</span>
+                <Switch
+                  checked={!!notifications[key]}
+                  label={label}
+                  onChange={() => set({ notifications: { ...notifications, [key]: !notifications[key] } })}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t border-slate-200">
+            <label className="aeo-label" htmlFor="aeo-competitors">
+              Competitor domains <span className="font-normal text-slate-400">· max 5</span>
+            </label>
+            <textarea
+              id="aeo-competitors"
+              value={competitorsText}
+              onChange={(e) => setCompetitorsText(e.target.value)}
+              rows={3}
+              placeholder="competitor.com"
+              className="aeo-textarea"
+            />
           </div>
         </Card>
       </div>

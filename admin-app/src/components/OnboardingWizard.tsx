@@ -21,9 +21,9 @@ const siteTypes = [
 ];
 
 const aiProviders = [
-  { id: 'openai', label: 'OpenAI GPT-4o', desc: 'Best all-round performance' },
-  { id: 'anthropic', label: 'Claude 3.5 Sonnet', desc: 'Excellent for long-form content' },
-  { id: 'gemini', label: 'Google Gemini 1.5', desc: 'Great for research & facts' },
+  { id: 'openai', label: 'OpenAI', desc: 'GPT models via your own API key' },
+  { id: 'anthropic', label: 'Anthropic', desc: 'Claude models via your own API key' },
+  { id: 'gemini', label: 'Google Gemini', desc: 'Gemini models via your own API key' },
 ];
 
 export default function OnboardingWizard({ onComplete }: Props) {

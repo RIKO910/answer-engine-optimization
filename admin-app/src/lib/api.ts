@@ -2,7 +2,11 @@ const getConfig = () => window.aeoGeniusData;
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const { apiUrl, nonce } = getConfig();
-  const response = await fetch(`${apiUrl}${endpoint}`, {
+  // With plain permalinks apiUrl is "...?rest_route=/aeo-genius/v1", so a query string
+  // on the endpoint must be joined with "&" instead of a second "?".
+  const url = apiUrl.includes('?') ? `${apiUrl}${endpoint.replace('?', '&')}` : `${apiUrl}${endpoint}`;
+  const response = await fetch(url, {
+    credentials: 'same-origin',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -28,7 +32,10 @@ export const api = {
   getAeoScore: (postId: number) => request<Record<string, unknown>>(`/aeo-score/${postId}`),
   getSchema: (postId: number) => request<Record<string, unknown>>(`/schema/${postId}`),
   saveSchema: (postId: number, schema: Record<string, unknown>) =>
-    request(`/schema/${postId}`, { method: 'POST', body: JSON.stringify(schema) }),
+    request<{ success: boolean; warnings?: string[]; reset?: boolean }>(`/schema/${postId}`, {
+      method: 'POST',
+      body: JSON.stringify(schema),
+    }),
   getSchemaTypes: () => request<string[]>('/schema/types'),
   getGlobalSchema: () => request<Record<string, unknown>>('/schema/global'),
   generateFaq: (data: { post_id?: number; content?: string; count?: number }) =>
@@ -47,9 +54,12 @@ export const api = {
   fixAuditIssue: (issueId: string) =>
     request(`/audit/fix/${issueId}`, { method: 'POST' }),
   getCitations: () => request<Record<string, unknown>>('/analytics/citations'),
-  scanCitations: () => request<{ new_citations: number }>('/analytics/citations', { method: 'POST' }),
+  scanCitations: () => request<import('@/types').CitationScan>('/analytics/citations', { method: 'POST' }),
   getAnalyticsOverview: () => request<Record<string, unknown>>('/analytics/overview'),
-  getCompetitorAnalysis: () => request<Record<string, unknown>>('/analytics/competitors'),
+  getCompetitorAnalysis: (refresh = false) =>
+    request<{ own_types: string[]; competitors: import('@/types').CompetitorRow[] }>(
+      `/analytics/competitors${refresh ? '?refresh=1' : ''}`
+    ),
   getBriefOpportunities: () => request<Array<Record<string, unknown>>>('/briefs/opportunities'),
   generateBrief: (topic: string) =>
     request<Record<string, unknown>>('/briefs/generate', {

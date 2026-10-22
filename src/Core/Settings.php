@@ -17,6 +17,67 @@ class Settings {
 	const OPTION_KEY = 'aeo_optimizer_settings';
 
 	/**
+	 * Settings keys that hold encrypted API keys.
+	 */
+	const API_KEYS = array( 'openai_api_key', 'anthropic_api_key', 'gemini_api_key', 'perplexity_api_key' );
+
+	/**
+	 * Default model per provider. Overridable in Settings and via the `aeo_ai_model` filter.
+	 */
+	const DEFAULT_MODELS = array(
+		'openai'     => 'gpt-5.4-mini',
+		'anthropic'  => 'claude-haiku-5-5',
+		'gemini'     => 'gemini-3.5-flash',
+		'perplexity' => 'sonar',
+	);
+
+	/**
+	 * Model to use for a provider.
+	 *
+	 * @param string $provider Provider slug.
+	 * @return string
+	 */
+	public static function get_model( $provider ) {
+		$model = (string) self::get( $provider . '_model', '' );
+		if ( '' === $model ) {
+			$model = self::DEFAULT_MODELS[ $provider ] ?? '';
+		}
+		return (string) apply_filters( 'aeo_ai_model', $model, $provider );
+	}
+
+	/**
+	 * Post types the plugin scores, audits and lists in llms.txt.
+	 *
+	 * @return string[]
+	 */
+	public static function get_post_types() {
+		$types = get_post_types( array( 'public' => true ), 'names' );
+		unset( $types['attachment'] );
+		return array_values( (array) apply_filters( 'aeo_post_types', array_values( $types ) ) );
+	}
+
+	/**
+	 * Normalize a user-entered domain or URL to a bare host.
+	 *
+	 * @param string $value Raw value.
+	 * @return string
+	 */
+	public static function normalize_domain( $value ) {
+		$value = trim( strtolower( sanitize_text_field( (string) $value ) ) );
+		if ( '' === $value ) {
+			return '';
+		}
+		if ( false === strpos( $value, '://' ) ) {
+			$value = 'https://' . $value;
+		}
+		$host = wp_parse_url( $value, PHP_URL_HOST );
+		if ( ! $host || false === strpos( $host, '.' ) ) {
+			return '';
+		}
+		return preg_replace( '/^www\./', '', $host );
+	}
+
+	/**
 	 * Get all settings.
 	 *
 	 * @return array<string, mixed>
@@ -85,20 +146,31 @@ class Settings {
 				: 'openai';
 		}
 
+		foreach ( array( 'openai_model', 'anthropic_model', 'gemini_model', 'perplexity_model' ) as $model_key ) {
+			if ( isset( $input[ $model_key ] ) ) {
+				// Model IDs only contain letters, digits, dots, dashes, underscores and slashes.
+				$sanitized[ $model_key ] = preg_replace( '/[^A-Za-z0-9._\/-]/', '', (string) $input[ $model_key ] );
+			}
+		}
+
 		if ( isset( $input['modules'] ) && is_array( $input['modules'] ) ) {
 			$sanitized['modules'] = array_map( 'rest_sanitize_boolean', $input['modules'] );
 		}
 
 		if ( isset( $input['competitors'] ) && is_array( $input['competitors'] ) ) {
-			$sanitized['competitors'] = array_slice(
-				array_map( 'sanitize_text_field', $input['competitors'] ),
-				0,
-				5
-			);
+			$domains = array();
+			foreach ( $input['competitors'] as $domain ) {
+				$domain = self::normalize_domain( $domain );
+				if ( $domain && ! in_array( $domain, $domains, true ) ) {
+					$domains[] = $domain;
+				}
+			}
+			$sanitized['competitors'] = array_slice( $domains, 0, 5 );
 		}
 
 		if ( isset( $input['tracked_keywords'] ) && is_array( $input['tracked_keywords'] ) ) {
-			$sanitized['tracked_keywords'] = array_map( 'sanitize_text_field', $input['tracked_keywords'] );
+			$keywords = array_filter( array_map( 'trim', array_map( 'sanitize_text_field', $input['tracked_keywords'] ) ) );
+			$sanitized['tracked_keywords'] = array_slice( array_values( array_unique( $keywords ) ), 0, 50 );
 		}
 
 		if ( isset( $input['business_info'] ) && is_array( $input['business_info'] ) ) {
@@ -112,7 +184,7 @@ class Settings {
 			);
 		}
 
-		$checkboxes = array( 'aeo_enable_schema', 'aeo_auto_questions', 'aeo_voice_optimization' );
+		$checkboxes = array( 'aeo_enable_schema', 'aeo_auto_questions', 'aeo_voice_optimization', 'defer_to_seo_plugin' );
 		foreach ( $checkboxes as $checkbox ) {
 			if ( isset( $input[ $checkbox ] ) ) {
 				$sanitized[ $checkbox ] = $input[ $checkbox ] ? 1 : 0;
@@ -162,12 +234,17 @@ class Settings {
 	 */
 	public static function get_public() {
 		$settings = self::get_all();
-		unset( $settings['openai_api_key'], $settings['anthropic_api_key'], $settings['gemini_api_key'] );
+		foreach ( self::API_KEYS as $key ) {
+			unset( $settings[ $key ] );
+		}
 
-		$settings['has_openai_key']    = ! empty( self::get( 'openai_api_key' ) );
-		$settings['has_anthropic_key'] = ! empty( self::get( 'anthropic_api_key' ) );
-		$settings['has_gemini_key']    = ! empty( self::get( 'gemini_api_key' ) );
+		$settings['has_openai_key']     = ! empty( self::get( 'openai_api_key' ) );
+		$settings['has_anthropic_key']  = ! empty( self::get( 'anthropic_api_key' ) );
+		$settings['has_gemini_key']     = ! empty( self::get( 'gemini_api_key' ) );
+		$settings['has_perplexity_key'] = ! empty( self::get( 'perplexity_api_key' ) );
 		$settings['woocommerce_active'] = class_exists( 'WooCommerce' );
+		$settings['seo_plugin']         = \AEO\Services\Seo_Compat::active_plugin_name();
+		$settings['default_models']     = self::DEFAULT_MODELS;
 
 		return $settings;
 	}

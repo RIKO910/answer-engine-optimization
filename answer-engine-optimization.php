@@ -3,7 +3,7 @@
  * Plugin Name:       Answer Engine Optimization
  * Plugin URI:        https://tarikul.top/plugins/answer-engine-optimization/
  * Description:       AI-Powered Answer Engine Optimization — optimize for ChatGPT, Perplexity, Google SGE, and all AI answer engines.
- * Version:           1.0.2
+ * Version:           1.1.0
  * Requires at least: 6.5
  * Requires PHP:      7.2
  * Author:            Tarikul Islam Riko
@@ -41,8 +41,14 @@ if ( file_exists( $aeo_autoload ) ) {
 	);
 }
 
-// Legacy bootstrap for backward compatibility.
-require_once __DIR__ . '/includes/class-answer-engine-optimization.php';
+if ( ! defined( 'AEO_PLUGIN_BASENAME' ) ) {
+	define( 'AEO_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+}
+
+// Activation hooks must be registered when the file is loaded, not inside a later
+// hook: on the activation request plugins_loaded has already fired.
+register_activation_hook( __FILE__, array( 'AEO\\Core\\Activator', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'AEO\\Plugin', 'deactivate' ) );
 
 /**
  * Initialize the plugin.

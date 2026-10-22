@@ -1,96 +1,64 @@
 <?php
 /**
- * Google Gemini provider.
+ * Google Gemini provider (generateContent API).
  *
  * @package AEO
  */
 
 namespace AEO\Services\AI;
 
-use AEO\Core\Settings;
-use AEO\Services\Encryption;
-
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Google Gemini integration.
+ * Gemini.
  */
-class Gemini_Provider implements AI_Provider_Interface {
+class Gemini_Provider extends Remote_Provider {
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public function generate_faqs( $content, $count = 5 ) {
-		$prompt = sprintf( 'Generate %d FAQ pairs as JSON. Content: %s', $count, wp_trim_words( wp_strip_all_tags( $content ), 500 ) );
-		$response = $this->request( $prompt );
-		if ( is_wp_error( $response ) ) {
-			return ( new Local_AI_Provider() )->generate_faqs( $content, $count );
-		}
-		$parsed = json_decode( $response, true );
-		return is_array( $parsed ) ? $parsed : ( new Local_AI_Provider() )->generate_faqs( $content, $count );
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function rewrite_content( $content ) {
-		$response = $this->request( 'Rewrite for AEO in HTML: ' . wp_trim_words( wp_strip_all_tags( $content ), 800 ) );
-		return is_wp_error( $response ) ? ( new Local_AI_Provider() )->rewrite_content( $content ) : $response;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function generate_brief( $topic ) {
-		$response = $this->request( 'Create AEO brief JSON for: ' . $topic );
-		if ( is_wp_error( $response ) ) {
-			return ( new Local_AI_Provider() )->generate_brief( $topic );
-		}
-		$parsed = json_decode( $response, true );
-		return is_array( $parsed ) ? $parsed : ( new Local_AI_Provider() )->generate_brief( $topic );
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function is_configured() {
-		return ! empty( Settings::get( 'gemini_api_key', '' ) );
-	}
-
-	/**
-	 * API request.
+	 * {@inheritdoc}
 	 *
-	 * @param string $prompt Prompt text.
-	 * @return string|\WP_Error
+	 * @var string
 	 */
-	private function request( $prompt ) {
-		$api_key = Encryption::decrypt( Settings::get( 'gemini_api_key', '' ) );
-		if ( empty( $api_key ) ) {
-			return new \WP_Error( 'no_api_key', __( 'Gemini API key not configured', 'answer-engine-optimization' ) );
+	protected $slug = 'gemini';
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function send( $prompt, $api_key, $model, $json ) {
+		$body = array(
+			'contents' => array(
+				array(
+					'role'  => 'user',
+					'parts' => array( array( 'text' => $prompt ) ),
+				),
+			),
+		);
+		if ( $json ) {
+			$body['generationConfig'] = array( 'responseMimeType' => 'application/json' );
 		}
 
-		$url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=' . $api_key;
-
-		$response = wp_remote_post(
-			$url,
-			array(
-				'timeout' => 60,
-				'headers' => array( 'Content-Type' => 'application/json' ),
-				'body'    => wp_json_encode(
-					array(
-						'contents' => array(
-							array( 'parts' => array( array( 'text' => $prompt ) ) ),
-						),
-					)
-				),
+		// Key goes in a header, not the URL, so it never lands in server or proxy logs.
+		$data = $this->decode(
+			wp_remote_post(
+				'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( $model ) . ':generateContent',
+				array(
+					'timeout' => 90,
+					'headers' => array(
+						'x-goog-api-key' => $api_key,
+						'Content-Type'   => 'application/json',
+					),
+					'body'    => wp_json_encode( $body ),
+				)
 			)
 		);
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
+		if ( is_wp_error( $data ) ) {
+			return $data;
 		}
 
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-		return $body['candidates'][0]['content']['parts'][0]['text'] ?? new \WP_Error( 'invalid_response', __( 'Invalid AI response', 'answer-engine-optimization' ) );
+		$text = '';
+		foreach ( (array) ( $data['candidates'][0]['content']['parts'] ?? array() ) as $part ) {
+			$text .= (string) ( $part['text'] ?? '' );
+		}
+		return $text;
 	}
 }

@@ -1,6 +1,9 @@
 <?php
 /**
- * Local fallback AI provider (no API key required).
+ * Offline fallback provider (no API key required).
+ *
+ * Builds questions from the post's own headings and sentences instead of
+ * templating the most frequent word ("What is the?").
  *
  * @package AEO
  */
@@ -10,104 +13,158 @@ namespace AEO\Services\AI;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Rule-based AI fallback when no API key is configured.
+ * Local heuristics.
  */
 class Local_AI_Provider implements AI_Provider_Interface {
 
+	const QUESTION_WORDS = '(what|how|why|when|where|who|which|can|could|should|does|do|is|are|will|would)';
+
 	/**
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 */
 	public function generate_faqs( $content, $count = 5 ) {
-		$text     = wp_strip_all_tags( $content );
-		$keywords = $this->extract_keywords( $text );
+		$content  = (string) strip_shortcodes( (string) $content );
+		$sections = $this->split_sections( $content );
 		$faqs     = array();
 
-		foreach ( array_slice( $keywords, 0, $count ) as $keyword ) {
-			$faqs[] = array(
-				/* translators: %s: extracted keyword */
-				'question' => sprintf( __( 'What is %s?', 'answer-engine-optimization' ), $keyword ),
-				'answer'   => $this->find_context( $text, $keyword ),
-			);
+		// 1. Headings become questions; the text under them becomes the answer.
+		foreach ( $sections as $section ) {
+			$question = $this->heading_to_question( $section['heading'] );
+			$answer   = $this->first_sentences( $section['body'], 2 );
+			if ( $question && $answer ) {
+				$faqs[] = array(
+					'question' => $question,
+					'answer'   => $answer,
+				);
+			}
 		}
 
-		$faqs[] = array(
-			'question' => __( 'How does this work?', 'answer-engine-optimization' ),
-			'answer'   => wp_trim_words( $text, 50 ),
-		);
+		// 2. Questions the author already wrote in the text.
+		$text = $this->plain( $content );
+		if ( preg_match_all( '/([A-Z][^.?!]{10,140}\?)\s+([^?]{20,400}?[.!])/u', $text, $m, PREG_SET_ORDER ) ) {
+			foreach ( $m as $match ) {
+				$faqs[] = array(
+					'question' => trim( $match[1] ),
+					'answer'   => trim( $match[2] ),
+				);
+			}
+		}
 
-		return array_slice( $faqs, 0, $count );
+		$faqs = AI_Response::normalize_faqs( $faqs );
+		return array_slice( $faqs, 0, max( 1, (int) $count ) );
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 */
 	public function rewrite_content( $content ) {
-		$text = wp_strip_all_tags( $content );
-		$intro = wp_trim_words( $text, 30 );
-
-		return '<div class="aeo-optimized-intro">' .
-			'<p><strong>' . esc_html__( 'Quick Answer:', 'answer-engine-optimization' ) . '</strong> ' .
-			esc_html( $intro ) . '</p>' .
-			'</div>' . $content;
+		$intro = $this->first_sentences( $this->plain( $content ), 2 );
+		if ( '' === $intro ) {
+			return $content;
+		}
+		return '<div class="aeo-optimized-intro"><p><strong>' . esc_html__( 'Quick answer:', 'answer-engine-optimization' ) . '</strong> ' .
+			esc_html( $intro ) . '</p></div>' . $content;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 */
 	public function generate_brief( $topic ) {
+		$topic = trim( (string) $topic );
 		return array(
-			'topic'           => $topic,
-			'target_questions' => array(
-				/* translators: %s: brief topic */
+			'topic'             => $topic,
+			'target_questions'  => array(
+				/* translators: %s: topic */
 				sprintf( __( 'What is %s?', 'answer-engine-optimization' ), $topic ),
-				/* translators: %s: brief topic */
-				sprintf( __( 'How to use %s?', 'answer-engine-optimization' ), $topic ),
-				/* translators: %s: brief topic */
-				sprintf( __( 'Why is %s important?', 'answer-engine-optimization' ), $topic ),
+				/* translators: %s: topic */
+				sprintf( __( 'How does %s work?', 'answer-engine-optimization' ), $topic ),
+				/* translators: %s: topic */
+				sprintf( __( 'How much does %s cost?', 'answer-engine-optimization' ), $topic ),
+				/* translators: %s: topic */
+				sprintf( __( 'What are the alternatives to %s?', 'answer-engine-optimization' ), $topic ),
 			),
-			'entities'        => array( $topic ),
-			'schema_type'     => 'Article',
-			'opportunity_score' => rand( 60, 95 ),
-			'faq_suggestions' => $this->generate_faqs( $topic, 3 ),
+			'entities'          => array( $topic ),
+			'schema_type'       => 'Article',
+			'faq_suggestions'   => array(),
+			'opportunity_score' => \AEO\Services\Brief_Service::opportunity_score( $topic ),
+			'source'            => 'template',
 		);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 */
 	public function is_configured() {
 		return true;
 	}
 
 	/**
-	 * Extract keywords from text.
+	 * Split HTML into heading + body sections.
 	 *
-	 * @param string $text Content text.
-	 * @return array<int, string>
+	 * @param string $html HTML.
+	 * @return array<int, array{heading: string, body: string}>
 	 */
-	private function extract_keywords( $text ) {
-		$stop_words = array( 'the', 'and', 'a', 'to', 'of', 'in', 'is', 'it', 'that', 'for', 'you', 'on', 'with', 'as', 'at', 'be', 'this', 'by', 'from', 'are', 'was', 'were', 'can', 'will', 'has', 'have' );
-		$words      = str_word_count( strtolower( $text ), 1 );
-		$words      = array_diff( $words, $stop_words );
-		$counts     = array_count_values( $words );
-		arsort( $counts );
-		return array_slice( array_keys( $counts ), 0, 10 );
+	private function split_sections( $html ) {
+		$parts    = preg_split( '/<h[2-4][^>]*>(.*?)<\/h[2-4]>/is', $html, -1, PREG_SPLIT_DELIM_CAPTURE );
+		$sections = array();
+		for ( $i = 1; $i < count( $parts ); $i += 2 ) {
+			$sections[] = array(
+				'heading' => $this->plain( $parts[ $i ] ),
+				'body'    => $this->plain( $parts[ $i + 1 ] ?? '' ),
+			);
+		}
+		return $sections;
 	}
 
 	/**
-	 * Find contextual sentence for keyword.
+	 * Turn a heading into a question.
 	 *
-	 * @param string $text    Full text.
-	 * @param string $keyword Keyword.
+	 * @param string $heading Heading text.
 	 * @return string
 	 */
-	private function find_context( $text, $keyword ) {
-		$sentences = preg_split( '/[.!?]+/', $text );
-		foreach ( $sentences as $sentence ) {
-			if ( stripos( $sentence, $keyword ) !== false ) {
-				return trim( $sentence ) . '.';
-			}
+	private function heading_to_question( $heading ) {
+		$heading = trim( rtrim( $heading, ':.' ) );
+		if ( mb_strlen( $heading ) < 4 || mb_strlen( $heading ) > 120 ) {
+			return '';
 		}
-		return wp_trim_words( $text, 30 );
+		if ( '?' === substr( $heading, -1 ) ) {
+			return $heading;
+		}
+		if ( preg_match( '/^' . self::QUESTION_WORDS . '\b/i', $heading ) ) {
+			return $heading . '?';
+		}
+		if ( preg_match( '/^how to\b/i', $heading ) ) {
+			return 'How do I ' . lcfirst( substr( $heading, 7 ) ) . '?';
+		}
+		/* translators: %s: section heading */
+		return sprintf( __( 'What should I know about %s?', 'answer-engine-optimization' ), lcfirst( $heading ) );
+	}
+
+	/**
+	 * First N sentences of a text.
+	 *
+	 * @param string $text Text.
+	 * @param int    $n    Sentences.
+	 * @return string
+	 */
+	private function first_sentences( $text, $n ) {
+		$text = trim( $text );
+		if ( '' === $text ) {
+			return '';
+		}
+		$sentences = preg_split( '/(?<=[.!?])\s+/u', $text, $n + 1 );
+		$out       = implode( ' ', array_slice( $sentences, 0, $n ) );
+		return wp_html_excerpt( $out, 320, '…' );
+	}
+
+	/**
+	 * HTML to plain text with normalized whitespace.
+	 *
+	 * @param string $html HTML.
+	 * @return string
+	 */
+	private function plain( $html ) {
+		$html = preg_replace( '/<\/(p|li|h[1-6]|div|br)>/i', '$0 ', (string) $html );
+		return trim( preg_replace( '/\s+/u', ' ', html_entity_decode( wp_strip_all_tags( $html ), ENT_QUOTES, 'UTF-8' ) ) );
 	}
 }

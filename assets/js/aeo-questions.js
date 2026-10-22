@@ -1,103 +1,120 @@
-jQuery(document).ready(function($) {
-    // Show questions modal when the editor is loaded
-    $(window).on('load', function() {
-        if ($('#aeo-questions-modal').length && $('#post').length) {
-            setTimeout(function() {
-                $('#aeo-questions-modal').show();
-                loadQuestionSuggestions();
-            }, 2000);
-        }
-    });
+/* Answer Engine Optimization: "Suggest questions" modal in the post editor. */
+jQuery(function ($) {
+    var data = window.aeoQuestionsData || {};
+    var $modal = $('#aeo-questions-modal');
+    var $list = $('#aeo-questions-list');
+    var $generate = $('#aeo-generate-questions');
+    var suggestions = [];
 
-    // Modal functionality
-    var modal = $('#aeo-questions-modal');
-    var postId = $('#post_ID').val();
-
-    // Close modal
-    $('.aeo-modal-close, #aeo-close-modal').on('click', function() {
-        modal.hide();
-    });
-
-    // Generate more questions
-    $('#aeo-generate-questions').on('click', function() {
-        generateQuestions();
-    });
-
-    // Apply selected questions
-    $('#aeo-apply-selected').on('click', function() {
-        applySelectedQuestions();
-    });
-
-    function loadQuestionSuggestions() {
-        $('#aeo-questions-list').html('<p>' + aeoQuestionsData.generatingText + '</p>');
-        generateQuestions();
+    if (!$modal.length) {
+        return;
     }
 
-    function generateQuestions() {
-        $('#aeo-generate-questions').prop('disabled', true).text(aeoQuestionsData.generatingText);
+    function postId() {
+        return $('#post_ID').val() || (window.wp && wp.data && wp.data.select('core/editor') ? wp.data.select('core/editor').getCurrentPostId() : 0);
+    }
 
-        $.ajax({
-            url: aeoQuestionsData.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'aeo_generate_questions',
-                post_id: postId,
-                nonce: aeoQuestionsData.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    displayQuestions(response.data);
-                } else {
-                    alert(aeoQuestionsData.errorText);
-                }
-            },
-            error: function() {
-                alert(aeoQuestionsData.errorText);
-            },
-            complete: function() {
-                $('#aeo-generate-questions').prop('disabled', false)
-                    .text('Generate More Questions');
+    function editorContent() {
+        try {
+            if (window.wp && wp.data && wp.data.select('core/editor')) {
+                return wp.data.select('core/editor').getEditedPostContent() || '';
+            }
+        } catch (e) {}
+        var $content = $('#content');
+        return $content.length ? $content.val() : '';
+    }
+
+    function open() {
+        $modal.show();
+        $modal.find('.aeo-modal-close').trigger('focus');
+        if (!suggestions.length) {
+            generate();
+        }
+    }
+
+    function close() {
+        $modal.hide();
+        $('.aeo-show-questions').trigger('focus');
+    }
+
+    function render() {
+        $list.empty();
+        suggestions.forEach(function (item, index) {
+            var id = 'aeo-q-' + index;
+            var $row = $('<div class="aeo-question-item"></div>');
+            var $label = $('<label></label>').attr('for', id);
+            $('<input type="checkbox" checked>').attr('id', id).val(index).appendTo($label);
+            $('<span></span>').text(item.question).appendTo($label); // .text(): never inject HTML.
+            $row.append($label).appendTo($list);
+        });
+    }
+
+    function generate() {
+        var id = postId();
+        $generate.prop('disabled', true).text(data.generatingText);
+        if (!suggestions.length) {
+            $list.empty().append($('<p></p>').text(data.generatingText));
+        }
+
+        $.post(data.ajaxurl, {
+            action: 'aeo_generate_questions',
+            post_id: id,
+            content: editorContent(),
+            nonce: data.nonce
+        }).done(function (response) {
+            if (response && response.success && Array.isArray(response.data)) {
+                var seen = {};
+                suggestions.forEach(function (s) { seen[s.question.toLowerCase()] = true; });
+                response.data.forEach(function (s) {
+                    if (s && s.question && !seen[s.question.toLowerCase()]) {
+                        suggestions.push({ question: String(s.question), answer: String(s.answer || '') });
+                        seen[s.question.toLowerCase()] = true;
+                    }
+                });
+                render();
+            } else {
+                $list.empty().append($('<p></p>').text(data.errorText));
+            }
+        }).fail(function () {
+            $list.empty().append($('<p></p>').text(data.errorText));
+        }).always(function () {
+            $generate.prop('disabled', false).text(data.generateText);
+        });
+    }
+
+    function apply() {
+        var picked = $list.find('input:checked').map(function () {
+            return suggestions[parseInt(this.value, 10)];
+        }).get();
+
+        if (!picked.length) {
+            window.alert(data.emptyText);
+            return;
+        }
+
+        picked.forEach(function (item) {
+            if (typeof window.aeoAddFaqRow === 'function') {
+                window.aeoAddFaqRow(item.question, item.answer);
             }
         });
+        close();
     }
 
-    function displayQuestions(questions) {
-        var html = '';
-        questions.forEach(function(question, index) {
-            html += `
-                <div class="aeo-question-item">
-                    <label>
-                        <input type="checkbox" name="aeo_suggested_questions[]" value="${index}" checked>
-                        ${question}
-                    </label>
-                </div>
-            `;
-        });
-        $('#aeo-questions-list').html(html);
-    }
-
-    function applySelectedQuestions() {
-        var selectedQuestions = [];
-        $('input[name="aeo_suggested_questions[]"]:checked').each(function() {
-            selectedQuestions.push($(this).parent().text().trim());
-        });
-
-        if (selectedQuestions.length > 0) {
-            // Add to FAQ items
-            selectedQuestions.forEach(function(question) {
-                var faqItem = `
-                    <div class="aeo-faq-item">
-                        <input type="text" name="aeo_faq_question[]" value="${question}" class="widefat">
-                        <textarea name="aeo_faq_answer[]" rows="2" class="widefat"></textarea>
-                        <button type="button" class="button aeo-remove-faq">Remove</button>
-                    </div>
-                `;
-                $('#aeo-faq-items').append(faqItem);
-            });
-
-            modal.hide();
-        } else {
-            alert('Please select at least one question');
+    $(document).on('click', '.aeo-show-questions', function (e) {
+        e.preventDefault();
+        open();
+    });
+    $modal.on('click', '.aeo-modal-close, #aeo-close-modal', close);
+    $modal.on('click', function (e) {
+        if (e.target === $modal[0]) {
+            close();
         }
-    }
+    });
+    $(document).on('keydown', function (e) {
+        if ('Escape' === e.key && $modal.is(':visible')) {
+            close();
+        }
+    });
+    $generate.on('click', generate);
+    $('#aeo-apply-selected').on('click', apply);
 });

@@ -19,10 +19,55 @@ class Activator {
 	 *
 	 * @return void
 	 */
-	public static function activate() {
+	public static function activate( $network_wide = false ) {
+		if ( is_multisite() && $network_wide ) {
+			$site_ids = get_sites(
+				array(
+					'fields' => 'ids',
+					'number' => 0,
+				)
+			);
+			foreach ( $site_ids as $site_id ) {
+				switch_to_blog( $site_id );
+				self::activate_site();
+				restore_current_blog();
+			}
+			return;
+		}
+
+		self::activate_site();
+	}
+
+	/**
+	 * Set up the plugin on the current site.
+	 *
+	 * @return void
+	 */
+	public static function activate_site() {
 		self::create_tables();
 		self::set_default_options();
+		\AEO\Plugin::register_rewrites();
 		flush_rewrite_rules();
+		Upgrader::schedule_events();
+		update_option( Upgrader::VERSION_OPTION, Upgrader::DB_VERSION );
+	}
+
+	/**
+	 * Set up a site created after network activation.
+	 *
+	 * @param \WP_Site $site New site.
+	 * @return void
+	 */
+	public static function on_new_site( $site ) {
+		if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		if ( ! is_plugin_active_for_network( AEO_PLUGIN_BASENAME ) ) {
+			return;
+		}
+		switch_to_blog( $site->blog_id );
+		self::activate_site();
+		restore_current_blog();
 	}
 
 	/**
@@ -30,7 +75,7 @@ class Activator {
 	 *
 	 * @return void
 	 */
-	private static function create_tables() {
+	public static function create_tables() {
 		global $wpdb;
 
 		$charset_collate = $wpdb->get_charset_collate();
@@ -109,6 +154,7 @@ class Activator {
 			'aeo_enable_schema'      => 1,
 			'aeo_auto_questions'     => 1,
 			'aeo_voice_optimization' => 1,
+			'defer_to_seo_plugin'    => 1,
 			'aeo_target_questions'   => '',
 			'notifications'          => array(
 				'email_citations' => true,
@@ -134,16 +180,20 @@ class Activator {
 			),
 		);
 
-		if ( ! get_option( 'aeo_optimizer_settings' ) ) {
-			update_option( 'aeo_optimizer_settings', $defaults );
+		$current = get_option( 'aeo_optimizer_settings' );
+		if ( ! is_array( $current ) ) {
+			$current = array();
 		}
 
-		// Migrate legacy settings.
+		// Migrate legacy settings once, without overwriting newer settings.
 		$legacy = get_option( 'aeo_settings' );
-		if ( $legacy && is_array( $legacy ) ) {
-			$merged = array_merge( $defaults, $legacy );
-			update_option( 'aeo_optimizer_settings', $merged );
+		if ( $legacy && is_array( $legacy ) && empty( $current['legacy_migrated'] ) ) {
+			$current                    = array_merge( $legacy, $current );
+			$current['legacy_migrated'] = true;
 		}
+
+		// Fill in any missing defaults (keeps existing values on re-activation).
+		update_option( 'aeo_optimizer_settings', array_replace_recursive( $defaults, $current ) );
 
 		if ( ! get_option( 'aeo_optimizer_schema_global' ) ) {
 			update_option(

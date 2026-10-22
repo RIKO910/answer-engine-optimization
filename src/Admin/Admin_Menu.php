@@ -27,9 +27,12 @@ class Admin_Menu {
 	 * @return void
 	 */
 	public function register_menu() {
+		$agency     = \AEO\Core\Settings::get( 'agency', array() );
+		$brand_name = is_array( $agency ) && ! empty( $agency['white_label_name'] ) ? $agency['white_label_name'] : '';
+
 		add_menu_page(
-			__( 'Answer Engine Optimization', 'answer-engine-optimization' ),
-			__( 'AEO', 'answer-engine-optimization' ),
+			$brand_name ? $brand_name : __( 'Answer Engine Optimization', 'answer-engine-optimization' ),
+			$brand_name ? $brand_name : __( 'AEO', 'answer-engine-optimization' ),
 			'manage_options',
 			'aeo-dashboard',
 			array( $this, 'render_app' ),
@@ -72,6 +75,6 @@ class Admin_Menu {
 	 * @return void
 	 */
 	public function render_app() {
-		echo '<div id="aeo-genius-root"></div>';
+		echo '<div id="aeo-genius-root"><noscript>' . esc_html__( 'This page needs JavaScript enabled.', 'answer-engine-optimization' ) . '</noscript></div>';
 	}
 }

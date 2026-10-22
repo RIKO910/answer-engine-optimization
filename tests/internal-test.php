@@ -30,6 +30,21 @@ if ( ! function_exists( 'wp_trim_words' ) ) {
 	}
 }
 
+foreach ( array(
+	'strip_shortcodes'        => function ( $t ) { return preg_replace( '/\[[^\]]*\]/', '', $t ); },
+	'sanitize_text_field'     => function ( $t ) { return trim( preg_replace( '/[\r\n\t ]+/', ' ', strip_tags( (string) $t ) ) ); },
+	'sanitize_textarea_field' => function ( $t ) { return trim( strip_tags( (string) $t ) ); },
+	'wp_html_excerpt'         => function ( $t, $n, $more = '' ) { return mb_strlen( $t ) > $n ? mb_substr( $t, 0, $n ) . $more : $t; },
+	'esc_html__'              => function ( $t ) { return $t; },
+	'apply_filters'           => function ( $tag, $value ) { return $value; },
+	'wp_parse_url'            => function ( $u, $c = -1 ) { return parse_url( $u, $c ); },
+) as $aeo_fn => $aeo_impl ) {
+	if ( ! function_exists( $aeo_fn ) ) {
+		$GLOBALS[ 'aeo_stub_' . $aeo_fn ] = $aeo_impl;
+		eval( "function {$aeo_fn}() { return call_user_func_array( \$GLOBALS['aeo_stub_{$aeo_fn}'], func_get_args() ); }" ); // phpcs:ignore
+	}
+}
+
 $plugin_dir = dirname( __DIR__ );
 
 spl_autoload_register(
@@ -62,6 +77,13 @@ $classes = array(
 	'AEO\\Services\\AI\\AI_Manager',
 	'AEO\\Services\\AI\\Local_AI_Provider',
 	'AEO\\Services\\AI\\OpenAI_Provider',
+	'AEO\\Services\\AI\\Anthropic_Provider',
+	'AEO\\Services\\AI\\Gemini_Provider',
+	'AEO\\Services\\AI\\AI_Response',
+	'AEO\\Services\\Seo_Compat',
+	'AEO\\Services\\Brief_Service',
+	'AEO\\Services\\Notification_Service',
+	'AEO\\Core\\Upgrader',
 	'AEO\\Admin\\Admin_Menu',
 	'AEO\\Admin\\Assets',
 	'AEO\\Frontend\\Frontend_Manager',
@@ -122,13 +144,26 @@ if ( count( $types ) >= 40 ) {
 }
 
 $ai   = new AEO\Services\AI\Local_AI_Provider();
-$faqs = $ai->generate_faqs( 'WordPress is a content management system used for building websites and blogs.', 3 );
-if ( count( $faqs ) >= 1 ) {
+$faqs = $ai->generate_faqs( '<p>Intro.</p><h2>How do I book?</h2><p>Call reception. It takes a minute.</p><h2>Parking</h2><p>Parking is free.</p>', 3 );
+if ( 2 === count( $faqs ) && 'How do I book?' === $faqs[0]['question'] && 'What should I know about parking?' === $faqs[1]['question'] ) {
 	echo "[PASS] Local AI FAQ generation: " . count( $faqs ) . " FAQs\n";
 	$passed++;
 } else {
 	echo "[FAIL] Local AI FAQ generation\n";
 	$failed++;
+}
+
+$checks = array(
+	'JSON in code fence'      => array( 'a' => 1 ) === AEO\Services\AI\AI_Response::extract_json( "Sure!\n```json\n{\"a\":1}\n```" ),
+	'FAQ normalize (wrapped)' => 1 === count( AEO\Services\AI\AI_Response::normalize_faqs( array( 'faqs' => array( array( 'question' => 'Q?', 'answer' => 'A' ), array( 'question' => 'q?', 'answer' => 'dup' ) ) ) ) ),
+	'Schema types from HTML'  => array( 'Hotel', 'PostalAddress' ) === AEO\Services\Citation_Service::extract_schema_types( '<script type="application/ld+json">{"@graph":[{"@type":"Hotel","address":{"@type":"PostalAddress"}}]}</script>' ),
+	'Perplexity source URLs'  => array( 'https://a.com/', 'https://b.com/' ) === AEO\Services\Citation_Service::extract_source_urls( array( 'citations' => array( 'https://a.com/', 'javascript:x' ), 'search_results' => array( array( 'url' => 'https://b.com/' ) ) ) ),
+	'Validate required props' => false === ( new AEO\Services\Schema_Service() )->validate( array( '@type' => 'Hotel', 'name' => 'X' ) )['valid'],
+	'Unicode word count'      => 3 === AEO\Services\Score_Engine::word_count( 'আমার সোনার বাংলা' ),
+);
+foreach ( $checks as $label => $ok ) {
+	echo ( $ok ? '[PASS] ' : '[FAIL] ' ) . $label . "\n";
+	$ok ? $passed++ : $failed++;
 }
 
 $encrypted = AEO\Services\Encryption::encrypt( 'test-key-123' );

@@ -11,7 +11,10 @@ use AEO\Admin\Admin_Menu;
 use AEO\Admin\Assets;
 use AEO\Api\Rest_Api;
 use AEO\Core\Activator;
+use AEO\Core\Settings;
+use AEO\Core\Upgrader;
 use AEO\Frontend\Frontend_Manager;
+use AEO\Services\Notification_Service;
 use AEO\Services\Score_Engine;
 
 defined( 'ABSPATH' ) || exit;
@@ -40,7 +43,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.2';
+	public $version = '1.1.0';
 
 	/**
 	 * Get singleton instance.
@@ -96,11 +99,54 @@ class Plugin {
 	 * @return void
 	 */
 	private function register_hooks() {
-		register_activation_hook( $this->file, array( Activator::class, 'activate' ) );
-		register_deactivation_hook( $this->file, array( $this, 'deactivate' ) );
-
+		add_action( 'init', array( __CLASS__, 'register_rewrites' ), 5 );
+		add_filter( 'query_vars', array( $this, 'register_query_vars' ) );
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', array( Upgrader::class, 'maybe_upgrade' ), 20 );
 		add_action( 'save_post', array( $this, 'on_save_post' ), 20, 2 );
+		add_action( 'deleted_post', array( $this, 'flush_llms_cache' ) );
+		add_filter( 'robots_txt', array( Frontend_Manager::class, 'filter_robots_txt' ), 20, 2 );
+		add_action( Upgrader::CRON_HOOK, array( $this, 'run_weekly_maintenance' ) );
+		add_action( 'wp_initialize_site', array( Activator::class, 'on_new_site' ), 20 );
+	}
+
+	/**
+	 * Register the /llms.txt rewrite rule on every request (front end and admin),
+	 * so flush_rewrite_rules() during activation actually persists it.
+	 *
+	 * @return void
+	 */
+	public static function register_rewrites() {
+		add_rewrite_rule( '^llms\.txt$', 'index.php?aeo_llms_txt=1', 'top' );
+	}
+
+	/**
+	 * Public query vars.
+	 *
+	 * @param string[] $vars Query vars.
+	 * @return string[]
+	 */
+	public function register_query_vars( $vars ) {
+		$vars[] = 'aeo_llms_txt';
+		return $vars;
+	}
+
+	/**
+	 * Weekly cron callback.
+	 *
+	 * @return void
+	 */
+	public function run_weekly_maintenance() {
+		( new Notification_Service() )->run_weekly();
+	}
+
+	/**
+	 * Clear the cached llms.txt.
+	 *
+	 * @return void
+	 */
+	public function flush_llms_cache() {
+		delete_transient( 'aeo_llms_txt' );
 	}
 
 	/**
@@ -157,9 +203,11 @@ class Plugin {
 			return;
 		}
 
-		if ( ! in_array( $post->post_type, array( 'post', 'page', 'product' ), true ) ) {
+		if ( ! in_array( $post->post_type, Settings::get_post_types(), true ) ) {
 			return;
 		}
+
+		$this->flush_llms_cache();
 
 		if ( 'publish' !== $post->post_status ) {
 			return;
@@ -173,7 +221,9 @@ class Plugin {
 	 *
 	 * @return void
 	 */
-	public function deactivate() {
+	public static function deactivate() {
+		Upgrader::unschedule_events();
+		delete_transient( 'aeo_llms_txt' );
 		flush_rewrite_rules();
 	}
 }

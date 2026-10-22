@@ -17,7 +17,43 @@ export interface AeoSettings {
   has_openai_key: boolean;
   has_anthropic_key: boolean;
   has_gemini_key: boolean;
+  has_perplexity_key: boolean;
   woocommerce_active: boolean;
+  seo_plugin: string;
+  defer_to_seo_plugin: number;
+  default_models: Record<string, string>;
+  openai_model?: string;
+  anthropic_model?: string;
+  gemini_model?: string;
+  perplexity_model?: string;
+  notifications: { email_citations: boolean; email_audit: boolean };
+  crawler_settings: Record<string, 'allow' | 'block'>;
+  agency?: { white_label_name: string; white_label_logo: string };
+}
+
+export interface CitationScanResult {
+  keyword: string;
+  cited: boolean;
+  urls: string[];
+  sources: string[];
+  error?: string;
+}
+
+export interface CitationScan {
+  scanned_at: string;
+  engine: string;
+  checked: number;
+  cited: number;
+  results: CitationScanResult[];
+}
+
+export interface CompetitorRow {
+  domain: string;
+  schema_types: string[];
+  missing_types: string[];
+  has_llms_txt: boolean;
+  error: string;
+  checked_at: string;
 }
 
 export interface PostScore {
@@ -47,9 +83,16 @@ export interface FaqItem {
 
 export interface Location {
   name: string;
+  type: string;
   address: string;
+  city: string;
+  region: string;
+  postal_code: string;
+  country: string;
   phone: string;
   hours: string;
+  price_range: string;
+  url: string;
   lat: string;
   lng: string;
 }

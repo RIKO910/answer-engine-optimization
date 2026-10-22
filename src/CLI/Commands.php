@@ -9,6 +9,7 @@ namespace AEO\CLI;
 
 use AEO\Services\Audit_Service;
 use AEO\Services\Score_Engine;
+use AEO\Services\Citation_Service;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -53,7 +54,7 @@ class Commands {
 	public function score() {
 		$posts  = get_posts(
 			array(
-				'post_type'      => array( 'post', 'page' ),
+				'post_type'      => \AEO\Core\Settings::get_post_types(),
 				'post_status'    => 'publish',
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
@@ -97,5 +98,25 @@ class Commands {
 		} else {
 			\WP_CLI::warning( $result['message'] );
 		}
+	}
+
+	/**
+	 * Check tracked keywords on Perplexity and record citations of this site.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp aeo scan
+	 *
+	 * @return void
+	 */
+	public function scan() {
+		$result = ( new Citation_Service() )->scan_citations();
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( $result->get_error_message() );
+		}
+		foreach ( $result['results'] as $row ) {
+			\WP_CLI::log( sprintf( '%s: %s', $row['keyword'], $row['cited'] ? 'cited (' . implode( ', ', $row['urls'] ) . ')' : 'not cited' ) );
+		}
+		\WP_CLI::success( sprintf( '%d of %d keywords cited this site', $result['cited'], $result['checked'] ) );
 	}
 }

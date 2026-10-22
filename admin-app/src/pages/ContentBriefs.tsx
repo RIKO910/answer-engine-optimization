@@ -5,6 +5,7 @@ import { Lightbulb, Sparkles, Target, FileText } from 'lucide-react';
 import { api } from '@/lib/api';
 import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
+import EmptyState from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
 
 export default function ContentBriefs() {
@@ -19,7 +20,7 @@ export default function ContentBriefs() {
   const generateMutation = useMutation({
     mutationFn: (t: string) => api.generateBrief(t),
     onSuccess: (data) => { setBrief(data); toast.success('Brief generated'); },
-    onError: () => toast.error('Brief generation failed'),
+    onError: (e: Error) => toast.error(e.message || 'Brief generation failed'),
   });
 
   const opps = opportunities as Array<{ topic: string; opportunity_score: number }>;
@@ -68,6 +69,11 @@ export default function ContentBriefs() {
               <p className="text-xs text-slate-500">Opportunity</p>
             </div>
           </div>
+          {brief.source === 'template' && (
+            <p className="text-xs text-slate-500 mt-3">
+              These are starter questions. Add an AI API key in Settings for a researched brief.
+            </p>
+          )}
           <div className="mt-5 pt-4 border-t border-slate-200">
             <p className="text-[13px] font-medium text-slate-500 mb-2">Target questions</p>
             <ul className="space-y-1.5">
@@ -83,7 +89,10 @@ export default function ContentBriefs() {
       )}
 
       <Card>
-        <CardHeader title="Opportunities" description="Topics with AEO citation potential. Click one to draft a brief." />
+        <CardHeader title="Opportunities" description="Your tracked keywords. A higher score means your site has less content on it yet. Click one to draft a brief." />
+        {opps.length === 0 && (
+          <EmptyState icon={Lightbulb} title="No tracked keywords" description="Add keywords in Settings to see which topics your site doesn't cover yet." />
+        )}
         <div className="-mx-2">
           {opps.map((opp, i) => (
             <button

@@ -8,8 +8,30 @@ import { Card } from '@/components/ui/Card';
 import type { Location } from '@/types';
 
 const emptyLocation = (): Location => ({
-  name: '', address: '', phone: '', hours: '', lat: '', lng: '',
+  name: '', type: 'LocalBusiness', address: '', city: '', region: '', postal_code: '', country: '',
+  phone: '', hours: '', price_range: '', url: '', lat: '', lng: '',
 });
+
+const businessTypes = [
+  'LocalBusiness', 'Hotel', 'Resort', 'BedAndBreakfast', 'Motel', 'Hostel', 'LodgingBusiness',
+  'Restaurant', 'Store', 'ProfessionalService', 'MedicalBusiness', 'LegalService', 'FinancialService',
+];
+
+type Field = { field: keyof Location; label: string; span?: 2; placeholder?: string; multiline?: boolean };
+
+const fields: Field[] = [
+  { field: 'name', label: 'Business name', span: 2 },
+  { field: 'address', label: 'Street address', span: 2 },
+  { field: 'city', label: 'City' },
+  { field: 'region', label: 'State / region' },
+  { field: 'postal_code', label: 'Postal code' },
+  { field: 'country', label: 'Country', placeholder: 'BD' },
+  { field: 'phone', label: 'Phone', placeholder: '+880 …' },
+  { field: 'price_range', label: 'Price range', placeholder: '$$' },
+  { field: 'hours', label: 'Opening hours', span: 2, multiline: true, placeholder: 'One per line, e.g.\nMo-Fr 09:00-18:00\nSa 10:00-14:00' },
+  { field: 'lat', label: 'Latitude', placeholder: '21.4272' },
+  { field: 'lng', label: 'Longitude', placeholder: '92.0058' },
+];
 
 export default function LocalBusiness() {
   const { data } = useQuery({
@@ -20,13 +42,13 @@ export default function LocalBusiness() {
   const [locations, setLocations] = useState<Location[]>([emptyLocation()]);
 
   useEffect(() => {
-    if (data && data.length > 0) setLocations(data);
+    if (data && data.length > 0) setLocations(data.map((l) => ({ ...emptyLocation(), ...l })));
   }, [data]);
 
   const saveMutation = useMutation({
     mutationFn: () => api.saveLocations(locations),
     onSuccess: () => toast.success('Locations saved'),
-    onError: () => toast.error('Save failed'),
+    onError: (e: Error) => toast.error(e.message || 'Save failed'),
   });
 
   const update = (index: number, field: keyof Location, value: string) => {
@@ -65,7 +87,7 @@ export default function LocalBusiness() {
                   <h3 className="text-sm font-semibold text-slate-900">
                     {loc.name || `Location ${i + 1}`}
                   </h3>
-                  <p className="text-xs text-slate-500">LocalBusiness schema</p>
+                  <p className="text-xs text-slate-500">{loc.type || 'LocalBusiness'} schema · shown on the homepage</p>
                 </div>
               </div>
               {locations.length > 1 && (
@@ -79,22 +101,41 @@ export default function LocalBusiness() {
               )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {([
-                { field: 'name' as const, label: 'Business name', span: 2 },
-                { field: 'address' as const, label: 'Address', span: 2 },
-                { field: 'phone' as const, label: 'Phone' },
-                { field: 'hours' as const, label: 'Opening hours' },
-                { field: 'lat' as const, label: 'Latitude' },
-                { field: 'lng' as const, label: 'Longitude' },
-              ]).map(({ field, label, span }) => (
+              <div className="md:col-span-2">
+                <label className="aeo-label" htmlFor={`aeo-type-${i}`}>Business type</label>
+                <select
+                  id={`aeo-type-${i}`}
+                  value={loc.type || 'LocalBusiness'}
+                  onChange={(e) => update(i, 'type', e.target.value)}
+                  className="aeo-select"
+                >
+                  {businessTypes.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+              {fields.map(({ field, label, span, placeholder, multiline }) => (
                 <div key={field} className={span === 2 ? 'md:col-span-2' : ''}>
-                  <label className="aeo-label">{label}</label>
-                  <input
-                    type="text"
-                    value={loc[field]}
-                    onChange={(e) => update(i, field, e.target.value)}
-                    className="aeo-input"
-                  />
+                  <label className="aeo-label" htmlFor={`aeo-${field}-${i}`}>{label}</label>
+                  {multiline ? (
+                    <textarea
+                      id={`aeo-${field}-${i}`}
+                      value={loc[field] ?? ''}
+                      rows={3}
+                      placeholder={placeholder}
+                      onChange={(e) => update(i, field, e.target.value)}
+                      className="aeo-textarea"
+                    />
+                  ) : (
+                    <input
+                      id={`aeo-${field}-${i}`}
+                      type="text"
+                      value={loc[field] ?? ''}
+                      placeholder={placeholder}
+                      onChange={(e) => update(i, field, e.target.value)}
+                      className="aeo-input"
+                    />
+                  )}
                 </div>
               ))}
             </div>

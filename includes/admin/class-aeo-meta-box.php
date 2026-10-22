@@ -27,7 +27,7 @@ class AEO_Meta_Box {
      * @since 1.0.0
      */
     public function aeo_add_meta_boxes() {
-        $post_types = get_post_types(array('public' => true));
+        $post_types = \AEO\Core\Settings::get_post_types();
 
         foreach ($post_types as $post_type) {
             add_meta_box(
@@ -76,8 +76,8 @@ class AEO_Meta_Box {
                         foreach ($faq_items as $index => $faq_item) {
                             ?>
                             <div class="aeo-faq-item">
-                                <input type="text" name="aeo_faq_question[]" value="<?php echo esc_attr($faq_item['question']); ?>" placeholder="<?php esc_html_e('Question', 'answer-engine-optimization'); ?>" class="widefat">
-                                <textarea name="aeo_faq_answer[]" rows="2" placeholder="<?php esc_html_e('Answer', 'answer-engine-optimization'); ?>" class="widefat"><?php echo esc_textarea($faq_item['answer']); ?></textarea>
+                                <input type="text" name="aeo_faq_question[]" value="<?php echo esc_attr($faq_item['question'] ?? ''); ?>" placeholder="<?php esc_attr_e('Question', 'answer-engine-optimization'); ?>" class="widefat">
+                                <textarea name="aeo_faq_answer[]" rows="2" placeholder="<?php esc_attr_e('Answer', 'answer-engine-optimization'); ?>" class="widefat"><?php echo esc_textarea($faq_item['answer'] ?? ''); ?></textarea>
                                 <button type="button" class="button aeo-remove-faq"><?php esc_html_e('Remove', 'answer-engine-optimization'); ?></button>
                             </div>
                             <?php
@@ -85,7 +85,10 @@ class AEO_Meta_Box {
                     }
                     ?>
                 </div>
-                <button type="button" id="aeo-add-faq" class="button"><?php esc_html_e('Add FAQ Item', 'answer-engine-optimization'); ?></button>
+                <button type="button" id="aeo-add-faq" class="button"><?php esc_html_e('Add FAQ item', 'answer-engine-optimization'); ?></button>
+                <?php if ( class_exists( 'AEO_Questions' ) && AEO_Questions::is_enabled() ) : ?>
+                    <button type="button" class="button aeo-show-questions"><?php esc_html_e('Suggest questions', 'answer-engine-optimization'); ?></button>
+                <?php endif; ?>
                 <p class="description"><?php esc_html_e('Add questions and answers that are relevant to your content', 'answer-engine-optimization'); ?></p>
             </div>
         </div>
@@ -102,13 +105,16 @@ class AEO_Meta_Box {
      * @since 1.0.0
      */
     public function aeo_save_post_meta($post_id, $post) {
-        // Check if nonce is set
+        // Check if nonce is set and valid
         if (!isset($_POST['aeo_meta_box_nonce'])) {
             return $post_id;
         }
 
-        // Verify nonce
-        if (!wp_verify_nonce($_POST['aeo_meta_box_nonce'], 'aeo_meta_box')) {
+        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aeo_meta_box_nonce'])), 'aeo_meta_box')) {
+            return $post_id;
+        }
+
+        if (wp_is_post_revision($post_id)) {
             return $post_id;
         }
 
@@ -124,30 +130,33 @@ class AEO_Meta_Box {
 
         // Save target question
         if (isset($_POST['aeo_target_question'])) {
-            update_post_meta($post_id, '_aeo_target_question', sanitize_text_field($_POST['aeo_target_question']));
+            update_post_meta($post_id, '_aeo_target_question', sanitize_text_field(wp_unslash($_POST['aeo_target_question'])));
         }
 
         // Save direct answer
         if (isset($_POST['aeo_direct_answer'])) {
-            update_post_meta($post_id, '_aeo_direct_answer', sanitize_textarea_field($_POST['aeo_direct_answer']));
+            update_post_meta($post_id, '_aeo_direct_answer', sanitize_textarea_field(wp_unslash($_POST['aeo_direct_answer'])));
         }
 
         // Save FAQ items
-        if (isset($_POST['aeo_faq_question']) && isset($_POST['aeo_faq_answer'])) {
-            $faq_items = array();
-            $questions = $_POST['aeo_faq_question'];
-            $answers = $_POST['aeo_faq_answer'];
+        $questions = isset($_POST['aeo_faq_question']) && is_array($_POST['aeo_faq_question']) ? wp_unslash($_POST['aeo_faq_question']) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per item below.
+        $answers   = isset($_POST['aeo_faq_answer']) && is_array($_POST['aeo_faq_answer']) ? wp_unslash($_POST['aeo_faq_answer']) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $faq_items = array();
 
-            for ($i = 0; $i < count($questions); $i++) {
-                if (!empty($questions[$i]) && !empty($answers[$i])) {
-                    $faq_items[] = array(
-                        'question' => sanitize_text_field($questions[$i]),
-                        'answer' => sanitize_textarea_field($answers[$i])
-                    );
-                }
+        foreach (array_values($questions) as $i => $question) {
+            $question = sanitize_text_field((string) $question);
+            $answer   = isset($answers[$i]) ? sanitize_textarea_field((string) $answers[$i]) : '';
+            if ('' !== $question && '' !== $answer) {
+                $faq_items[] = array(
+                    'question' => $question,
+                    'answer'   => $answer,
+                );
             }
+        }
 
-            update_post_meta($post_id, '_aeo_faq_items', $faq_items);
+        if ($faq_items) {
+            // wp_slash: update_post_meta() unslashes, which would strip backslashes typed by the author.
+            update_post_meta($post_id, '_aeo_faq_items', wp_slash($faq_items));
         } else {
             delete_post_meta($post_id, '_aeo_faq_items');
         }
@@ -176,6 +185,16 @@ class AEO_Meta_Box {
                 array( 'jquery' ),
                 AEO_VERSION,
                 true
+            );
+
+            wp_localize_script(
+                'aeo-admin-js',
+                'aeoMetaBoxData',
+                array(
+                    'questionLabel' => __('Question', 'answer-engine-optimization'),
+                    'answerLabel'   => __('Answer', 'answer-engine-optimization'),
+                    'removeLabel'   => __('Remove', 'answer-engine-optimization'),
+                )
             );
         }
     }

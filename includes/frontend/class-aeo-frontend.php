@@ -17,22 +17,19 @@ class AEO_Frontend {
     }
 
     public function enqueue_frontend_assets() {
-        if (is_singular()) {
-            wp_enqueue_style(
-                'aeo-frontend-css',
-                AEO_PLUGIN_URL . 'assets/css/aeo-frontend.css',
-                array(),
-                AEO_VERSION
-            );
-
-            wp_enqueue_script(
-                'aeo-frontend-js',
-                AEO_PLUGIN_URL . 'assets/js/aeo-frontend.js',
-                array('jquery'),
-                AEO_VERSION,
-                true
-            );
+        if (!is_singular()) {
+            return;
         }
+        $post_id = get_queried_object_id();
+        if (!get_post_meta($post_id, '_aeo_faq_items', true) && !get_post_meta($post_id, '_aeo_direct_answer', true)) {
+            return;
+        }
+        wp_enqueue_style(
+            'aeo-frontend-css',
+            AEO_PLUGIN_URL . 'assets/css/aeo-frontend.css',
+            array(),
+            AEO_VERSION
+        );
     }
 
     public function add_structured_data() {
@@ -137,49 +134,47 @@ class AEO_Frontend {
     }
 
     public function enhance_content($content) {
-        if (!is_singular() || !in_the_loop() || !is_main_query()) {
+        if (!is_singular() || !in_the_loop() || !is_main_query() || post_password_required()) {
             return $content;
         }
 
-        global $post;
-        $options = get_option('aeo_settings');
+        $post_id = get_the_ID();
         $enhanced_content = $content;
 
-        // Add direct answer at the beginning
-        $direct_answer = get_post_meta($post->ID, '_aeo_direct_answer', true);
+        // Direct answer at the top (also the target of the Speakable schema).
+        $direct_answer = trim((string) get_post_meta($post_id, '_aeo_direct_answer', true));
 
-        if (!empty($direct_answer) && !empty($options['aeo_voice_optimization'])) {
-            $answer_html = '<div class="aeo-direct-answer">';
-            $answer_html .= '<p><strong>' . esc_html__('Quick Answer:', 'answer-engine-optimization') . '</strong> ';
+        if ('' !== $direct_answer && \AEO\Core\Settings::get('aeo_voice_optimization', 1)) {
+            $answer_html  = '<div class="aeo-direct-answer">';
+            $answer_html .= '<p><strong>' . esc_html__('Quick answer:', 'answer-engine-optimization') . '</strong> ';
             $answer_html .= esc_html($direct_answer) . '</p>';
             $answer_html .= '</div>';
 
             $enhanced_content = $answer_html . $enhanced_content;
         }
 
-        // Add FAQ section at the end
-        $faq_items = get_post_meta($post->ID, '_aeo_faq_items', true);
+        // Visible FAQ section (FAQPage schema must match visible content).
+        $faq_items = get_post_meta($post_id, '_aeo_faq_items', true);
 
-        if (!empty($faq_items) && is_array($faq_items)) {
-            $faq_html = '<div class="aeo-faq-section">';
-            $faq_html .= '<h2>' . esc_html__('Frequently Asked Questions', 'answer-engine-optimization') . '</h2>';
-            $faq_html .= '<div class="aeo-faq-items">';
+        if (\AEO\Core\Settings::is_module_enabled('faq_automation') && !empty($faq_items) && is_array($faq_items)) {
+            $items_html = '';
 
             foreach ($faq_items as $index => $item) {
                 if (!empty($item['question']) && !empty($item['answer'])) {
-                    $faq_html .= '<div class="aeo-faq-item">';
-                    $faq_html .= '<h3 class="aeo-faq-question" data-index="' . esc_attr($index) . '">';
-                    $faq_html .= esc_html($item['question']);
-                    $faq_html .= '</h3>';
-                    $faq_html .= '<div class="aeo-faq-answer">';
-                    $faq_html .= wpautop(wp_kses_post($item['answer']));
-                    $faq_html .= '</div>';
-                    $faq_html .= '</div>';
+                    // Native <details>: accessible, no JavaScript, content stays in the HTML for crawlers.
+                    $items_html .= '<details class="aeo-faq-item"' . (0 === $index ? ' open' : '') . '>';
+                    $items_html .= '<summary class="aeo-faq-question">' . esc_html($item['question']) . '</summary>';
+                    $items_html .= '<div class="aeo-faq-answer">' . wpautop(esc_html($item['answer'])) . '</div>';
+                    $items_html .= '</details>';
                 }
             }
 
-            $faq_html .= '</div></div>';
-            $enhanced_content .= $faq_html;
+            if ('' !== $items_html) {
+                $faq_html  = '<section class="aeo-faq-section" aria-labelledby="aeo-faq-title-' . (int) $post_id . '">';
+                $faq_html .= '<h2 id="aeo-faq-title-' . (int) $post_id . '">' . esc_html__('Frequently asked questions', 'answer-engine-optimization') . '</h2>';
+                $faq_html .= '<div class="aeo-faq-items">' . $items_html . '</div></section>';
+                $enhanced_content .= $faq_html;
+            }
         }
 
         return $enhanced_content;

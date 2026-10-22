@@ -7,6 +7,8 @@
 
 namespace AEO\Services;
 
+use AEO\Core\Settings;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -62,35 +64,47 @@ class Score_Engine {
 	 *
 	 * @return array<string, mixed>
 	 */
+	/**
+	 * Unicode-aware word count (str_word_count() returns 0 for Bengali, Arabic, CJK, etc.).
+	 *
+	 * @param string $text Plain text.
+	 * @return int
+	 */
+	public static function word_count( $text ) {
+		return (int) preg_match_all( '/[\p{L}\p{N}][\p{L}\p{N}\p{M}\'’-]*/u', (string) $text );
+	}
+
+	/**
+	 * Site-wide average score.
+	 *
+	 * @return array{average: int, total_posts: int}
+	 */
 	public function get_site_average() {
 		global $wpdb;
-
-		$avg = $wpdb->get_var(
-			"SELECT AVG(meta_value) FROM {$wpdb->postmeta} pm
-			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-			WHERE pm.meta_key = '_aeo_score'
-			AND p.post_status = 'publish'
-			AND p.post_type IN ('post','page')"
+		$types        = Settings::get_post_types();
+		$placeholders = implode( ',', array_fill( 0, count( $types ), '%s' ) );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT AVG(CAST(pm.meta_value AS UNSIGNED)) AS avg_score, COUNT(*) AS total FROM {$wpdb->postmeta} pm
+				INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				WHERE pm.meta_key = '_aeo_score' AND p.post_status = 'publish' AND p.post_type IN ($placeholders)",
+				$types
+			),
+			ARRAY_A
 		);
-
-		$count = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
-			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-			WHERE pm.meta_key = '_aeo_score'
-			AND p.post_status = 'publish'
-			AND p.post_type IN ('post','page')"
-		);
+		// phpcs:enable
 
 		return array(
-			'average'     => $avg ? (int) round( (float) $avg ) : 0,
-			'total_posts' => $count,
+			'average'     => $row && $row['avg_score'] ? (int) round( (float) $row['avg_score'] ) : 0,
+			'total_posts' => $row ? (int) $row['total'] : 0,
 		);
 	}
 
 	/**
-	 * Score content structure factor.
+	 * Headings, lists, length and direct answer.
 	 *
-	 * @param \WP_Post $post Post object.
+	 * @param \WP_Post $post Post.
 	 * @return int
 	 */
 	private function score_content_structure( $post ) {
@@ -100,10 +114,10 @@ class Score_Engine {
 		if ( preg_match( '/<h[2-3][^>]*>/i', $content ) ) {
 			$score += 25;
 		}
-		if ( preg_match( '/<ol|<ul/i', $content ) ) {
+		if ( preg_match( '/<(ol|ul)[\s>]/i', $content ) ) {
 			$score += 20;
 		}
-		if ( str_word_count( wp_strip_all_tags( $content ) ) >= 300 ) {
+		if ( self::word_count( wp_strip_all_tags( strip_shortcodes( $content ) ) ) >= 300 ) {
 			$score += 25;
 		}
 		if ( get_post_meta( $post->ID, '_aeo_direct_answer', true ) ) {
@@ -114,22 +128,26 @@ class Score_Engine {
 	}
 
 	/**
-	 * Score schema coverage factor.
+	 * How complete the structured data for this post is.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return int
 	 */
 	private function score_schema_coverage( $post_id ) {
-		$schema = get_post_meta( $post_id, '_aeo_schema', true );
-		if ( ! empty( $schema ) ) {
-			return 100;
+		if ( ! Settings::get( 'aeo_enable_schema', 1 ) ) {
+			return 0;
 		}
 
-		$score = 40; // Base article schema always output.
-		if ( get_post_meta( $post_id, '_aeo_faq_items', true ) ) {
-			$score += 40;
+		$custom = get_post_meta( $post_id, '_aeo_schema', true );
+		$score  = $custom ? 60 : 40; // A main node is always output (auto or custom).
+
+		if ( has_post_thumbnail( $post_id ) ) {
+			$score += 20;
 		}
-		if ( get_post_meta( $post_id, '_aeo_target_question', true ) ) {
+		if ( has_excerpt( $post_id ) || get_post_meta( $post_id, '_aeo_direct_answer', true ) ) {
+			$score += 20;
+		}
+		if ( ( new Schema_Service() )->build_faq_node( $post_id ) ) {
 			$score += 20;
 		}
 
@@ -137,7 +155,7 @@ class Score_Engine {
 	}
 
 	/**
-	 * Score FAQ presence factor.
+	 * FAQ count.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return int
@@ -155,28 +173,24 @@ class Score_Engine {
 		if ( $count >= 3 ) {
 			return 75;
 		}
-		if ( $count >= 1 ) {
-			return 50;
-		}
-
-		return 0;
+		return 50;
 	}
 
 	/**
-	 * Score semantic clarity factor.
+	 * Sentence length and direct answer.
 	 *
-	 * @param \WP_Post $post Post object.
+	 * @param \WP_Post $post Post.
 	 * @return int
 	 */
 	private function score_semantic_clarity( $post ) {
-		$text       = wp_strip_all_tags( $post->post_content );
-		$word_count = str_word_count( $text );
+		$text       = wp_strip_all_tags( strip_shortcodes( $post->post_content ) );
+		$word_count = self::word_count( $text );
 
 		if ( $word_count < 50 ) {
 			return 10;
 		}
 
-		$sentences = preg_split( '/[.!?]+/', $text );
+		$sentences = array_filter( array_map( 'trim', preg_split( '/[.!?।]+/u', $text ) ) );
 		$avg_len   = $word_count / max( 1, count( $sentences ) );
 
 		$score = 50;
@@ -191,13 +205,13 @@ class Score_Engine {
 	}
 
 	/**
-	 * Score citation signals factor.
+	 * Signals that make a page easy to cite.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return int
 	 */
 	private function score_citation_signals( $post_id ) {
-		$score = 30;
+		$score = 0;
 
 		if ( get_post_meta( $post_id, '_aeo_target_question', true ) ) {
 			$score += 30;
@@ -205,20 +219,21 @@ class Score_Engine {
 		if ( has_post_thumbnail( $post_id ) ) {
 			$score += 20;
 		}
-		if ( get_post_meta( $post_id, '_aeo_canonical', true ) ) {
-			$score += 10;
+		// Freshness: updated in the last 12 months.
+		if ( (int) get_post_modified_time( 'U', true, $post_id ) > time() - YEAR_IN_SECONDS ) {
+			$score += 20;
 		}
-		if ( 'noindex' !== get_post_meta( $post_id, '_aeo_index_status', true ) ) {
-			$score += 10;
+		if ( ! Seo_Compat::is_noindex( $post_id ) ) {
+			$score += 30;
 		}
 
 		return min( 100, $score );
 	}
 
 	/**
-	 * Get color level for score.
+	 * Colour level.
 	 *
-	 * @param int $score Score value.
+	 * @param int $score Score.
 	 * @return string
 	 */
 	private function get_level( $score ) {

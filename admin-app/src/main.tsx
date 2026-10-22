@@ -19,7 +19,7 @@ if (root) {
       <QueryClientProvider client={queryClient}>
         <HashRouter>
           <App />
-          <Toaster position="top-right" richColors />
+          <Toaster position="bottom-right" toastOptions={{ style: { borderRadius: 8, border: "1px solid #e4e4e7", boxShadow: "0 8px 24px -8px rgba(0,0,0,0.12)", fontSize: 13 } }} />
         </HashRouter>
       </QueryClientProvider>
     </React.StrictMode>

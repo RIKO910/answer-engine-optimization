@@ -1,12 +1,20 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   LayoutDashboard, FileText, Code2, HelpCircle, MapPin,
   ShoppingCart, BarChart3, Search, Lightbulb, Settings, Building2,
-  Sparkles, ExternalLink,
+  ArrowUpRight, LucideIcon,
 } from 'lucide-react';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
-const navGroups = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+const navGroups: Array<{ label: string; items: NavItem[] }> = [
   {
     label: 'Overview',
     items: [
@@ -18,9 +26,9 @@ const navGroups = [
     label: 'Optimize',
     items: [
       { to: '/content', label: 'Content', icon: FileText },
-      { to: '/schema', label: 'Schema Builder', icon: Code2 },
-      { to: '/faqs', label: 'FAQ Manager', icon: HelpCircle },
-      { to: '/briefs', label: 'Content Briefs', icon: Lightbulb },
+      { to: '/schema', label: 'Schema', icon: Code2 },
+      { to: '/faqs', label: 'FAQs', icon: HelpCircle },
+      { to: '/briefs', label: 'Briefs', icon: Lightbulb },
     ],
   },
   {
@@ -34,42 +42,60 @@ const navGroups = [
     label: 'Tools',
     items: [
       { to: '/audit', label: 'Site Audit', icon: Search },
-      { to: '/agency', label: 'Agency Tools', icon: Building2 },
+      { to: '/agency', label: 'Agency', icon: Building2 },
       { to: '/settings', label: 'Settings', icon: Settings },
     ],
   },
 ];
 
+const allItems = navGroups.flatMap((g) => g.items);
+
+function useBranding() {
+  const { data } = useQuery({ queryKey: ['settings'], queryFn: () => api.getSettings() });
+  const agency = ((data as Record<string, unknown>)?.agency || {}) as Record<string, string>;
+  return {
+    name: agency.white_label_name?.trim() || 'AEO',
+    logo: agency.white_label_logo?.trim() || '',
+  };
+}
+
+function Brand() {
+  const { name, logo } = useBranding();
+  return (
+    <div className="flex items-center gap-2.5 min-w-0">
+      {logo ? (
+        <img src={logo} alt="" className="w-7 h-7 rounded-md object-contain" />
+      ) : (
+        <div className="flex items-center justify-center w-7 h-7 rounded-md bg-slate-900 text-white text-[11px] font-semibold tracking-tight">
+          {(name.length <= 3 ? name : name.charAt(0)).toUpperCase()}
+        </div>
+      )}
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-slate-900 leading-tight truncate">{name}</p>
+        <p className="text-2xs text-slate-500 leading-tight truncate">Answer Engine Optimization</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Layout() {
   const location = useLocation();
+  const current = allItems.find((i) => i.to === location.pathname)?.label || 'Dashboard';
+  const data = window.aeoGeniusData;
 
   return (
     <div className="aeo-shell">
-      {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-gradient-dark shadow-sidebar flex flex-col">
-        {/* Logo */}
-        <div className="p-5 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-brand shadow-glow">
-              <Sparkles size={18} className="text-white" />
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-white leading-tight">AEO Genius</h1>
-              <p className="text-[10px] text-indigo-300/70 font-medium tracking-wide uppercase">
-                Answer Engine Optimization
-              </p>
-            </div>
-          </div>
+      {/* Sidebar (desktop) */}
+      <aside className="aeo-sidebar hidden md:flex">
+        <div className="h-14 flex items-center px-4 border-b border-slate-200">
+          <Brand />
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-3 space-y-5">
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5" aria-label="AEO">
           {navGroups.map((group) => (
             <div key={group.label}>
-              <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-indigo-400/50">
-                {group.label}
-              </p>
-              <div className="space-y-0.5">
+              <p className="px-2.5 mb-1 text-2xs font-medium text-slate-400">{group.label}</p>
+              <div className="space-y-px">
                 {group.items.map(({ to, label, icon: Icon }) => (
                   <NavLink
                     key={to}
@@ -81,11 +107,12 @@ export default function Layout() {
                   >
                     {({ isActive }) => (
                       <>
-                        <Icon size={17} strokeWidth={isActive ? 2.5 : 2} />
+                        <Icon
+                          size={16}
+                          strokeWidth={1.75}
+                          className={isActive ? 'text-aeo-600' : 'text-slate-400'}
+                        />
                         {label}
-                        {isActive && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-aeo-400" />
-                        )}
                       </>
                     )}
                   </NavLink>
@@ -95,43 +122,53 @@ export default function Layout() {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-white/10">
-          <div className="rounded-xl bg-white/5 p-3">
-            <p className="text-xs text-indigo-200/60">Version {window.aeoGeniusData?.version}</p>
-            <a
-              href={window.aeoGeniusData?.siteUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-1 flex items-center gap-1 text-xs text-indigo-300 hover:text-white transition-colors"
-            >
-              View site <ExternalLink size={10} />
-            </a>
-          </div>
+        <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between">
+          <span className="text-2xs text-slate-400 tabular-nums">v{data?.version}</span>
+          <a
+            href={data?.siteUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            View site <ArrowUpRight size={12} />
+          </a>
         </div>
       </aside>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0 bg-gradient-mesh">
-        {/* Top bar */}
-        <header className="flex items-center justify-between px-8 py-4 border-b border-slate-200/60 bg-white/60 backdrop-blur-sm">
-          <div className="text-sm text-slate-500">
-            <span className="text-slate-400">{window.aeoGeniusData?.siteName}</span>
-            <span className="mx-2 text-slate-300">/</span>
-            <span className="font-medium text-slate-700">
-              {navGroups.flatMap((g) => g.items).find((i) => i.to === location.pathname)?.label || 'Dashboard'}
-            </span>
+      {/* Main */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-14 flex items-center justify-between gap-4 px-6 lg:px-8 border-b border-slate-200 bg-white">
+          <div className="md:hidden">
+            <Brand />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="aeo-badge bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-soft" />
-              Active
-            </span>
+          <div className="hidden md:flex items-center text-sm min-w-0">
+            <span className="text-slate-500 truncate">{data?.siteName}</span>
+            <span className="mx-2 text-slate-300">/</span>
+            <span className="font-medium text-slate-900 truncate">{current}</span>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-8">
-          <div className="aeo-page-enter max-w-7xl mx-auto">
+        {/* Mobile nav */}
+        <nav className="md:hidden flex gap-1 overflow-x-auto px-4 py-2 border-b border-slate-200 bg-white" aria-label="AEO">
+          {allItems.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) =>
+                cn(
+                  'flex-shrink-0 h-8 px-3 inline-flex items-center rounded-md text-xs font-medium',
+                  isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600'
+                )
+              }
+            >
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <main className="flex-1 px-6 py-8 lg:px-10">
+          <div key={location.pathname} className="aeo-page-enter max-w-6xl mx-auto">
             <Outlet />
           </div>
         </main>

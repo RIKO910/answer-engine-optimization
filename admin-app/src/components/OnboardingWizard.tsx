@@ -62,89 +62,76 @@ export default function OnboardingWizard({ onComplete }: Props) {
 
   const steps = [
     { title: 'Welcome', subtitle: 'Let\'s optimize your site for AI' },
-    { title: 'Site Type', subtitle: 'What kind of website is this?' },
-    { title: 'Business Info', subtitle: 'Tell us about your brand' },
-    { title: 'AI Setup', subtitle: 'Choose your AI provider' },
-    { title: 'Launch', subtitle: 'You\'re all set!' },
+    { title: 'Site type', subtitle: 'What kind of website is this?' },
+    { title: 'Business info', subtitle: 'Tell us about your brand' },
+    { title: 'AI provider', subtitle: 'Choose your AI provider' },
+    { title: 'Ready', subtitle: 'You\'re all set' },
   ];
 
   const isLast = step === steps.length - 1;
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
-        {/* Header gradient */}
-        <div className="bg-gradient-brand px-8 pt-8 pb-6 text-white relative overflow-hidden">
-          <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/10 blur-xl" />
-          <div className="absolute -left-4 bottom-0 w-24 h-24 rounded-full bg-white/5 blur-lg" />
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-                <Sparkles size={16} />
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-white/70">
-                Setup Wizard
-              </span>
-            </div>
-            <h2 className="text-xl font-bold">{steps[step].title}</h2>
-            <p className="text-sm text-white/70 mt-1">{steps[step].subtitle}</p>
-          </div>
-          {/* Step indicators */}
-          <div className="flex gap-1.5 mt-6">
+      <div className="absolute inset-0 bg-slate-950/40" />
+      <div role="dialog" aria-modal="true" aria-labelledby="aeo-wizard-title" className="relative w-full max-w-lg bg-white rounded-xl border border-slate-200 shadow-pop overflow-hidden animate-slide-up">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-5 border-b border-slate-200">
+          <div className="flex gap-1 mb-5" aria-hidden="true">
             {steps.map((_, i) => (
               <div
                 key={i}
                 className={cn(
-                  'h-1 flex-1 rounded-full transition-all duration-300',
-                  i <= step ? 'bg-white' : 'bg-white/25'
+                  'h-1 flex-1 rounded-full transition-colors duration-300',
+                  i <= step ? 'bg-aeo-600' : 'bg-slate-200'
                 )}
               />
             ))}
           </div>
+          <p className="text-xs text-slate-500 tabular-nums">Step {step + 1} of {steps.length}</p>
+          <h2 id="aeo-wizard-title" className="text-lg font-semibold tracking-tight text-slate-900 mt-1">{steps[step].title}</h2>
+          <p className="text-sm text-slate-500 mt-0.5">{steps[step].subtitle}</p>
         </div>
 
         {/* Content */}
-        <div className="px-8 py-6 min-h-[280px]">
+        <div className="px-6 py-6 min-h-[280px]">
           {step === 0 && (
-            <div className="text-center py-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-brand-subtle flex items-center justify-center mx-auto mb-5">
-                <Sparkles size={28} className="text-aeo-600" />
+            <div className="py-2">
+              <div className="aeo-icon-box w-10 h-10 mb-4">
+                <Sparkles size={18} strokeWidth={1.75} />
               </div>
-              <p className="text-slate-600 text-sm leading-relaxed max-w-sm mx-auto">
+              <p className="text-slate-600 text-sm leading-relaxed max-w-md">
                 Optimize your WordPress site for AI answer engines — ChatGPT, Perplexity,
                 Google AI Overviews, and Bing Copilot. Setup takes under 10 minutes.
               </p>
-              <div className="flex justify-center gap-6 mt-6 text-xs text-slate-400">
-                <span>✓ 100% Free</span>
-                <span>✓ No API key required</span>
-                <span>✓ Auto-fix included</span>
-              </div>
+              <ul className="mt-5 space-y-2">
+                {['Free, no upsells', 'No API key required', 'Takes a few minutes'].map((t) => (
+                  <li key={t} className="flex items-center gap-2 text-[13px] text-slate-600">
+                    <Check size={14} className="text-slate-400" /> {t}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
           {step === 1 && (
-            <div className="grid grid-cols-1 gap-2.5">
+            <div className="grid grid-cols-1 gap-2">
               {siteTypes.map((type) => (
                 <button
                   key={type.id}
                   onClick={() => setSiteType(type.id)}
                   className={cn(
-                    'flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-200',
+                    'flex items-center gap-3 w-full px-3 py-3 m-0 rounded-lg border bg-white text-left cursor-pointer transition-colors duration-150',
                     siteType === type.id
-                      ? 'border-aeo-500 bg-aeo-50/50 shadow-sm'
-                      : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50'
+                      ? 'border-aeo-600 ring-1 ring-aeo-600'
+                      : 'border-slate-200 hover:border-slate-300'
                   )}
                 >
-                  <div className={cn(
-                    'aeo-icon-box',
-                    siteType === type.id ? 'bg-aeo-100 text-aeo-600' : 'bg-slate-100 text-slate-500'
-                  )}>
-                    <type.icon size={18} />
+                  <div className="aeo-icon-box">
+                    <type.icon size={15} strokeWidth={1.75} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">{type.label}</p>
-                    <p className="text-xs text-slate-400">{type.desc}</p>
+                    <p className="text-sm font-medium text-slate-900">{type.label}</p>
+                    <p className="text-xs text-slate-500">{type.desc}</p>
                   </div>
                   {siteType === type.id && (
                     <Check size={16} className="ml-auto text-aeo-600" />
@@ -157,7 +144,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
           {step === 2 && (
             <div className="space-y-4">
               <div>
-                <label className="aeo-label">Site / Business Name</label>
+                <label className="aeo-label">Site or business name</label>
                 <input
                   type="text"
                   value={businessName}
@@ -179,8 +166,8 @@ export default function OnboardingWizard({ onComplete }: Props) {
           )}
 
           {step === 3 && (
-            <div className="space-y-3">
-              <p className="text-sm text-slate-500 mb-4">
+            <div className="space-y-2">
+              <p className="text-sm text-slate-500 mb-3">
                 Choose your AI provider. Add API keys later in Settings — core features work without one.
               </p>
               {aiProviders.map((p) => (
@@ -188,18 +175,18 @@ export default function OnboardingWizard({ onComplete }: Props) {
                   key={p.id}
                   onClick={() => setAiProvider(p.id)}
                   className={cn(
-                    'flex items-center gap-4 w-full p-4 rounded-2xl border-2 text-left transition-all',
+                    'flex items-center gap-3 w-full px-3 py-3 m-0 rounded-lg border bg-white text-left cursor-pointer transition-colors duration-150',
                     aiProvider === p.id
-                      ? 'border-aeo-500 bg-aeo-50/50'
-                      : 'border-slate-100 hover:border-slate-200'
+                      ? 'border-aeo-600 ring-1 ring-aeo-600'
+                      : 'border-slate-200 hover:border-slate-300'
                   )}
                 >
-                  <div className="aeo-icon-box bg-violet-50 text-violet-600">
-                    <Bot size={18} />
+                  <div className="aeo-icon-box">
+                    <Bot size={15} strokeWidth={1.75} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">{p.label}</p>
-                    <p className="text-xs text-slate-400">{p.desc}</p>
+                    <p className="text-sm font-medium text-slate-900">{p.label}</p>
+                    <p className="text-xs text-slate-500">{p.desc}</p>
                   </div>
                   {aiProvider === p.id && <Check size={16} className="ml-auto text-aeo-600" />}
                 </button>
@@ -208,17 +195,17 @@ export default function OnboardingWizard({ onComplete }: Props) {
           )}
 
           {step === 4 && (
-            <div className="text-center py-4">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-5">
-                <Rocket size={28} className="text-emerald-600" />
+            <div className="py-2">
+              <div className="aeo-icon-box w-10 h-10 mb-4">
+                <Rocket size={18} strokeWidth={1.75} />
               </div>
               <p className="text-sm text-slate-600 mb-5">
-                We'll run an initial site scan and apply auto-fixes in the background.
+                Finish setup to save your details. You can run your first site audit from the dashboard.
               </p>
-              <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto text-left">
-                {['Schema markup configured', 'FAQ automation enabled', 'Site audit scheduled', 'AEO baseline calculated'].map((item) => (
-                  <div key={item} className="flex items-center gap-2 text-xs text-slate-600">
-                    <Check size={14} className="text-emerald-500 flex-shrink-0" />
+              <div className="space-y-2">
+                {['Schema markup configured', 'FAQ tools enabled', 'Business details saved'].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-[13px] text-slate-600">
+                    <Check size={14} className="text-emerald-600 flex-shrink-0" />
                     {item}
                   </div>
                 ))}
@@ -228,29 +215,25 @@ export default function OnboardingWizard({ onComplete }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div className="px-6 py-4 border-t border-slate-200 flex justify-between items-center bg-slate-50">
           <button
             onClick={() => setStep(Math.max(0, step - 1))}
             disabled={step === 0}
             className="aeo-btn-ghost disabled:opacity-30"
           >
-            <ChevronLeft size={16} /> Back
+            <ChevronLeft size={14} /> Back
           </button>
-          <span className="text-xs text-slate-400 font-medium">
-            {step + 1} / {steps.length}
-          </span>
           {isLast ? (
             <button
               onClick={() => completeMutation.mutate()}
               disabled={completeMutation.isPending}
               className="aeo-btn-primary"
             >
-              {completeMutation.isPending ? 'Setting up...' : 'Launch AEO'}
-              <Rocket size={16} />
+              {completeMutation.isPending ? 'Saving…' : 'Finish setup'}
             </button>
           ) : (
             <button onClick={() => setStep(step + 1)} className="aeo-btn-primary">
-              Continue <ChevronRight size={16} />
+              Continue <ChevronRight size={14} />
             </button>
           )}
         </div>

@@ -31,19 +31,19 @@ export default function ContentOptimizer() {
   return (
     <div>
       <PageHeader
-        title="Content Optimizer"
-        description="AEO scores and AI-powered content rewriting for maximum AI citation readiness"
+        title="Content"
+        description="AEO score for every published post, with optional AI rewriting."
         icon={FileText}
         actions={
           <button onClick={() => refetch()} disabled={isFetching} className="aeo-btn-secondary">
-            <RefreshCw size={16} className={isFetching ? 'animate-spin' : ''} /> Refresh
+            <RefreshCw size={14} className={isFetching ? 'animate-spin' : ''} /> Refresh
           </button>
         }
       />
 
-      <Card padding={false} className="overflow-hidden">
+      <Card padding={false}>
         {isLoading ? (
-          <LoadingState message="Analyzing content..." />
+          <LoadingState message="Analyzing content…" />
         ) : posts.length === 0 ? (
           <EmptyState
             icon={FileText}
@@ -56,8 +56,8 @@ export default function ContentOptimizer() {
               <tr>
                 <th>Title</th>
                 <th>Type</th>
-                <th>AEO Score</th>
-                <th>Actions</th>
+                <th>AEO score</th>
+                <th className="w-32"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody>
@@ -68,24 +68,24 @@ export default function ContentOptimizer() {
                       href={post.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 font-medium text-aeo-600 hover:text-aeo-700 transition-colors"
+                      className="group inline-flex items-center gap-1.5 text-slate-900 hover:text-aeo-700 transition-colors"
                     >
                       {post.title}
-                      <ExternalLink size={12} className="opacity-50" />
+                      <ExternalLink size={12} className="text-slate-300 group-hover:text-aeo-600" />
                     </a>
                   </td>
                   <td>
-                    <span className="aeo-badge bg-slate-100 text-slate-600 capitalize">{post.type}</span>
+                    <span className="text-[13px] text-slate-500 capitalize">{post.type}</span>
                   </td>
                   <td><ScoreBadge score={post.score} /></td>
                   <td>
                     <button
                       onClick={() => { setSelectedPost(post.id); rewriteMutation.mutate(post.id); }}
                       disabled={rewriteMutation.isPending && selectedPost === post.id}
-                      className="aeo-btn-secondary text-xs !py-1.5 !px-3"
+                      className="aeo-btn-secondary aeo-btn-sm"
                     >
-                      <Wand2 size={14} />
-                      {rewriteMutation.isPending && selectedPost === post.id ? 'Rewriting...' : 'AI Rewrite'}
+                      <Wand2 size={12} />
+                      {rewriteMutation.isPending && selectedPost === post.id ? 'Rewriting…' : 'AI rewrite'}
                     </button>
                   </td>
                 </tr>
@@ -96,14 +96,14 @@ export default function ContentOptimizer() {
       </Card>
 
       {rewriteResult && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
           <Card>
-            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Original</h3>
+            <h3 className="text-[13px] font-medium text-slate-500 mb-3">Original</h3>
             <div className="text-sm text-slate-600 max-h-72 overflow-auto leading-relaxed prose-sm" dangerouslySetInnerHTML={{ __html: rewriteResult.original }} />
           </Card>
-          <Card className="ring-1 ring-emerald-200/60">
-            <h3 className="text-sm font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Wand2 size={14} /> AI Optimized
+          <Card className="border-aeo-200">
+            <h3 className="text-[13px] font-medium text-aeo-700 mb-3 flex items-center gap-1.5">
+              <Wand2 size={13} /> AI optimized
             </h3>
             <div className="text-sm text-slate-600 max-h-72 overflow-auto leading-relaxed" dangerouslySetInnerHTML={{ __html: rewriteResult.rewritten }} />
           </Card>

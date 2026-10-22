@@ -1,142 +1,300 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
 
+/* ------------------------------------------------------------------
+ * Root: full-bleed inside wp-admin, neutral canvas, system font.
+ * ------------------------------------------------------------------ */
 #aeo-genius-root {
-  margin: 16px 20px 20px 0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  margin: 0 0 0 -20px;
+  min-height: calc(100vh - 32px);
+  background: #fafafa;
+  color: #18181b;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#aeo-genius-root * {
+@media screen and (max-width: 782px) {
+  #aeo-genius-root {
+    margin-left: -10px;
+    min-height: calc(100vh - 46px);
+  }
+}
+
+/* Minimal preflight (Tailwind's is disabled to avoid touching wp-admin). */
+#aeo-genius-root *,
+#aeo-genius-root *::before,
+#aeo-genius-root *::after {
   box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e4e4e7;
 }
 
-@layer components {
-  .aeo-shell {
-    @apply flex min-h-[calc(100vh-48px)] rounded-2xl overflow-hidden shadow-card border border-slate-200/80 bg-surface-muted;
-  }
-
-  .aeo-card {
-    @apply bg-white rounded-2xl border border-slate-200/70 shadow-card p-6 transition-shadow duration-200;
-  }
-
-  .aeo-card-hover {
-    @apply aeo-card hover:shadow-card-hover hover:border-aeo-200/50;
-  }
-
-  .aeo-card-glass {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl border border-white/60 shadow-card p-6;
-  }
-
-  .aeo-btn {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-
-  .aeo-btn-primary {
-    @apply aeo-btn bg-gradient-brand text-white shadow-sm hover:shadow-glow hover:brightness-105 focus:ring-aeo-500 active:scale-[0.98];
-  }
-
-  .aeo-btn-secondary {
-    @apply aeo-btn bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus:ring-slate-300;
-  }
-
-  .aeo-btn-ghost {
-    @apply aeo-btn text-slate-600 hover:bg-slate-100 hover:text-slate-900;
-  }
-
-  .aeo-btn-danger {
-    @apply aeo-btn bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 focus:ring-red-300;
-  }
-
-  .aeo-input {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-aeo-400 focus:outline-none focus:ring-2 focus:ring-aeo-500/20;
-  }
-
-  .aeo-select {
-    @apply aeo-input appearance-none pr-10;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
-    background-size: 1.25rem;
-    background-position: right 0.75rem center;
-    background-repeat: no-repeat;
-  }
-
-  .aeo-textarea {
-    @apply aeo-input resize-y min-h-[100px];
-  }
-
-  .aeo-label {
-    @apply block text-sm font-medium text-slate-700 mb-1.5;
-  }
-
-  .aeo-badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
-  }
-
-  .aeo-score-green {
-    @apply text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200/60;
-  }
-
-  .aeo-score-orange {
-    @apply text-amber-700 bg-amber-50 ring-1 ring-amber-200/60;
-  }
-
-  .aeo-score-red {
-    @apply text-rose-700 bg-rose-50 ring-1 ring-rose-200/60;
-  }
-
-  .aeo-nav-item {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200;
-  }
-
-  .aeo-nav-item-active {
-    @apply aeo-nav-item bg-white/10 text-white shadow-sm;
-  }
-
-  .aeo-nav-item-inactive {
-    @apply aeo-nav-item text-indigo-200/80 hover:bg-white/5 hover:text-white;
-  }
-
-  .aeo-table {
-    @apply w-full text-sm;
-  }
-
-  .aeo-table th {
-    @apply text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50/80 border-b border-slate-100;
-  }
-
-  .aeo-table td {
-    @apply px-5 py-4 border-b border-slate-50 text-slate-700;
-  }
-
-  .aeo-table tr:hover td {
-    @apply bg-slate-50/50;
-  }
-
-  .aeo-page-enter {
-    @apply animate-slide-up;
-  }
-
-  .aeo-gradient-text {
-    @apply bg-gradient-brand bg-clip-text text-transparent;
-  }
-
-  .aeo-icon-box {
-    @apply flex items-center justify-center rounded-xl p-2.5;
-  }
-
-  .aeo-skeleton {
-    @apply animate-pulse rounded-lg bg-slate-200/70;
-  }
+#aeo-genius-root img,
+#aeo-genius-root svg {
+  display: block;
+  vertical-align: middle;
 }
 
-/* Custom scrollbar */
+/* Neutralise wp-admin defaults that leak into the app. */
+#aeo-genius-root h1,
+#aeo-genius-root h2,
+#aeo-genius-root h3,
+#aeo-genius-root h4,
+#aeo-genius-root p {
+  margin: 0;
+  padding: 0;
+  color: inherit;
+}
+
+#aeo-genius-root a {
+  color: inherit;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+#aeo-genius-root a:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+#aeo-genius-root ul,
+#aeo-genius-root ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#aeo-genius-root li {
+  margin: 0;
+}
+
+#aeo-genius-root code {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+}
+
+#aeo-genius-root input[type='checkbox'],
+#aeo-genius-root input[type='radio'] {
+  accent-color: #4f46e5;
+  box-shadow: none;
+}
+
+#aeo-genius-root :focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------
+ * Layout
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-shell {
+  @apply flex min-h-[inherit];
+}
+
+#aeo-genius-root .aeo-sidebar {
+  @apply w-60 flex-shrink-0 flex flex-col bg-white border-r border-slate-200;
+  position: sticky;
+  top: 32px;
+  height: calc(100vh - 32px);
+}
+
+/* ------------------------------------------------------------------
+ * Surfaces
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-card {
+  @apply bg-white rounded-xl border border-slate-200 p-5 transition-colors duration-150;
+}
+
+#aeo-genius-root .aeo-card-hover {
+  @apply bg-white rounded-xl border border-slate-200 p-5 transition-colors duration-150 hover:border-slate-300;
+}
+
+#aeo-genius-root .aeo-card-glass {
+  @apply bg-white rounded-xl border border-slate-200 p-5;
+}
+
+#aeo-genius-root .aeo-card-muted {
+  @apply bg-slate-50 rounded-lg border border-slate-200 p-4;
+}
+
+/* ------------------------------------------------------------------
+ * Buttons
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-btn,
+#aeo-genius-root .aeo-btn-primary,
+#aeo-genius-root .aeo-btn-secondary,
+#aeo-genius-root .aeo-btn-ghost,
+#aeo-genius-root .aeo-btn-danger {
+  @apply inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg text-sm font-medium leading-none whitespace-nowrap cursor-pointer select-none transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  border: 1px solid transparent;
+  min-height: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+#aeo-genius-root .aeo-btn-primary {
+  @apply bg-aeo-600 text-white hover:bg-aeo-700 active:bg-aeo-800;
+}
+
+#aeo-genius-root .aeo-btn-secondary {
+  @apply bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300;
+}
+
+#aeo-genius-root .aeo-btn-ghost {
+  @apply bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+}
+
+#aeo-genius-root .aeo-btn-danger {
+  @apply bg-white text-red-600 border-slate-200 hover:bg-red-50 hover:border-red-200;
+}
+
+#aeo-genius-root .aeo-btn-sm {
+  @apply h-8 px-2.5 text-xs;
+}
+
+/* ------------------------------------------------------------------
+ * Form controls
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-input,
+#aeo-genius-root .aeo-select,
+#aeo-genius-root .aeo-textarea {
+  @apply block w-full max-w-none rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150 hover:border-slate-300 focus:border-aeo-500 focus:outline-none;
+  height: 36px;
+  min-height: 36px;
+  line-height: 1.25rem;
+  margin: 0;
+  box-shadow: none;
+  font-family: inherit;
+}
+
+#aeo-genius-root .aeo-input:focus,
+#aeo-genius-root .aeo-select:focus,
+#aeo-genius-root .aeo-textarea:focus {
+  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+}
+
+#aeo-genius-root .aeo-select {
+  @apply appearance-none pr-9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2371717a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-size: 1rem;
+  background-position: right 0.625rem center;
+  background-repeat: no-repeat;
+}
+
+#aeo-genius-root .aeo-textarea {
+  @apply py-2 resize-y;
+  height: auto;
+  min-height: 96px;
+}
+
+#aeo-genius-root .aeo-label {
+  @apply block text-[13px] font-medium text-slate-700 mb-1.5;
+}
+
+#aeo-genius-root .aeo-hint {
+  @apply text-xs text-slate-500 mt-1.5;
+}
+
+/* ------------------------------------------------------------------
+ * Badges & scores
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-badge {
+  @apply inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium border border-slate-200 bg-white text-slate-700;
+}
+
+#aeo-genius-root .aeo-score-green {
+  @apply text-emerald-700;
+}
+
+#aeo-genius-root .aeo-score-orange {
+  @apply text-amber-700;
+}
+
+#aeo-genius-root .aeo-score-red {
+  @apply text-rose-700;
+}
+
+#aeo-genius-root .aeo-dot {
+  @apply inline-block w-1.5 h-1.5 rounded-full flex-shrink-0;
+}
+
+/* ------------------------------------------------------------------
+ * Navigation
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-nav-item,
+#aeo-genius-root .aeo-nav-item-active,
+#aeo-genius-root .aeo-nav-item-inactive {
+  @apply flex items-center gap-2.5 h-8 px-2.5 rounded-md text-[13px] font-medium transition-colors duration-150;
+}
+
+#aeo-genius-root .aeo-nav-item-active {
+  @apply bg-slate-100 text-slate-900;
+}
+
+#aeo-genius-root .aeo-nav-item-inactive {
+  @apply text-slate-600 hover:bg-slate-50 hover:text-slate-900;
+}
+
+/* ------------------------------------------------------------------
+ * Tables
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-table {
+  @apply w-full text-sm border-collapse;
+}
+
+#aeo-genius-root .aeo-table th {
+  @apply text-left px-4 h-10 text-xs font-medium text-slate-500 bg-slate-50 border-b border-slate-200 whitespace-nowrap;
+}
+
+#aeo-genius-root .aeo-table td {
+  @apply px-4 py-3 border-b border-slate-100 text-slate-700 align-middle;
+}
+
+#aeo-genius-root .aeo-table tr:last-child td {
+  @apply border-b-0;
+}
+
+#aeo-genius-root .aeo-table tbody tr:hover td {
+  @apply bg-slate-50;
+}
+
+/* ------------------------------------------------------------------
+ * Misc
+ * ------------------------------------------------------------------ */
+#aeo-genius-root .aeo-page-enter {
+  @apply animate-slide-up;
+}
+
+#aeo-genius-root .aeo-gradient-text {
+  @apply text-slate-900;
+}
+
+#aeo-genius-root .aeo-icon-box {
+  @apply flex items-center justify-center rounded-lg w-8 h-8 border border-slate-200 bg-white text-slate-500 flex-shrink-0;
+}
+
+#aeo-genius-root .aeo-skeleton {
+  @apply animate-pulse rounded-md bg-slate-100;
+}
+
+#aeo-genius-root .aeo-divider {
+  @apply border-t border-slate-200;
+}
+
+#aeo-genius-root .aeo-kbd {
+  @apply inline-flex items-center rounded border border-slate-200 bg-slate-50 px-1.5 font-mono text-2xs text-slate-500;
+}
+
+/* Scrollbars */
 #aeo-genius-root ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 #aeo-genius-root ::-webkit-scrollbar-track {
@@ -144,10 +302,25 @@
 }
 
 #aeo-genius-root ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: #e4e4e7;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 #aeo-genius-root ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #d4d4d8;
+  background-clip: content-box;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  #aeo-genius-root *,
+  #aeo-genius-root *::before,
+  #aeo-genius-root *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Utilities last so they can override component classes (e.g. .aeo-label.flex). */
+@tailwind utilities;

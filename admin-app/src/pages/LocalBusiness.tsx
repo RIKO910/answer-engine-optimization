@@ -38,16 +38,16 @@ export default function LocalBusiness() {
   return (
     <div>
       <PageHeader
-        title="Local Business AEO"
-        description="NAP management, hours, and LocalBusiness schema for each location"
+        title="Local business"
+        description="Name, address, phone and hours for each location, output as LocalBusiness schema."
         icon={MapPin}
         actions={
           <>
             <button onClick={() => setLocations([...locations, emptyLocation()])} className="aeo-btn-secondary">
-              <Plus size={16} /> Add Location
+              <Plus size={14} /> Add location
             </button>
             <button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="aeo-btn-primary">
-              <Save size={16} /> {saveMutation.isPending ? 'Saving...' : 'Save All'}
+              <Save size={14} /> {saveMutation.isPending ? 'Saving…' : 'Save'}
             </button>
           </>
         }
@@ -56,22 +56,23 @@ export default function LocalBusiness() {
       <div className="space-y-4">
         {locations.map((loc, i) => (
           <Card key={i}>
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-slate-200">
               <div className="flex items-center gap-3">
-                <div className="aeo-icon-box bg-violet-50 text-violet-600 ring-1 ring-violet-100">
-                  <Building size={18} />
+                <div className="aeo-icon-box">
+                  <Building size={15} strokeWidth={1.75} />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900">
                     {loc.name || `Location ${i + 1}`}
                   </h3>
-                  <p className="text-xs text-slate-400">LocalBusiness schema entry</p>
+                  <p className="text-xs text-slate-500">LocalBusiness schema</p>
                 </div>
               </div>
               {locations.length > 1 && (
                 <button
                   onClick={() => setLocations(locations.filter((_, idx) => idx !== i))}
-                  className="aeo-btn-danger !py-1.5 !px-2.5"
+                  className="aeo-btn-ghost aeo-btn-sm hover:!text-red-600"
+                  aria-label="Remove location"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -79,10 +80,10 @@ export default function LocalBusiness() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {([
-                { field: 'name' as const, label: 'Business Name', span: 2 },
+                { field: 'name' as const, label: 'Business name', span: 2 },
                 { field: 'address' as const, label: 'Address', span: 2 },
                 { field: 'phone' as const, label: 'Phone' },
-                { field: 'hours' as const, label: 'Opening Hours' },
+                { field: 'hours' as const, label: 'Opening hours' },
                 { field: 'lat' as const, label: 'Latitude' },
                 { field: 'lng' as const, label: 'Longitude' },
               ]).map(({ field, label, span }) => (

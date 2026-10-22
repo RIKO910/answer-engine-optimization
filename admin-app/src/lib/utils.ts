@@ -13,7 +13,7 @@ export function getScoreColor(score: number): string {
 
 export function getScoreLabel(score: number): string {
   if (score >= 71) return 'Good';
-  if (score >= 41) return 'Needs Work';
+  if (score >= 41) return 'Needs work';
   return 'Poor';
 }
 

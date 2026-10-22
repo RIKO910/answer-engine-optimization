@@ -10,9 +10,9 @@ import type { AuditIssue } from '@/types';
 import { cn } from '@/lib/utils';
 
 const severityConfig = {
-  critical: { icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-50 ring-rose-200/60', label: 'Critical' },
-  warning: { icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50 ring-amber-200/60', label: 'Warning' },
-  opportunity: { icon: Lightbulb, color: 'text-blue-600', bg: 'bg-blue-50 ring-blue-200/60', label: 'Opportunity' },
+  critical: { icon: AlertCircle, color: 'text-rose-600', dot: 'bg-rose-500', label: 'Critical' },
+  warning: { icon: AlertTriangle, color: 'text-amber-600', dot: 'bg-amber-500', label: 'Warning' },
+  opportunity: { icon: Lightbulb, color: 'text-slate-500', dot: 'bg-slate-400', label: 'Opportunity' },
 };
 
 export default function SiteAudit() {
@@ -40,7 +40,7 @@ export default function SiteAudit() {
     <div>
       <PageHeader
         title="Site Audit"
-        description="Full-site AEO scan with one-click auto-fix for common issues"
+        description="Scan every published page for AEO issues and fix common ones in one click."
         icon={Search}
         actions={
           <button
@@ -48,30 +48,30 @@ export default function SiteAudit() {
             disabled={runMutation.isPending}
             className="aeo-btn-primary"
           >
-            <Play size={16} />
-            {runMutation.isPending ? 'Scanning...' : 'Run Audit'}
+            <Play size={14} />
+            {runMutation.isPending ? 'Scanning…' : 'Run audit'}
           </button>
         }
       />
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
         {(['critical', 'warning', 'opportunity'] as const).map((sev) => {
           const cfg = severityConfig[sev];
           return (
-            <div key={sev} className="aeo-card-hover text-center">
-              <div className={cn('aeo-icon-box mx-auto mb-3 ring-1', cfg.bg)}>
-                <cfg.icon size={20} className={cfg.color} />
+            <div key={sev} className="aeo-card">
+              <div className="flex items-center gap-2">
+                <span className={cn('aeo-dot', cfg.dot)} />
+                <p className="text-[13px] font-medium text-slate-500">{cfg.label}</p>
               </div>
-              <p className="text-3xl font-bold text-slate-900 tabular-nums">{summary[sev] || 0}</p>
-              <p className="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">{cfg.label}</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900 tabular-nums">{summary[sev] || 0}</p>
             </div>
           );
         })}
       </div>
 
-      <Card padding={false} className="overflow-hidden">
+      <Card padding={false}>
         {isLoading ? (
-          <LoadingState message="Loading audit results..." />
+          <LoadingState message="Loading audit results…" />
         ) : issues.length === 0 ? (
           <EmptyState
             icon={Search}
@@ -79,7 +79,7 @@ export default function SiteAudit() {
             description="Run a site audit to discover AEO issues and opportunities"
             action={
               <button onClick={() => runMutation.mutate()} className="aeo-btn-primary">
-                <Play size={16} /> Run First Audit
+                <Play size={14} /> Run first audit
               </button>
             }
           />
@@ -90,7 +90,7 @@ export default function SiteAudit() {
                 <th>Severity</th>
                 <th>Issue</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th className="w-28"><span className="sr-only">Action</span></th>
               </tr>
             </thead>
             <tbody>
@@ -99,17 +99,15 @@ export default function SiteAudit() {
                 return (
                   <tr key={issue.id}>
                     <td>
-                      <span className={cn('aeo-badge ring-1', cfg.bg, cfg.color)}>
-                        <cfg.icon size={12} />
+                      <span className="aeo-badge">
+                        <cfg.icon size={12} className={cfg.color} />
                         {cfg.label}
                       </span>
                     </td>
-                    <td className="font-medium">{issue.message}</td>
+                    <td className="text-slate-900">{issue.message}</td>
                     <td>
-                      <span className={cn(
-                        'aeo-badge',
-                        issue.status === 'fixed' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200/60' : 'bg-slate-100 text-slate-600'
-                      )}>
+                      <span className="aeo-badge capitalize">
+                        <span className={cn('aeo-dot', issue.status === 'fixed' ? 'bg-emerald-500' : 'bg-slate-300')} />
                         {issue.status}
                       </span>
                     </td>
@@ -118,9 +116,9 @@ export default function SiteAudit() {
                         <button
                           onClick={() => fixMutation.mutate(issue.id)}
                           disabled={fixMutation.isPending}
-                          className="aeo-btn-secondary text-xs !py-1.5 !px-3"
+                          className="aeo-btn-secondary aeo-btn-sm"
                         >
-                          <Wrench size={12} /> Auto-Fix
+                          <Wrench size={12} /> Auto-fix
                         </button>
                       )}
                     </td>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Building2, Save, Terminal, Code, Layers, Users } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -17,6 +17,14 @@ const agencyFeatures = [
 export default function AgencyTools() {
   const [whiteLabelName, setWhiteLabelName] = useState('');
   const [whiteLabelLogo, setWhiteLabelLogo] = useState('');
+  const queryClient = useQueryClient();
+  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: () => api.getSettings() });
+
+  useEffect(() => {
+    const agency = ((settings as Record<string, unknown>)?.agency || {}) as Record<string, string>;
+    setWhiteLabelName(agency.white_label_name || '');
+    setWhiteLabelLogo(agency.white_label_logo || '');
+  }, [settings]);
 
   const saveMutation = useMutation({
     mutationFn: () =>
@@ -24,7 +32,10 @@ export default function AgencyTools() {
         agency: { white_label_name: whiteLabelName, white_label_logo: whiteLabelLogo },
         modules: { agency: true },
       }),
-    onSuccess: () => toast.success('Agency settings saved'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
+      toast.success('Branding saved');
+    },
     onError: () => toast.error('Save failed'),
   });
 
@@ -32,27 +43,27 @@ export default function AgencyTools() {
     <div>
       <PageHeader
         title="Agency Tools"
-        description="White-label branding, API access, and multi-site management"
+        description="White-label branding and developer access for client sites."
         icon={Building2}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
-          <CardHeader title="White-Label Branding" description="Customize the admin experience for clients" />
+          <CardHeader title="White-label" description="Shown in the sidebar instead of the plugin name" />
           <div className="space-y-4">
             <div>
-              <label className="aeo-label">Agency Name</label>
+              <label className="aeo-label">Agency name</label>
               <input
                 type="text"
                 value={whiteLabelName}
                 onChange={(e) => setWhiteLabelName(e.target.value)}
-                placeholder="Your Agency Name"
+                placeholder="Your agency"
                 className="aeo-input"
               />
-              <p className="text-xs text-slate-400 mt-1">Replaces "Answer Engine Optimization" in admin</p>
+              <p className="aeo-hint">Leave empty to use the default name.</p>
             </div>
             <div>
-              <label className="aeo-label">Agency Logo URL</label>
+              <label className="aeo-label">Logo URL</label>
               <input
                 type="url"
                 value={whiteLabelLogo}
@@ -62,20 +73,18 @@ export default function AgencyTools() {
               />
             </div>
             <button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="aeo-btn-primary">
-              <Save size={16} /> Save Branding
+              <Save size={14} /> Save
             </button>
           </div>
         </Card>
 
         <Card>
-          <CardHeader title="Included Features" description="All agency tools are free" />
-          <div className="space-y-2">
+          <CardHeader title="Developer access" />
+          <div className="-mx-2">
             {agencyFeatures.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                <div className="aeo-icon-box bg-aeo-50 text-aeo-600">
-                  <Icon size={16} />
-                </div>
-                <span className="text-sm font-medium text-slate-700">{label}</span>
+              <div key={label} className="flex items-center gap-3 px-2 h-10 rounded-md">
+                <Icon size={15} strokeWidth={1.75} className="text-slate-400 flex-shrink-0" />
+                <span className="text-sm text-slate-800">{label}</span>
               </div>
             ))}
           </div>

@@ -46,13 +46,13 @@ export default function SchemaBuilder() {
     <div>
       <PageHeader
         title="Schema Builder"
-        description="Visual JSON-LD editor with 40+ Schema.org types — no coding required"
+        description="Edit the JSON-LD structured data for any post."
         icon={Code2}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <Card className="lg:col-span-4">
-          <CardHeader title="Configuration" description="Select post and schema type" />
+          <CardHeader title="Configuration" />
           <div className="space-y-4">
             <div>
               <label className="aeo-label">Post</label>
@@ -61,47 +61,45 @@ export default function SchemaBuilder() {
                 onChange={(e) => { setSelectedPost(e.target.value); loadSchema(e.target.value); }}
                 className="aeo-select"
               >
-                <option value="">Choose a post...</option>
+                <option value="">Choose a post…</option>
                 {(posts as Array<{ id: number; title: string }>).map((p) => (
                   <option key={p.id} value={p.id}>{p.title}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="aeo-label">Schema Type</label>
+              <label className="aeo-label">Schema type</label>
               <select value={schemaType} onChange={(e) => setSchemaType(e.target.value)} className="aeo-select">
                 {types.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
-              <p className="text-xs text-slate-400 mt-1">{types.length} types available</p>
+              <p className="aeo-hint">{types.length} types available</p>
             </div>
-            <div className="flex flex-col gap-2 pt-2">
+            <div className="flex flex-col gap-2 pt-1">
               <button onClick={autoGenerate} className="aeo-btn-secondary w-full">
-                <Wand2 size={16} /> Auto-Generate
+                <Wand2 size={14} /> Generate template
               </button>
               <button
                 onClick={() => saveMutation.mutate()}
                 disabled={!selectedPost || saveMutation.isPending}
                 className="aeo-btn-primary w-full"
               >
-                <Save size={16} /> {saveMutation.isPending ? 'Saving...' : 'Save Schema'}
+                <Save size={14} /> {saveMutation.isPending ? 'Saving…' : 'Save schema'}
               </button>
             </div>
           </div>
         </Card>
 
-        <Card className="lg:col-span-8 !p-0 overflow-hidden">
-          <div className="flex items-center gap-2 px-5 py-3 bg-slate-900 border-b border-slate-800">
-            <Braces size={14} className="text-aeo-400" />
-            <span className="text-xs font-mono text-slate-400">JSON-LD Preview</span>
-            {schemaType && (
-              <span className="ml-auto aeo-badge bg-aeo-500/20 text-aeo-300 text-[10px]">{schemaType}</span>
-            )}
+        <Card className="lg:col-span-8" padding={false}>
+          <div className="flex items-center gap-2 px-4 h-10 bg-slate-50 border-b border-slate-200">
+            <Braces size={14} className="text-slate-400" />
+            <span className="text-xs font-medium text-slate-600">JSON-LD</span>
+            {schemaType && <span className="ml-auto aeo-badge font-mono">{schemaType}</span>}
           </div>
           <textarea
             value={schemaJson}
             onChange={(e) => setSchemaJson(e.target.value)}
             rows={22}
-            className="w-full font-mono text-xs bg-slate-950 text-emerald-400 p-5 border-0 focus:outline-none focus:ring-0 resize-none leading-relaxed"
+            className="block w-full max-w-none font-mono text-xs bg-white text-slate-800 p-4 m-0 border-0 rounded-none shadow-none focus:outline-none resize-y leading-relaxed"
             placeholder='{"@context": "https://schema.org", "@type": "Article", ...}'
             spellCheck={false}
           />

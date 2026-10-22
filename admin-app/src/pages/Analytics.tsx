@@ -8,10 +8,11 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import EmptyState from '@/components/ui/EmptyState';
 
-const engineColors: Record<string, string> = {
-  perplexity: '#6366f1',
-  bing_copilot: '#0ea5e9',
-  google_sge: '#10b981',
+
+const engineLabels: Record<string, string> = {
+  perplexity: 'Perplexity',
+  bing_copilot: 'Bing Copilot',
+  google_sge: 'Google AI Overviews',
 };
 
 export default function Analytics() {
@@ -31,7 +32,7 @@ export default function Analytics() {
     onError: () => toast.error('Citation scan failed'),
   });
 
-  if (isLoading) return <LoadingState message="Loading analytics..." />;
+  if (isLoading) return <LoadingState message="Loading analytics…" />;
 
   const citations = (overview?.citations || {}) as Record<string, unknown>;
   const trend = (citations.trend || []) as Array<{ date: string; count: number }>;
@@ -41,8 +42,8 @@ export default function Analytics() {
   return (
     <div>
       <PageHeader
-        title="AI Visibility Analytics"
-        description="Track how AI engines discover and cite your content"
+        title="Analytics"
+        description="How AI engines discover and cite your content."
         icon={BarChart3}
         actions={
           <button
@@ -50,15 +51,15 @@ export default function Analytics() {
             disabled={scanMutation.isPending}
             className="aeo-btn-primary"
           >
-            <RefreshCw size={16} className={scanMutation.isPending ? 'animate-spin' : ''} />
-            {scanMutation.isPending ? 'Scanning...' : 'Scan Citations'}
+            <RefreshCw size={14} className={scanMutation.isPending ? 'animate-spin' : ''} />
+            {scanMutation.isPending ? 'Scanning…' : 'Scan citations'}
           </button>
         }
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <Card>
-          <CardHeader title="Citation Trend" description="Last 30 days" />
+          <CardHeader title="Citations" description="Last 30 days" />
           {trend.length === 0 ? (
             <EmptyState
               icon={BarChart3}
@@ -67,44 +68,39 @@ export default function Analytics() {
             />
           ) : (
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={trend} barSize={20}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+              <BarChart data={trend} barSize={14} margin={{ top: 4, right: 0, left: -24, bottom: 0 }}>
+                <CartesianGrid vertical={false} stroke="#f4f4f5" />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#a1a1aa' }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#a1a1aa' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                  cursor={{ fill: '#fafafa' }}
+                  contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12)', fontSize: 12 }}
                 />
-                <Bar dataKey="count" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
-                <defs>
-                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#6366f1" />
-                    <stop offset="100%" stopColor="#8b5cf6" />
-                  </linearGradient>
-                </defs>
+                <Bar dataKey="count" fill="#4f46e5" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
         </Card>
 
         <Card>
-          <CardHeader title="Citations by Engine" description="AI engine breakdown" />
+          <CardHeader title="By engine" description="Share of citations per AI engine" />
           {byEngine.length === 0 ? (
             <EmptyState icon={Globe} title="No engines tracked" description="Run a citation scan to populate data" />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {byEngine.map((e, i) => {
                 const total = byEngine.reduce((s, x) => s + Number(x.count), 0);
                 const pct = total > 0 ? Math.round((Number(e.count) / total) * 100) : 0;
                 return (
                   <div key={i}>
-                    <div className="flex justify-between text-sm mb-1.5">
-                      <span className="font-medium text-slate-700 capitalize">{e.engine.replace('_', ' ')}</span>
-                      <span className="text-slate-500 tabular-nums">{e.count} <span className="text-slate-300">({pct}%)</span></span>
+                    <div className="flex justify-between text-[13px] mb-1.5">
+                      <span className="text-slate-800">{engineLabels[e.engine] || e.engine.replace(/_/g, ' ')}</span>
+                      <span className="text-slate-500 tabular-nums">{e.count} · {pct}%</span>
                     </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{ width: `${pct}%`, backgroundColor: engineColors[e.engine] || '#6366f1' }}
+                        className="h-full rounded-full bg-aeo-600 transition-[width] duration-500"
+                        style={{ width: `${pct}%` }}
                       />
                     </div>
                   </div>
@@ -117,9 +113,8 @@ export default function Analytics() {
 
       <Card>
         <CardHeader
-          title="Competitor Gap Analysis"
+          title="Competitor gaps"
           description="Schema and FAQ gaps vs competitors"
-          action={<Users size={18} className="text-slate-400" />}
         />
         {compData.length === 0 ? (
           <EmptyState
@@ -128,11 +123,11 @@ export default function Analytics() {
             description="Add up to 5 competitor domains in Settings"
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {compData.map((comp, i) => (
-              <div key={i} className="p-4 rounded-2xl border border-slate-100 hover:border-aeo-200 transition-colors">
-                <p className="font-semibold text-slate-800">{comp.domain as string}</p>
-                <p className="text-xs text-slate-400 mt-2">
+              <div key={i} className="aeo-card-muted">
+                <p className="text-sm font-medium text-slate-900">{comp.domain as string}</p>
+                <p className="text-xs text-slate-500 mt-1">
                   Missing: {(comp.missing_types as string[])?.join(', ')}
                 </p>
               </div>

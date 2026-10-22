@@ -1,12 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Save, Settings as SettingsIcon, Bot, ToggleLeft, Key, Target } from 'lucide-react';
+import { Save, Settings as SettingsIcon, Check } from 'lucide-react';
 import { api } from '@/lib/api';
 import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import type { AeoSettings } from '@/types';
+
+const moduleLabels: Record<string, string> = {
+  content_optimizer: 'Content optimizer',
+  schema_builder: 'Schema builder',
+  faq_automation: 'FAQ automation',
+  analytics: 'Analytics',
+  local_business: 'Local business',
+  woocommerce: 'WooCommerce',
+  technical: 'Technical (llms.txt, AI crawlers)',
+  social_og: 'Open Graph & social cards',
+  content_briefs: 'Content briefs',
+  site_audit: 'Site audit',
+  agency: 'Agency tools',
+};
 
 type SettingsForm = Partial<AeoSettings> & {
   openai_api_key?: string;
@@ -32,7 +46,7 @@ export default function Settings() {
     onError: () => toast.error('Failed to save settings'),
   });
 
-  if (isLoading) return <LoadingState message="Loading settings..." />;
+  if (isLoading) return <LoadingState message="Loading settings…" />;
 
   const modules = (form.modules || {}) as Record<string, boolean>;
 
@@ -40,21 +54,20 @@ export default function Settings() {
     <div>
       <PageHeader
         title="Settings"
-        description="API keys, feature modules, and tracking configuration"
+        description="AI provider, modules and tracking."
         icon={SettingsIcon}
         actions={
           <button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="aeo-btn-primary">
-            <Save size={16} /> {saveMutation.isPending ? 'Saving...' : 'Save Changes'}
+            <Save size={14} /> {saveMutation.isPending ? 'Saving…' : 'Save changes'}
           </button>
         }
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader
-            title="AI Provider"
-            description="Connect your AI API keys for enhanced features"
-            action={<Bot size={18} className="text-aeo-500" />}
+            title="AI provider"
+            description="Optional. Core features work without an API key."
           />
           <div className="space-y-4">
             <div>
@@ -70,18 +83,23 @@ export default function Settings() {
               </select>
             </div>
             {[
-              { key: 'openai_api_key', label: 'OpenAI API Key', placeholder: 'sk-...', configured: form.has_openai_key },
-              { key: 'anthropic_api_key', label: 'Anthropic API Key', placeholder: 'sk-ant-...', configured: form.has_anthropic_key },
-              { key: 'gemini_api_key', label: 'Gemini API Key', placeholder: 'AIza...', configured: form.has_gemini_key },
+              { key: 'openai_api_key', label: 'OpenAI API key', placeholder: 'sk-...', configured: form.has_openai_key },
+              { key: 'anthropic_api_key', label: 'Anthropic API key', placeholder: 'sk-ant-...', configured: form.has_anthropic_key },
+              { key: 'gemini_api_key', label: 'Gemini API key', placeholder: 'AIza...', configured: form.has_gemini_key },
             ].map(({ key, label, placeholder, configured }) => (
               <div key={key}>
-                <label className="aeo-label flex items-center gap-2">
-                  <Key size={12} /> {label}
-                  {configured && <span className="aeo-badge bg-emerald-50 text-emerald-600 text-[10px]">configured</span>}
+                <label className="aeo-label flex items-center justify-between">
+                  <span>{label}</span>
+                  {configured && (
+                    <span className="inline-flex items-center gap-1 text-xs font-normal text-emerald-600">
+                      <Check size={12} /> Saved
+                    </span>
+                  )}
                 </label>
                 <input
                   type="password"
-                  placeholder={placeholder}
+                  autoComplete="off"
+                  placeholder={configured ? '••••••••••••' : placeholder}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
                   className="aeo-input"
                 />
@@ -92,25 +110,25 @@ export default function Settings() {
 
         <Card>
           <CardHeader
-            title="Feature Modules"
-            description="Toggle individual AEO modules"
-            action={<ToggleLeft size={18} className="text-slate-400" />}
+            title="Modules"
+            description="Turn individual features on or off"
           />
-          <div className="space-y-1">
+          <div className="-mx-2">
             {Object.entries(modules).map(([key, enabled]) => (
               <label
                 key={key}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
+                className="flex items-center justify-between px-2 h-10 rounded-md hover:bg-slate-50 cursor-pointer transition-colors"
               >
-                <span className="text-sm font-medium text-slate-700 capitalize">{key.replace(/_/g, ' ')}</span>
+                <span className="text-sm text-slate-800">{moduleLabels[key] || key.replace(/_/g, ' ')}</span>
                 <button
                   type="button"
                   role="switch"
                   aria-checked={!!enabled}
                   onClick={() => setForm({ ...form, modules: { ...modules, [key]: !enabled } })}
-                  className={`relative w-9 h-5 rounded-full transition-colors ${enabled ? 'bg-aeo-500' : 'bg-slate-200'}`}
+                  aria-label={key.replace(/_/g, ' ')}
+                  className={`relative w-8 h-[18px] p-0 m-0 border-0 rounded-full cursor-pointer transition-colors ${enabled ? 'bg-aeo-600' : 'bg-slate-200'}`}
                 >
-                  <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${enabled ? 'left-[18px]' : 'left-0.5'}`} />
+                  <span className={`absolute top-[2px] w-[14px] h-[14px] bg-white rounded-full transition-[left] duration-150 ${enabled ? 'left-[16px]' : 'left-[2px]'}`} />
                 </button>
               </label>
             ))}
@@ -119,13 +137,12 @@ export default function Settings() {
 
         <Card className="lg:col-span-2">
           <CardHeader
-            title="Tracking & Competitors"
-            description="Keywords to monitor and competitor domains for gap analysis"
-            action={<Target size={18} className="text-slate-400" />}
+            title="Tracking"
+            description="Keywords to monitor and competitor domains to compare against"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="aeo-label">Tracked Keywords</label>
+              <label className="aeo-label">Keywords</label>
               <textarea
                 value={(form.tracked_keywords ?? []).join('\n')}
                 onChange={(e) => setForm({ ...form, tracked_keywords: e.target.value.split('\n').filter(Boolean) })}
@@ -135,7 +152,7 @@ export default function Settings() {
               />
             </div>
             <div>
-              <label className="aeo-label">Competitor Domains (max 5)</label>
+              <label className="aeo-label">Competitor domains <span className="font-normal text-slate-400">· max 5</span></label>
               <textarea
                 value={(form.competitors ?? []).join('\n')}
                 onChange={(e) => setForm({ ...form, competitors: e.target.value.split('\n').filter(Boolean).slice(0, 5) })}

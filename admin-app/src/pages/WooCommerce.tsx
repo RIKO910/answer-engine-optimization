@@ -1,17 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { ShoppingCart, CheckCircle2, Package } from 'lucide-react';
+import { ShoppingCart, CheckCircle2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import EmptyState from '@/components/ui/EmptyState';
 
+// Only list what the plugin actually outputs today (see WooCommerce_Integration.php).
 const features = [
-  'Product Schema Auto-generation',
-  'Real-time Price & Availability',
-  'Aggregate Rating Schema',
-  'Brand, GTIN, MPN, SKU Mapping',
-  'Product Variant Schema',
-  'AI Product FAQs',
+  'Product schema on every product page',
+  'Price, currency and stock availability',
+  'Aggregate rating from reviews',
+  'SKU and brand (from the "brand" attribute)',
 ];
 
 export default function WooCommerce() {
@@ -25,8 +24,8 @@ export default function WooCommerce() {
   return (
     <div>
       <PageHeader
-        title="WooCommerce AEO"
-        description="Product schema and AI shopping optimization for your store"
+        title="WooCommerce"
+        description="Product structured data for AI shopping assistants."
         icon={ShoppingCart}
       />
 
@@ -34,43 +33,35 @@ export default function WooCommerce() {
         <Card>
           <EmptyState
             icon={ShoppingCart}
-            title="WooCommerce Not Detected"
-            description="Install and activate WooCommerce to enable product AEO features including auto schema, pricing, and review markup"
+            title="WooCommerce not detected"
+            description="Install and activate WooCommerce to add Product schema with price, stock and ratings."
           />
         </Card>
       ) : (
-        <div className="space-y-6">
-          <div className="aeo-card bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200/60">
-            <div className="flex items-center gap-4">
-              <div className="aeo-icon-box bg-emerald-100 text-emerald-600 ring-1 ring-emerald-200">
-                <CheckCircle2 size={22} />
-              </div>
-              <div>
-                <p className="font-semibold text-emerald-800">WooCommerce Active</p>
-                <p className="text-sm text-emerald-600/80">Product AEO is enabled and running on your store</p>
-              </div>
-            </div>
+        <div className="space-y-4">
+          <div className="aeo-card flex items-center gap-3">
+            <span className="aeo-dot bg-emerald-500" />
+            <p className="text-sm text-slate-900 font-medium">WooCommerce is active</p>
+            <p className="text-[13px] text-slate-500">Product schema is being added to your store.</p>
           </div>
 
           <Card>
-            <CardHeader title="Active Features" description="Automatically applied to product pages" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <CardHeader title="What gets added" description="Applied automatically to product pages" />
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
               {features.map((f) => (
-                <div key={f} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/80">
-                  <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0" />
-                  <span className="text-sm font-medium text-slate-700">{f}</span>
-                </div>
+                <li key={f} className="flex items-center gap-2.5">
+                  <CheckCircle2 size={15} strokeWidth={1.75} className="text-slate-400 flex-shrink-0" />
+                  <span className="text-sm text-slate-800">{f}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </Card>
 
           <Card>
             <CardHeader
-              title="How It Works"
-              description="Automatic schema injection"
-              action={<Package size={18} className="text-slate-400" />}
+              title="How it works"
             />
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
               Product schema is automatically injected on all WooCommerce product pages,
               including real-time price, stock availability, customer ratings, and brand data.
               Toggle the WooCommerce module in Settings to control this behavior.

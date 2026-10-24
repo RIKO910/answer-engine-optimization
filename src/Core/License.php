@@ -114,13 +114,30 @@ class License {
 	 * @return array<string, mixed>|\WP_Error Decoded JSON.
 	 */
 	public static function request( $endpoint, array $body ) {
-		$response = wp_remote_post(
+		// LiteSpeed's bot check sometimes answers with a "please wait" page while
+		// the server is busy. Try again once, then through ?rest_route=, which
+		// WordPress serves the same API from.
+		$urls = array(
 			self::server() . '/wp-json/qc/v1/license/' . $endpoint,
-			array(
-				'body'    => $body,
-				'timeout' => 15,
-			)
+			self::server() . '/wp-json/qc/v1/license/' . $endpoint,
+			add_query_arg( 'rest_route', '/qc/v1/license/' . $endpoint, self::server() . '/' ),
 		);
+		foreach ( $urls as $i => $url ) {
+			if ( 1 === $i ) {
+				sleep( 2 );
+			}
+			$response = wp_remote_post(
+				$url,
+				array(
+					'body'    => $body,
+					'timeout' => 15,
+					'headers' => array( 'Accept' => 'application/json' ),
+				)
+			);
+			if ( is_wp_error( $response ) || ! self::is_bot_challenge( (string) wp_remote_retrieve_body( $response ) ) ) {
+				break;
+			}
+		}
 		if ( is_wp_error( $response ) ) {
 			return new \WP_Error(
 				'aeo_license_connect',

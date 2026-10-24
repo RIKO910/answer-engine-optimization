@@ -142,7 +142,7 @@ export interface VisibilitySummary {
   checked: number;
   cited: number;
   mentioned: number;
-  engines: Array<{ engine: string; label: string; checked: number; cited: number; mentioned: number; errors: number; avg_position: number | null }>;
+  engines: Array<{ engine: string; label: string; checked: number; cited: number; mentioned: number; errors: number; error?: string; avg_position: number | null }>;
   keywords: Array<{ keyword: string; engines: Record<string, EngineResult> }>;
   share_of_voice: Array<{ name: string; is_you: boolean; cited: number; percent: number }>;
   sentiment: { positive: number; neutral: number; negative: number };
@@ -150,6 +150,7 @@ export interface VisibilitySummary {
 
 export interface ScanProgress {
   scan_id?: string;
+  busy?: boolean;
   total: number;
   done: number;
   finished: string;

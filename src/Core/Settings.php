@@ -270,6 +270,10 @@ class Settings {
 			$sanitized['brand_names'] = array_slice( array_values( array_filter( array_map( 'trim', array_map( 'sanitize_text_field', $input['brand_names'] ) ) ) ), 0, 10 );
 		}
 
+		if ( isset( $input['visibility_domain'] ) ) {
+			$sanitized['visibility_domain'] = self::normalize_domain( (string) $input['visibility_domain'] );
+		}
+
 		if ( isset( $input['citation_engines'] ) && is_array( $input['citation_engines'] ) ) {
 			$sanitized['citation_engines'] = array_values( array_intersect( $input['citation_engines'], array_keys( \AEO\Services\Ai_Visibility::ENGINES ) ) );
 		}

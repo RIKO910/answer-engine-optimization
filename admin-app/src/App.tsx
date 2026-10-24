@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Layout from '@/components/Layout';
@@ -25,13 +25,21 @@ import { pageToRoute } from '@/lib/utils';
 
 function AppRoutes() {
   const navigate = useNavigate();
-  const initialRoute = pageToRoute[window.aeoGeniusData?.currentPage || 'aeo-dashboard'] || '/';
+  const redirected = useRef(false);
 
+  // Opening a WordPress submenu item (admin.php?page=aeo-content) should land on that
+  // screen, once. Earlier this effect re-ran on every route change (react-router gives
+  // a new `navigate` each time the location changes) and sent clicks in the plugin's
+  // own menu straight back to the submenu page.
   useEffect(() => {
-    if (initialRoute !== '/') {
+    if (redirected.current) return;
+    redirected.current = true;
+    const hasHashRoute = window.location.hash.length > 2; // e.g. "#/schema"
+    const initialRoute = pageToRoute[window.aeoGeniusData?.currentPage || 'aeo-dashboard'] || '/';
+    if (!hasHashRoute && initialRoute !== '/') {
       navigate(initialRoute, { replace: true });
     }
-  }, [initialRoute, navigate]);
+  }, [navigate]);
 
   return (
     <Routes>

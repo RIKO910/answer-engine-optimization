@@ -22,6 +22,9 @@ interface VisibilityData {
   history: Array<{ scan_id: string; date: string; cited_rate: number; mentioned_rate: number }>;
   progress: ScanProgress | null;
   brands: string[];
+  own_host: string;
+  is_local: boolean;
+  domain: string;
 }
 
 interface AnswerRow {
@@ -81,6 +84,10 @@ export default function Analytics() {
   const [keywords, setKeywords] = useState<string>('');
   const [brands, setBrands] = useState<string>('');
   const [engines, setEngines] = useState<string[]>([]);
+  const [domain, setDomain] = useState('');
+  useEffect(() => {
+    if (vis.data) setDomain(vis.data.domain || '');
+  }, [vis.data]);
   useEffect(() => {
     if (!settings.data) return;
     setKeywords(((s.tracked_keywords as string[]) || []).join('\n'));
@@ -99,7 +106,7 @@ export default function Analytics() {
   const saveTracking = useMutation({
     mutationFn: () => {
       const lines = (t: string) => t.split('\n').map((l) => l.trim()).filter(Boolean);
-      return api.updateSettings({ tracked_keywords: lines(keywords), brand_names: lines(brands), citation_engines: engines });
+      return api.updateSettings({ tracked_keywords: lines(keywords), brand_names: lines(brands), citation_engines: engines, visibility_domain: domain });
     },
     onSuccess: (d) => {
       qc.setQueryData(['settings'], d);
@@ -109,20 +116,39 @@ export default function Analytics() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const runScan = async () => {
+  // Each check is a live web search (up to a minute or two), so the scan runs in
+  // small server requests. A failed request is retried; a scan interrupted by a
+  // closed tab or a server timeout can be resumed where it stopped.
+  const continueWithRetry = async (): Promise<ScanProgress> => {
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        return await post<ScanProgress>('/visibility/continue');
+      } catch (e) {
+        lastError = e;
+        await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+      }
+    }
+    throw lastError;
+  };
+
+  const runScan = async (resume = false) => {
     if (running.current) return;
     running.current = true;
     try {
-      let p = await post<ScanProgress>('/visibility/start');
+      let p = resume ? await continueWithRetry() : await post<ScanProgress>('/visibility/start');
       setProgress(p);
       while (!p.finished && p.done < p.total) {
-        p = await post<ScanProgress>('/visibility/continue');
+        // Another request (e.g. one still running from a closed tab) holds the scan.
+        if (p.busy) await new Promise((r) => setTimeout(r, 4000));
+        p = await continueWithRetry();
         setProgress(p);
       }
       await qc.invalidateQueries({ queryKey: ['visibility'] });
       toast.success(__('Scan finished'));
     } catch (e) {
-      toast.error((e as Error).message || __('Scan failed'));
+      await qc.invalidateQueries({ queryKey: ['visibility'] });
+      toast.error(sprintf(__('The scan stopped: %s. Use Resume to continue where it stopped.'), (e as Error).message || __('server error')));
     } finally {
       running.current = false;
       setProgress(null);
@@ -136,15 +162,42 @@ export default function Analytics() {
   });
 
   if (vis.isLoading) return <LoadingState message={__('Loading AI visibility…')} />;
+  if (vis.isError) {
+    return (
+      <div>
+        <PageHeader title={__('AI visibility')} />
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 flex items-center justify-between gap-4">
+          <p className="text-[13px] text-red-800">
+            {sprintf(__('Could not load AI visibility data: %s'), (vis.error as Error)?.message || __('server error'))}
+          </p>
+          <button type="button" className="aeo-btn-secondary aeo-btn-sm" onClick={() => vis.refetch()}>{__('Try again')}</button>
+        </div>
+      </div>
+    );
+  }
 
   const data = vis.data;
   const available = data?.engines || [];
-  const summary = data?.summary;
-  const history = data?.history || [];
+  // Only a real scan result counts; older versions sent [] for "no scan yet".
+  const rawSummary = data?.summary as VisibilitySummary | null | undefined;
+  const summary: VisibilitySummary | null =
+    rawSummary && !Array.isArray(rawSummary) && rawSummary.scan_id
+      ? {
+          ...rawSummary,
+          engines: rawSummary.engines || [],
+          keywords: rawSummary.keywords || [],
+          share_of_voice: rawSummary.share_of_voice || [],
+          sentiment: rawSummary.sentiment || { positive: 0, neutral: 0, negative: 0 },
+        }
+      : null;
+  const history = Array.isArray(data?.history) ? data!.history : [];
   const labels = Object.fromEntries((data?.all || []).map((e) => [e.engine, e.label]));
   const scanEngines = summary?.engines?.map((e) => e.engine) || [];
   const compData = competitors.data?.competitors || [];
   const keywordCount = keywords.split('\n').filter((l) => l.trim()).length;
+  const saved = data?.progress;
+  const canResume = !progress && !!saved && !saved.finished && saved.done < saved.total;
+  const noScanYet = !summary || !summary.scan_id;
 
   return (
     <div>
@@ -156,8 +209,13 @@ export default function Analytics() {
             <button type="button" className="aeo-btn-secondary" onClick={() => report.mutate()} disabled={report.isPending}>
               <FileDown size={14} /> {__('Client report')}
             </button>
+            {canResume && (
+              <button type="button" className="aeo-btn-secondary" onClick={() => runScan(true)} disabled={caps?.ai === false}>
+                {sprintf(__('Resume (%1$d / %2$d)'), saved!.done, saved!.total)}
+              </button>
+            )}
             <button
-              onClick={runScan}
+              onClick={() => runScan(false)}
               disabled={!!progress || available.length === 0 || caps?.ai === false}
               className="aeo-btn-primary"
               title={available.length ? '' : __('Add an API key for at least one engine in Settings')}
@@ -175,6 +233,23 @@ export default function Analytics() {
         </div>
       )}
 
+      {data?.is_local && !data.domain && (
+        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 flex flex-col md:flex-row md:items-center gap-3 justify-between">
+          <p className="text-[13px] text-amber-900 max-w-2xl">
+            {sprintf(
+              __('This site runs at %s, which AI engines can never link to, so every answer would count as "not cited". Enter the domain of your live site to measure it from here.'),
+              data.own_host || 'localhost'
+            )}
+          </p>
+          <div className="flex gap-2 flex-shrink-0">
+            <input className="aeo-input w-56" placeholder="example.com" value={domain} onChange={(e) => setDomain(e.target.value)} aria-label={__('Live domain')} />
+            <button type="button" className="aeo-btn-primary" disabled={!domain.trim() || saveTracking.isPending} onClick={() => saveTracking.mutate()}>
+              {__('Save')}
+            </button>
+          </div>
+        </div>
+      )}
+
       {available.length === 0 && (
         <div className="aeo-card-muted mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-[13px] text-slate-600">
@@ -187,7 +262,7 @@ export default function Analytics() {
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <Stat label={__('Cited')} value={summary ? `${pct(summary.cited, summary.checked)}%` : '—'} hint={summary ? sprintf(__('%1$d of %2$d answers link to you'), summary.cited, summary.checked) : __('No scan yet')} />
+        <Stat label={__('Cited')} value={summary ? `${pct(summary.cited, summary.checked)}%` : '—'} hint={summary && !noScanYet ? sprintf(__('%1$d of %2$d answers link to %3$s'), summary.cited, summary.checked, data?.own_host || __('you')) : __('No scan yet')} />
         <Stat label={__('Mentioned')} value={summary ? `${pct(summary.mentioned, summary.checked)}%` : '—'} hint={__('Brand named, with or without a link')} />
         <Stat
           label={__('Sentiment')}
@@ -210,6 +285,9 @@ export default function Analytics() {
                 )}
               </div>
               <p className="text-2xl font-semibold tabular-nums mt-2">{pct(e.cited, e.checked)}%</p>
+              {e.checked === 0 && e.error ? (
+                <p className="text-xs text-amber-700 mt-1 break-words" title={e.error}>{e.error.length > 120 ? `${e.error.slice(0, 120)}…` : e.error}</p>
+              ) : null}
               <p className="text-xs text-slate-500">
                 {sprintf(__('%1$d/%2$d cited'), e.cited, e.checked)}
                 {e.avg_position ? ` · ${sprintf(__('avg. position %s'), String(e.avg_position))}` : ''}
@@ -287,8 +365,8 @@ export default function Analytics() {
                 <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#a1a1aa' }} axisLine={false} tickLine={false} unit="%" />
                 <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7', fontSize: 12 }} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="cited_rate" name={__('Cited')} stroke="#4f46e5" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="mentioned_rate" name={__('Mentioned')} stroke="#a1a1aa" strokeWidth={2} dot={false} />
+                <Line type="linear" dataKey="cited_rate" name={__('Cited')} stroke="#4f46e5" strokeWidth={2} dot={{ r: 3 }} />
+                <Line type="linear" dataKey="mentioned_rate" name={__('Mentioned')} stroke="#a1a1aa" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           )}
@@ -339,6 +417,11 @@ export default function Analytics() {
               <label className="aeo-label" htmlFor="aeo-brands">{__('Brand names')}</label>
               <textarea id="aeo-brands" rows={3} className="aeo-textarea" value={brands} onChange={(e) => setBrands(e.target.value)} placeholder={String(data?.brands?.[0] || '')} />
               <p className="aeo-hint">{__('Counted as a mention when an answer names you. Add local spellings too.')}</p>
+            </div>
+            <div>
+              <label className="aeo-label" htmlFor="aeo-domain">{__('Your domain')}</label>
+              <input id="aeo-domain" className="aeo-input" value={domain} placeholder={data?.own_host || ''} onChange={(e) => setDomain(e.target.value)} />
+              <p className="aeo-hint">{__('Links to this domain count as citations. Leave empty to use this site\'s address.')}</p>
             </div>
             <div>
               <p className="aeo-label">{__('Engines')}</p>

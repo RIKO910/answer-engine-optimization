@@ -26,6 +26,7 @@ defined( 'ABSPATH' ) || exit;
 class Ai_Visibility {
 
 	const STATE        = 'aeo_visibility_scan_state';
+	const LOCK         = 'aeo_visibility_scan_lock'; // Processing lock (see lock()).
 	const MAX_KEYWORDS = 25;
 
 	const ENGINES = array(
@@ -148,6 +149,20 @@ class Ai_Visibility {
 			return $this->progress( $state );
 		}
 
+		// Each check is a live web search that can take a minute; never let PHP's
+		// max_execution_time (often 30 s on local servers) kill the request mid-check.
+		if ( function_exists( 'set_time_limit' ) ) {
+			@set_time_limit( (int) $budget + 150 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+		ignore_user_abort( true );
+
+		// Only one request may work on a scan at a time. Otherwise a request that keeps
+		// running after its tab closed and a "Resume" from another tab check the same
+		// questions twice. Others just report progress and the browser polls again.
+		if ( ! $this->lock( (int) $budget + 150 ) ) {
+			return $this->progress( $state ) + array( 'busy' => true );
+		}
+
 		$start = microtime( true );
 		$total = count( $state['items'] );
 
@@ -155,8 +170,16 @@ class Ai_Visibility {
 			list( $keyword, $engine ) = $state['items'][ $state['done'] ];
 			$this->check( $state['scan_id'], $keyword, $engine );
 			$state['done']++;
+			// A new scan was started meanwhile: never overwrite it with this one.
+			wp_cache_delete( self::STATE, 'options' );
+			$current = $this->state();
+			if ( ( $current['scan_id'] ?? '' ) !== $state['scan_id'] ) {
+				$this->unlock();
+				return $this->progress( $current );
+			}
 			update_option( self::STATE, $state, false );
 		}
+		$this->unlock();
 
 		if ( $state['done'] >= $total ) {
 			$state['finished'] = current_time( 'mysql' );
@@ -165,6 +188,34 @@ class Ai_Visibility {
 		}
 
 		return $this->progress( $state );
+	}
+
+	/**
+	 * Take the processing lock. add_option() is atomic (unique option_name), so two
+	 * requests cannot both get it; a lock left by a killed request expires.
+	 *
+	 * @param int $ttl Seconds.
+	 * @return bool
+	 */
+	private function lock( $ttl ) {
+		if ( add_option( self::LOCK, time() + $ttl, '', 'no' ) ) {
+			return true;
+		}
+		$expires = (int) get_option( self::LOCK, 0 );
+		if ( $expires && $expires < time() ) {
+			delete_option( self::LOCK );
+			return (bool) add_option( self::LOCK, time() + $ttl, '', 'no' );
+		}
+		return false;
+	}
+
+	/**
+	 * Release the processing lock.
+	 *
+	 * @return void
+	 */
+	private function unlock() {
+		delete_option( self::LOCK );
 	}
 
 	/**
@@ -180,9 +231,13 @@ class Ai_Visibility {
 		if ( function_exists( 'set_time_limit' ) ) {
 			@set_time_limit( 0 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		}
+		$rounds = 0;
 		do {
 			$progress = $this->process( 300 );
-		} while ( empty( $progress['finished'] ) );
+			if ( ! empty( $progress['busy'] ) ) {
+				sleep( 5 ); // Another request holds the lock; wait for it.
+			}
+		} while ( empty( $progress['finished'] ) && ++$rounds < 200 );
 		return $this->scan_summary( $state['scan_id'] );
 	}
 
@@ -280,7 +335,7 @@ class Ai_Visibility {
 	 * @return array<string, mixed>
 	 */
 	public static function analyse( $text, array $sources ) {
-		$own_host = self::host( home_url() );
+		$own_host = self::own_host();
 		$hosts    = array();
 		foreach ( $sources as $source ) {
 			$h = self::source_host( $source );
@@ -360,7 +415,28 @@ class Ai_Visibility {
 	}
 
 	/**
-	 * Host without www.
+	 * Domain counted as "you": the visibility_domain setting (for local/staging copies
+	 * of a live site) or this site's host.
+	 *
+	 * @return string
+	 */
+	public static function own_host() {
+		$domain = (string) Settings::get( 'visibility_domain', '' );
+		$host   = '' !== $domain ? $domain : self::host( home_url() );
+		return preg_replace( '/^www\./', '', strtolower( $host ) );
+	}
+
+	/**
+	 * Is the site address one AI engines can never link to (localhost, .test, .local…)?
+	 *
+	 * @return bool
+	 */
+	public static function site_is_local() {
+		return \AEO\Services\IndexNow::is_local();
+	}
+
+	/**
+	 * Host of a URL without www.
 	 *
 	 * @param string $url URL.
 	 * @return string
@@ -428,7 +504,7 @@ class Ai_Visibility {
 		$response = wp_remote_post(
 			$url,
 			array(
-				'timeout' => 90,
+				'timeout' => (int) apply_filters( 'aeo_visibility_timeout', 120 ),
 				'headers' => array_merge( array( 'Content-Type' => 'application/json' ), $headers ),
 				'body'    => wp_json_encode( $body ),
 			)
@@ -725,11 +801,13 @@ class Ai_Visibility {
 					'cited'     => 0,
 					'mentioned' => 0,
 					'errors'    => 0,
+					'error'     => '',
 					'positions' => array(),
 				);
 			}
 			if ( '' !== $r['error'] ) {
 				$engines[ $e ]['errors']++;
+				$engines[ $e ]['error'] = (string) $r['error'];
 			} else {
 				$engines[ $e ]['checked']++;
 				$checked++;
@@ -793,7 +871,7 @@ class Ai_Visibility {
 		$sov_rows  = array();
 		foreach ( $sov as $name => $count ) {
 			$sov_rows[] = array(
-				'name'    => 'you' === $name ? self::host( home_url() ) : $name,
+				'name'    => 'you' === $name ? self::own_host() : $name,
 				'is_you'  => 'you' === $name,
 				'cited'   => $count,
 				'percent' => $sov_total ? (int) round( 100 * $count / $sov_total ) : 0,

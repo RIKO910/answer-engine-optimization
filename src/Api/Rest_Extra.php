@@ -107,6 +107,17 @@ class Rest_Extra {
 	}
 
 	/**
+	 * An empty PHP array encodes as JSON [] (truthy in JavaScript); send null instead
+	 * when there is nothing, so the admin can tell "no data" from "data".
+	 *
+	 * @param mixed $value Value.
+	 * @return mixed
+	 */
+	private static function object_or_null( $value ) {
+		return is_array( $value ) && ! empty( $value ) ? $value : null;
+	}
+
+	/**
 	 * Routes.
 	 *
 	 * @return void
@@ -166,7 +177,7 @@ class Rest_Extra {
 							array_keys( Ai_Visibility::ENGINES ),
 							Ai_Visibility::ENGINES
 						),
-						'summary'   => $v->scan_summary(),
+						'summary'   => self::object_or_null( $v->scan_summary() ),
 						'history'   => $v->history(),
 						'progress'  => $state ? array(
 							'done'     => (int) $state['done'],
@@ -174,6 +185,9 @@ class Rest_Extra {
 							'finished' => (string) $state['finished'],
 						) : null,
 						'brands'    => Ai_Visibility::brand_names(),
+						'own_host'  => Ai_Visibility::own_host(),
+						'is_local'  => Ai_Visibility::site_is_local(),
+						'domain'    => (string) Settings::get( 'visibility_domain', '' ),
 					)
 				);
 			},

@@ -6,8 +6,10 @@ import {
   ArrowUpRight, LucideIcon, Bot, Activity, Wrench, LayoutTemplate, Hotel, ListChecks,
 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { cn, pageToRoute } from '@/lib/utils';
+import { useEffect } from 'react';
 import { __ } from '@/lib/i18n';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface NavItem {
   to: string;
@@ -95,6 +97,23 @@ function Brand() {
 
 export default function Layout() {
   const location = useLocation();
+
+  // Keep the WordPress admin submenu highlight in step with the in-app route.
+  useEffect(() => {
+    const slug = Object.keys(pageToRoute).find((k) => pageToRoute[k] === location.pathname && k !== 'aeo-dashboard')
+      || (location.pathname === '/' ? 'aeo-dashboard' : '');
+    const menu = document.querySelector('#toplevel_page_aeo-dashboard .wp-submenu');
+    if (!menu || !slug) return;
+    menu.querySelectorAll('li').forEach((li) => {
+      const link = li.querySelector('a');
+      const href = link?.getAttribute('href') || '';
+      const match = new RegExp(`[?&]page=${slug}(?:$|&|#)`).test(href);
+      li.classList.toggle('current', match);
+      link?.classList.toggle('current', match);
+      if (match) link?.setAttribute('aria-current', 'page');
+      else link?.removeAttribute('aria-current');
+    });
+  }, [location.pathname]);
   const current = allItems.find((i) => i.to === location.pathname)?.label || 'Dashboard';
   const data = window.aeoGeniusData;
 
@@ -184,7 +203,9 @@ export default function Layout() {
 
         <main className="flex-1 px-6 py-8 lg:px-10">
           <div key={location.pathname} className="aeo-page-enter max-w-6xl mx-auto">
-            <Outlet />
+            <ErrorBoundary key={location.pathname}>
+              <Outlet />
+            </ErrorBoundary>
           </div>
         </main>
       </div>

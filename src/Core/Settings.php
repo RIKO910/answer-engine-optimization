@@ -293,6 +293,20 @@ class Settings {
 	}
 
 	/**
+	 * Admin branding. White-label (agency name and logo) is a Pro feature; free
+	 * installs always show the plugin's own name.
+	 *
+	 * @return array{name: string, logo: string}
+	 */
+	public static function branding() {
+		$brand = array(
+			'name' => '',
+			'logo' => '',
+		);
+		return (array) apply_filters( 'aeo_branding', $brand ) + $brand;
+	}
+
+	/**
 	 * Get settings safe for frontend (no API keys).
 	 *
 	 * @return array<string, mixed>
@@ -310,7 +324,8 @@ class Settings {
 		foreach ( array( 'mistral', 'deepseek', 'openrouter' ) as $p ) {
 			$settings[ 'has_' . $p . '_key' ] = ! empty( self::get( $p . '_api_key' ) );
 		}
-		$settings['mcp']                = \AEO\Api\Mcp_Server::info();
+		$settings['pro']                = Pro::data();
+		$settings['branding']           = self::branding();
 		$settings['roles']              = Capabilities::roles();
 		$settings['cap_labels']         = Capabilities::CAPS;
 		$settings['role_caps']          = Capabilities::map();

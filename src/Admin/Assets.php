@@ -82,6 +82,8 @@ class Assets {
 				'siteName'    => get_bloginfo( 'name' ),
 				'pluginUrl'   => AEO_PLUGIN_URL,
 				'version'     => AEO_VERSION,
+				'pro'         => \AEO\Core\Pro::data(),
+				'branding'    => \AEO\Core\Settings::branding(),
 				'caps'        => array(
 					'manage' => current_user_can( 'aeo_manage_settings' ),
 					'view'   => current_user_can( 'aeo_view_reports' ),

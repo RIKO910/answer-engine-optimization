@@ -11,8 +11,6 @@
 namespace AEO\Content;
 
 use AEO\Core\Settings;
-use AEO\Services\AI\AI_Manager;
-use AEO\Services\AI\Local_AI_Provider;
 use AEO\Services\Seo_Compat;
 
 defined( 'ABSPATH' ) || exit;
@@ -122,23 +120,6 @@ class Meta_Service {
 		);
 	}
 
-	/**
-	 * Suggest title + description.
-	 *
-	 * @param int $post_id Post ID.
-	 * @return array{title: string, description: string}|\WP_Error
-	 */
-	public static function suggest( $post_id ) {
-		$post = get_post( $post_id );
-		if ( ! $post ) {
-			return new \WP_Error( 'aeo_404', __( 'Post not found', 'answer-engine-optimization' ) );
-		}
-		$ai = ( new AI_Manager() )->get_provider();
-		if ( ! method_exists( $ai, 'generate_meta' ) ) {
-			$ai = new Local_AI_Provider();
-		}
-		return $ai->generate_meta( get_the_title( $post ), $post->post_content );
-	}
 
 	/**
 	 * Save title + description.
@@ -186,34 +167,6 @@ class Meta_Service {
 		return $out;
 	}
 
-	/**
-	 * Suggest alt text for an attachment.
-	 *
-	 * @param int $attachment_id Attachment ID.
-	 * @return array{alt: string, source: string}|\WP_Error
-	 */
-	public static function suggest_alt( $attachment_id ) {
-		$file = get_attached_file( $attachment_id );
-		if ( ! $file ) {
-			return new \WP_Error( 'aeo_404', __( 'Image not found', 'answer-engine-optimization' ) );
-		}
-		$parent  = (int) wp_get_post_parent_id( $attachment_id );
-		$context = $parent ? wp_strip_all_tags( get_the_title( $parent ) ) : '';
-		$ai      = ( new AI_Manager() )->get_provider();
-		if ( method_exists( $ai, 'describe_image' ) && ! $ai instanceof Local_AI_Provider ) {
-			$alt = $ai->describe_image( $file, $context );
-			if ( ! is_wp_error( $alt ) && '' !== $alt ) {
-				return array(
-					'alt'    => $alt,
-					'source' => 'ai',
-				);
-			}
-		}
-		return array(
-			'alt'    => ( new Local_AI_Provider() )->describe_image( $file, $context ),
-			'source' => 'filename',
-		);
-	}
 
 	/**
 	 * Save alt text.

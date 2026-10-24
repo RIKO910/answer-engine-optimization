@@ -10,6 +10,8 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import EmptyState from '@/components/ui/EmptyState';
 import Tabs from '@/components/ui/Tabs';
+import ProGate from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 import { SwitchRow } from '@/components/ui/Switch';
 import { cn } from '@/lib/utils';
 
@@ -323,14 +325,22 @@ export default function Tools() {
         tabs={[
           { id: 'io', label: __('Import / export') },
           { id: 'migrate', label: __('Migrate FAQs') },
-          { id: 'mcp', label: __('MCP & AI agents') },
-          { id: 'roles', label: __('Roles') },
+          { id: 'mcp', label: isPro() ? __('MCP & AI agents') : `${__('MCP & AI agents')} · Pro` },
+          { id: 'roles', label: isPro() ? __('Roles') : `${__('Roles')} · Pro` },
         ]}
       />
       {tab === 'io' && <ImportExport />}
       {tab === 'migrate' && <Migration />}
-      {tab === 'mcp' && <Mcp />}
-      {tab === 'roles' && <Roles />}
+      {tab === 'mcp' && (
+        <ProGate feature="mcp">
+          <Mcp />
+        </ProGate>
+      )}
+      {tab === 'roles' && (
+        <ProGate feature="roles">
+          <Roles />
+        </ProGate>
+      )}
     </div>
   );
 }

@@ -5,7 +5,7 @@ Tags: seo, schema, faq, ai, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,24 +26,28 @@ It adds clean structured data, a visible FAQ and direct-answer block, an `llms.t
 * **Site audit** - flags thin content, missing images, FAQs, direct answers and configuration problems. Some issues can be fixed in one click.
 * **llms.txt, llms-full.txt and Markdown pages** - an automatic `/llms.txt` index (grouped by language with Polylang/WPML), a full-text `/llms-full.txt`, and a clean Markdown version of every page at `page-url.md` or via `Accept: text/markdown`. Password-protected and noindex pages are left out.
 * **AI crawler controls** - 28 AI crawlers grouped by purpose (training, AI search, user fetch) with one-click presets such as "block training, stay in AI search", plus Content-Signal lines in robots.txt.
-* **AI visibility tracking** - asks ChatGPT, Perplexity, Gemini and Claude your customers' questions with live web search and records whether the answer links to you, names you, at what position and with what sentiment. Share of voice against the domains they cite, a question x engine matrix, full answers and sources, and a trend over time. Uses your own API keys. Nothing is estimated or simulated.
+* **AI visibility tracking** - asks Perplexity (and with Pro also ChatGPT, Gemini and Claude) your customers' questions with live web search and records whether the answer links to you, names you, at what position and with what sentiment. A question x engine matrix with full answers and sources; share of voice and trends are in Pro. Uses your own API keys. Nothing is estimated or simulated.
 * **AI traffic** - logs AI crawler visits and visitors arriving from AI assistants (ChatGPT, Perplexity, Gemini, Copilot, Claude…) without cookies or IP addresses.
-* **Google Search Console and GA4** - question-style queries and AI-assistant sessions, using your own Google OAuth client. **Bing AI Performance** - import the CSV export.
+* **Google Search Console and GA4 (Pro)** - question-style queries and AI-assistant sessions, using your own Google OAuth client. **Bing AI Performance (Pro)** - import the CSV export.
 * **IndexNow** - pings Bing, Yandex, Seznam and Naver when a page is published or updated.
 * **Gutenberg blocks** - FAQ, HowTo, Key Takeaways and Direct Answer blocks with matching schema; Elementor and Bricks widgets for FAQ and Key Takeaways. Live AEO score panel in the block editor.
-* **Content tools** - stale-content finder, bulk AI FAQ drafts with an approval queue, SEO titles and descriptions (written into Yoast/Rank Math/SEOPress fields when present), and image alt text.
-* **Schema templates** - reusable JSON-LD with display rules (post type, term, page) and placeholders for custom fields, ACF and Meta Box.
+* **Content tools** - stale-content finder, SEO titles and descriptions (written into Yoast/Rank Math/SEOPress fields when present) and image alt text. Bulk AI FAQ drafts and writing with AI are in Pro.
+* **Schema templates (Pro)** - reusable JSON-LD with display rules (post type, term, page) and placeholders for custom fields, ACF and Meta Box.
 * **Author profiles** - job title, credentials, expertise and profile links as Person schema, with an optional author box.
 * **Hotels (Quotel Hotel Booking)** - Hotel schema with check-in/out, stars, amenities, nearby attractions and guest rating; HotelRoom/Suite with an Offer for each room; a hotel FAQ starter.
 * **Competitor check** - reads competitors' homepage structured data and checks for an llms.txt file, and shows schema types they use that you don't.
 * **Local business** - multiple locations with PostalAddress, opening hours, geo coordinates and business type (Hotel, Restaurant, Store and more).
-* **WooCommerce** - adds brand, GTIN, return policy, shipping details and price-valid-until to WooCommerce's own Product schema, and optionally ProductGroup for variable products.
+* **WooCommerce** - adds brand and GTIN to WooCommerce's own Product schema. Pro adds return policy, shipping details, price-valid-until and ProductGroup for variable products.
 * **Open Graph and Twitter cards** - when no SEO plugin is handling them.
 * **Content briefs** - target questions, entities and schema type for a topic, plus an opportunity score based on how much of your own content already covers it.
 * **Weekly email** - optional audit and citation summary.
-* **White-label and client reports** - replace the plugin name and logo, and print a client report.
-* **Roles** - decide which roles can view reports, edit schema, use AI or change settings.
+* **White-label and client reports (Pro)** - replace the plugin name and logo, and print a client report.
+* **Roles (Pro)** - decide which roles can view reports, edit schema, use AI or change settings.
 * **Import / export** - settings, schema, locations, templates and per-page FAQs as one JSON file; copy Yoast and Rank Math FAQ blocks into the plugin.
+
+= Pro add-on (optional) =
+
+Answer Engine Optimization Pro is a separate plugin that adds visibility tracking on ChatGPT, Gemini and Claude (25 prompts), share of voice, trends and scheduled scans, Google Search Console, GA4 and Bing data, client reports, white-label, bulk AI tools, schema templates, an MCP server, role permissions and advanced WooCommerce schema. Licenses are managed under AEO → License.
 
 = AI providers (optional) =
 
@@ -54,7 +58,7 @@ AI visibility scans use the OpenAI, Gemini and Anthropic keys with web search, p
 = Developers =
 
 * REST API under `/wp-json/aeo-genius/v1/` (cookie or Application Password auth).
-* **MCP server** at `/wp-json/aeo-genius/v1/mcp` (off by default) with 14 tools, and the same tools registered with the WordPress Abilities API (6.9+).
+* **MCP server (Pro)** at `/wp-json/aeo-genius/v1/mcp` (off by default) with 14 tools, and the same tools registered with the WordPress Abilities API (6.9+).
 * **WPGraphQL** fields: `aeoScore`, `aeoTargetQuestion`, `aeoDirectAnswer`, `aeoFaqs`, `aeoSchema`, `aeoMarkdown`.
 * Public schema map: `/wp-json/aeo-genius/v1/schemamap`.
 * WP-CLI: `wp aeo audit`, `wp aeo score`, `wp aeo fix <issue_id>`, `wp aeo scan`.
@@ -109,9 +113,15 @@ Answer Engine Optimization is the practice of optimizing web content so AI-power
 
 Yoast and Rank Math are excellent traditional SEO plugins. Answer Engine Optimization adds a dedicated AEO layer: AI citation tracking, AEO Score per post, AI FAQ generation, competitor gap analysis for AI visibility, llms.txt for AI crawlers, and schema types optimized for answer engines. It works alongside them — not as a replacement.
 
-= Is this plugin really 100% free? =
+= Is this plugin free? =
 
-Yes. There is no Pro version. AI features use your own API key (OpenAI, Anthropic, Gemini, or Perplexity for citation tracking), so you only pay the provider for what you use.
+Yes. Everything in this plugin works without paying: schema, FAQs, blocks, the AEO score, llms.txt, AI crawler controls, AI traffic, the site audit and Perplexity visibility tracking. AI features use your own API key, so you only pay the provider for what you use.
+
+The optional Answer Engine Optimization Pro add-on adds agency and reporting features: ChatGPT, Gemini and Claude visibility tracking, share of voice and trends, scheduled scans, Google Search Console and GA4, Bing import, client reports, white-label, bulk AI tools, schema templates, an MCP server, role permissions and advanced WooCommerce schema. Nothing in this free plugin is locked.
+
+= How do I activate Pro? =
+
+Install and activate the Answer Engine Optimization Pro add-on, then go to AEO → License, paste your license key and click Activate license. The license is checked once a day; if the license server cannot be reached, Pro keeps working.
 
 = Do I need an OpenAI or AI API key? =
 
@@ -190,6 +200,14 @@ Yes. Set an agency name and logo under Agency; they replace the plugin name in t
 
 == Changelog ==
 
+= 1.3.0 =
+* New: License page (AEO → License) for the optional Answer Engine Optimization Pro add-on, with daily license checks through the QueueCommerce license server.
+* Changed: ChatGPT, Gemini and Claude visibility tracking, share of voice, trends, scheduled scans, Google Search Console/GA4, Bing import, client reports, white-label, bulk AI tools, schema templates, the MCP server, role permissions and advanced WooCommerce schema moved to the Pro add-on. Your settings and data are kept and come back when Pro is active.
+* Free plugin: AI visibility on Perplexity with 5 prompts per scan.
+* Fixed: AI visibility page was blank on sites that had never run a scan.
+* Fixed: clicking the plugin's own menu after opening a page from the WordPress submenu jumped back to that page.
+* Fixed: long AI scans could stop on Windows servers (PHP time limit), and could check questions twice after an interruption.
+
 = 1.2.0 =
 * New: AI access page with 28 AI crawlers, presets, Content-Signal, llms-full.txt and per-page Markdown.
 * New: multi-engine AI visibility (ChatGPT, Perplexity, Gemini, Claude) with share of voice, sentiment, position, answer viewer, prompt suggestions and trend.
@@ -246,6 +264,9 @@ Yes. Set an agency name and logo under Agency; they replace the plugin name in t
 * Custom database tables: schema cache, audit log, citations
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Pro features (ChatGPT/Gemini/Claude tracking, Google and Bing data, reports, white-label, bulk AI, schema templates, MCP, roles) moved to the separate Answer Engine Optimization Pro add-on. Your data is kept.
 
 = 1.2.0 =
 Large feature release. Adds two database tables and flushes rewrite rules on update. Review AI access: GPTBot and other training crawlers keep the rules you had.

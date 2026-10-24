@@ -47,7 +47,8 @@ class Capabilities {
 	 * @return array<string, string[]>
 	 */
 	public static function map() {
-		$saved = Settings::get( 'role_caps', array() );
+		// Custom role mapping is a Pro feature; free installs use the defaults.
+		$saved = apply_filters( 'aeo_custom_role_caps', false ) ? Settings::get( 'role_caps', array() ) : array();
 		$map   = array();
 		foreach ( self::DEFAULTS as $cap => $roles ) {
 			$map[ $cap ] = isset( $saved[ $cap ] ) && is_array( $saved[ $cap ] ) ? array_values( array_unique( array_merge( array( 'administrator' ), $saved[ $cap ] ) ) ) : $roles;

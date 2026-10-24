@@ -11,6 +11,8 @@ import LoadingState from '@/components/ui/LoadingState';
 import EmptyState from '@/components/ui/EmptyState';
 import Stat from '@/components/ui/Stat';
 import Tabs from '@/components/ui/Tabs';
+import ProGate from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 
 interface TrafficReport {
   days: number;
@@ -414,13 +416,21 @@ export default function Traffic() {
         onChange={setTab}
         tabs={[
           { id: 'ai', label: __('AI crawlers & referrals') },
-          { id: 'google', label: 'Google' },
-          { id: 'bing', label: 'Bing' },
+          { id: 'google', label: isPro() ? 'Google' : 'Google · Pro' },
+          { id: 'bing', label: isPro() ? 'Bing' : 'Bing · Pro' },
         ]}
       />
       {tab === 'ai' && <AiTraffic />}
-      {tab === 'google' && <Google />}
-      {tab === 'bing' && <Bing />}
+      {tab === 'google' && (
+        <ProGate feature="google">
+          <Google />
+        </ProGate>
+      )}
+      {tab === 'bing' && (
+        <ProGate feature="bing">
+          <Bing />
+        </ProGate>
+      )}
     </div>
   );
 }

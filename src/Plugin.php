@@ -43,7 +43,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	public $version = '1.2.0';
+	public $version = '1.3.0';
 
 	/**
 	 * Get singleton instance.
@@ -115,12 +115,10 @@ class Plugin {
 		\AEO\Integrations\Page_Builders::register();
 		\AEO\Integrations\Hotel::register();
 		\AEO\Integrations\Abilities::register();
-		\AEO\Api\Mcp_Server::register();
 		\AEO\Api\Rest_Tools::register();
 		\AEO\Integrations\Graphql::register();
 		\AEO\Core\Capabilities::register();
-		\AEO\Services\Google_Service::register();
-		\AEO\Services\Report_Service::register();
+		\AEO\Core\License::register();
 		\AEO\Services\IndexNow::register();
 		add_action( Upgrader::CRON_HOOK, array( $this, 'run_weekly_maintenance' ) );
 		add_action( 'wp_initialize_site', array( Activator::class, 'on_new_site' ), 20 );
@@ -251,6 +249,7 @@ class Plugin {
 	public static function deactivate() {
 		Upgrader::unschedule_events();
 		wp_clear_scheduled_hook( \AEO\Services\IndexNow::HOOK );
+		wp_clear_scheduled_hook( \AEO\Core\License::CRON );
 		\AEO\Frontend\Llms_Txt::flush();
 		flush_rewrite_rules();
 	}

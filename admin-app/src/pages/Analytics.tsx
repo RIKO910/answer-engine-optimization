@@ -5,19 +5,22 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import { Link } from 'react-router-dom';
 import { RefreshCw, BarChart3, Users, Check, Minus, AlertTriangle, Plus, Sparkles, Save, FileDown } from 'lucide-react';
 import { api, get, post } from '@/lib/api';
-import { __, sprintf } from '@/lib/i18n';
+import { __, _n, sprintf } from '@/lib/i18n';
 import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import EmptyState from '@/components/ui/EmptyState';
 import Stat from '@/components/ui/Stat';
 import Modal from '@/components/ui/Modal';
+import ProGate, { ProBadge } from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 import type { EngineResult, ScanProgress, VisibilitySummary } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface VisibilityData {
   engines: string[];
-  all: Array<{ engine: string; label: string }>;
+  all: Array<{ engine: string; label: string; locked?: boolean }>;
+  max_prompts?: number;
   summary: VisibilitySummary | null;
   history: Array<{ scan_id: string; date: string; cited_rate: number; mentioned_rate: number }>;
   progress: ScanProgress | null;
@@ -206,9 +209,15 @@ export default function Analytics() {
         description={__('Whether ChatGPT, Perplexity, Gemini and Claude cite or mention you for the questions your customers ask.')}
         actions={
           <>
-            <button type="button" className="aeo-btn-secondary" onClick={() => report.mutate()} disabled={report.isPending}>
-              <FileDown size={14} /> {__('Client report')}
-            </button>
+            {isPro() ? (
+              <button type="button" className="aeo-btn-secondary" onClick={() => report.mutate()} disabled={report.isPending}>
+                <FileDown size={14} /> {__('Client report')}
+              </button>
+            ) : (
+              <Link to="/license" className="aeo-btn-secondary" title={__('Client reports are a Pro feature')}>
+                <FileDown size={14} /> {__('Client report')} <ProBadge />
+              </Link>
+            )}
             {canResume && (
               <button type="button" className="aeo-btn-secondary" onClick={() => runScan(true)} disabled={caps?.ai === false}>
                 {sprintf(__('Resume (%1$d / %2$d)'), saved!.done, saved!.total)}
@@ -253,7 +262,9 @@ export default function Analytics() {
       {available.length === 0 && (
         <div className="aeo-card-muted mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-[13px] text-slate-600">
-            {__('Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key to start.')}
+            {isPro()
+              ? __('Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key to start.')
+              : __('Scans ask Perplexity your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity API key to start. ChatGPT, Gemini and Claude tracking is in Pro.')}
           </p>
           <Link to="/settings" className="aeo-btn-secondary aeo-btn-sm self-start sm:self-center">
             {__('Add a key')}
@@ -269,7 +280,7 @@ export default function Analytics() {
           value={summary ? `${summary.sentiment.positive}/${summary.sentiment.neutral}/${summary.sentiment.negative}` : '—'}
           hint={__('Positive / neutral / negative mentions')}
         />
-        <Stat label={__('Last scan')} value={<span className="text-base">{summary?.scanned_at?.slice(0, 16) || '—'}</span>} hint={sprintf(__('%d engines connected'), available.length)} />
+        <Stat label={__('Last scan')} value={<span className="text-base">{summary?.scanned_at?.slice(0, 16) || '—'}</span>} hint={sprintf(_n('%d engine connected', '%d engines connected', available.length), available.length)} />
       </div>
 
       {summary && summary.engines.length > 0 && (
@@ -332,7 +343,9 @@ export default function Analytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <Card>
           <CardHeader title={__('Share of voice')} description={__('Who the engines cite for your questions')} />
-          {!summary || summary.share_of_voice.length === 0 ? (
+          {!isPro() ? (
+            <ProGate feature="insights" compact />
+          ) : !summary || summary.share_of_voice.length === 0 ? (
             <EmptyState icon={Users} title={__('No sources yet')} description={__('Appears after a scan.')} />
           ) : (
             <ul className="space-y-2.5">
@@ -355,7 +368,9 @@ export default function Analytics() {
 
         <Card>
           <CardHeader title={__('Trend')} description={__('Cited and mentioned rate per scan')} />
-          {history.length < 2 ? (
+          {!isPro() ? (
+            <ProGate feature="insights" compact />
+          ) : history.length < 2 ? (
             <EmptyState icon={BarChart3} title={__('Not enough scans')} description={__('The trend appears after two or more scans.')} />
           ) : (
             <ResponsiveContainer width="100%" height={220}>
@@ -376,7 +391,7 @@ export default function Analytics() {
       <Card className="mb-4">
         <CardHeader
           title={__('What to track')}
-          description={sprintf(__('%d questions · up to 25 are checked per scan on each engine'), keywordCount)}
+          description={sprintf(__('%1$d questions · up to %2$d are checked per scan on each engine'), keywordCount, data?.max_prompts || 5) + (isPro() ? '' : ` · ${__('Pro checks up to 25')}`)}
           action={
             <button type="button" className="aeo-btn-primary aeo-btn-sm" onClick={() => saveTracking.mutate()} disabled={saveTracking.isPending || caps?.manage === false}>
               <Save size={12} /> {__('Save')}
@@ -428,19 +443,20 @@ export default function Analytics() {
               <div className="space-y-1.5">
                 {(data?.all || []).map((e) => {
                   const hasKey = available.includes(e.engine) || (engines.length > 0 && engines.includes(e.engine));
-                  const on = engines.length === 0 ? available.includes(e.engine) : engines.includes(e.engine);
+                  const on = !e.locked && (engines.length === 0 ? available.includes(e.engine) : engines.includes(e.engine));
                   return (
-                    <label key={e.engine} className="flex items-center gap-2 text-sm text-slate-700">
+                    <label key={e.engine} className={cn('flex items-center gap-2 text-sm', e.locked ? 'text-slate-400' : 'text-slate-700')}>
                       <input
                         type="checkbox"
                         checked={on}
+                        disabled={e.locked}
                         onChange={() => {
                           const base = engines.length === 0 ? available : engines;
                           setEngines(on ? base.filter((x) => x !== e.engine) : [...base, e.engine]);
                         }}
                       />
                       {e.label}
-                      {!hasKey && <span className="text-2xs text-slate-400">· {__('no key')}</span>}
+                      {e.locked ? <ProBadge /> : !hasKey && <span className="text-2xs text-slate-400">· {__('no key')}</span>}
                     </label>
                   );
                 })}

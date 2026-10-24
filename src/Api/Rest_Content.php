@@ -1,13 +1,13 @@
 <?php
 /**
- * REST routes for content tools: score preview, freshness, FAQ queue, meta and alt text.
+ * REST routes for content tools: score preview, freshness, FAQ storage, meta and alt text.
+ * (Bulk FAQ queue, AI meta/alt and schema templates are in the Pro add-on.)
  *
  * @package AEO
  */
 
 namespace AEO\Api;
 
-use AEO\Content\Faq_Queue;
 use AEO\Content\Freshness;
 use AEO\Content\Meta_Service;
 use AEO\Services\Score_Engine;
@@ -68,7 +68,6 @@ class Rest_Content {
 	 */
 	public static function routes() {
 		$edit = array( __CLASS__, 'can_edit' );
-		$ai   = array( __CLASS__, 'can_ai' );
 		$get  = WP_REST_Server::READABLE;
 		$post = WP_REST_Server::CREATABLE;
 		$r    = static function ( $route, $methods, $cb, $perm ) {
@@ -126,73 +125,6 @@ class Rest_Content {
 			$edit
 		);
 
-		// Bulk FAQ queue.
-		$r(
-			'/faq-queue',
-			$get,
-			static function () {
-				return Rest_Extra::respond(
-					array(
-						'pending'  => Faq_Queue::pending(),
-						'progress' => get_option( Faq_Queue::STATE, null ),
-					)
-				);
-			},
-			$edit
-		);
-		$r(
-			'/faq-queue/start',
-			$post,
-			static function ( WP_REST_Request $req ) {
-				$p   = self::p( $req );
-				$ids = array_map( 'intval', (array) ( $p['post_ids'] ?? array() ) );
-				if ( ! empty( $p['without_faqs'] ) ) {
-					foreach ( get_posts( array( 'post_type' => \AEO\Core\Settings::get_post_types(), 'post_status' => 'publish', 'posts_per_page' => 50, 'fields' => 'ids' ) ) as $id ) {
-						if ( ! ( new \AEO\Services\Schema_Service() )->build_faq_node( $id ) && ! get_post_meta( $id, Faq_Queue::META, true ) ) {
-							$ids[] = $id;
-						}
-					}
-				}
-				Faq_Queue::start( $ids );
-				return Rest_Extra::respond( Faq_Queue::process( 15 ) );
-			},
-			$ai
-		);
-		$r(
-			'/faq-queue/continue',
-			$post,
-			static function () {
-				return Rest_Extra::respond( Faq_Queue::process( 20 ) );
-			},
-			$ai
-		);
-		$r(
-			'/faq-queue/approve',
-			$post,
-			static function ( WP_REST_Request $req ) {
-				$p  = self::p( $req );
-				$id = (int) ( $p['post_id'] ?? 0 );
-				if ( ! current_user_can( 'edit_post', $id ) ) {
-					return Rest_Extra::respond( new \WP_Error( 'aeo_forbidden', 'Forbidden' ), 403 );
-				}
-				return Rest_Extra::respond( array( 'total' => Faq_Queue::approve( $id, (array) ( $p['items'] ?? array() ) ) ) );
-			},
-			$edit
-		);
-		$r(
-			'/faq-queue/reject',
-			$post,
-			static function ( WP_REST_Request $req ) {
-				$id = (int) ( self::p( $req )['post_id'] ?? 0 );
-				if ( ! current_user_can( 'edit_post', $id ) ) {
-					return Rest_Extra::respond( new \WP_Error( 'aeo_forbidden', 'Forbidden' ), 403 );
-				}
-				Faq_Queue::reject( $id );
-				return Rest_Extra::respond( array( 'ok' => true ) );
-			},
-			$edit
-		);
-
 		// Meta titles and descriptions.
 		$r(
 			'/meta',
@@ -201,18 +133,6 @@ class Rest_Content {
 				return Rest_Extra::respond( Meta_Service::list_posts( 'missing' === $req->get_param( 'filter' ) ? 'missing' : 'all' ) );
 			},
 			$edit
-		);
-		$r(
-			'/meta/suggest',
-			$post,
-			static function ( WP_REST_Request $req ) {
-				$id = (int) ( self::p( $req )['post_id'] ?? 0 );
-				if ( ! current_user_can( 'edit_post', $id ) ) {
-					return Rest_Extra::respond( new \WP_Error( 'aeo_forbidden', 'Forbidden' ), 403 );
-				}
-				return Rest_Extra::respond( Meta_Service::suggest( $id ) );
-			},
-			$ai
 		);
 		$r(
 			'/meta/save',
@@ -239,18 +159,6 @@ class Rest_Content {
 			$edit
 		);
 		$r(
-			'/alt/suggest',
-			$post,
-			static function ( WP_REST_Request $req ) {
-				$id = (int) ( self::p( $req )['id'] ?? 0 );
-				if ( ! current_user_can( 'edit_post', $id ) ) {
-					return Rest_Extra::respond( new \WP_Error( 'aeo_forbidden', 'Forbidden' ), 403 );
-				}
-				return Rest_Extra::respond( Meta_Service::suggest_alt( $id ) );
-			},
-			$ai
-		);
-		$r(
 			'/alt/save',
 			$post,
 			static function ( WP_REST_Request $req ) {
@@ -265,61 +173,31 @@ class Rest_Content {
 			$edit
 		);
 	
-		// Schema templates (display rules + field mapping).
+
+		// Hotel.
+		// Add FAQ items to a page (hotel FAQ starter; Pro's review queue uses the same store).
 		$r(
-			'/schema-templates',
-			$get,
-			static function () {
-				return Rest_Extra::respond(
-					array(
-						'templates'  => \AEO\Services\Schema_Templates::all(),
-						'post_types' => \AEO\Core\Settings::get_post_types(),
-						'taxonomies' => array_values(
-							array_map(
-								static function ( $t ) {
-									return array(
-										'name'  => $t->name,
-										'label' => $t->labels->singular_name,
-									);
-								},
-								get_taxonomies( array( 'public' => true ), 'objects' )
-							)
-						),
-						'acf'        => function_exists( 'get_field' ),
-						'metabox'    => function_exists( 'rwmb_meta' ),
-					)
-				);
-			},
-			$edit
-		);
-		$r(
-			'/schema-templates',
-			$post,
-			static function ( WP_REST_Request $req ) {
-				$result = \AEO\Services\Schema_Templates::save_all( (array) ( self::p( $req )['templates'] ?? array() ) );
-				\AEO\Api\Public_Api::flush_schemamap();
-				return Rest_Extra::respond( $result );
-			},
-			static function () {
-				return current_user_can( 'aeo_edit_schema' ) && current_user_can( 'aeo_manage_settings' );
-			}
-		);
-		$r(
-			'/schema-templates/preview',
+			'/faqs/add',
 			$post,
 			static function ( WP_REST_Request $req ) {
 				$p  = self::p( $req );
 				$id = (int) ( $p['post_id'] ?? 0 );
 				if ( ! $id || ! current_user_can( 'edit_post', $id ) ) {
-					return Rest_Extra::respond( new \WP_Error( 'aeo_post', __( 'Choose a post to preview.', 'answer-engine-optimization' ) ) );
+					return Rest_Extra::respond( new \WP_Error( 'aeo_forbidden', 'Forbidden' ), 403 );
 				}
-				$json = is_string( $p['schema'] ?? null ) ? $p['schema'] : wp_json_encode( $p['schema'] ?? array() );
-				return Rest_Extra::respond( \AEO\Services\Schema_Templates::preview( $json, $id ) );
+				$items = array();
+				foreach ( (array) ( $p['items'] ?? array() ) as $item ) {
+					if ( is_array( $item ) ) {
+						$items[] = array(
+							'question' => sanitize_text_field( (string) ( $item['question'] ?? '' ) ),
+							'answer'   => wp_kses_post( (string) ( $item['answer'] ?? '' ) ),
+						);
+					}
+				}
+				return Rest_Extra::respond( array( 'total' => \AEO\Content\Faq_Store::add( $id, $items ) ) );
 			},
 			$edit
 		);
-
-		// Hotel.
 		$r(
 			'/hotel',
 			$get,

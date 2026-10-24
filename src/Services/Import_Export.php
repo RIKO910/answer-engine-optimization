@@ -56,7 +56,8 @@ class Import_Export {
 			$out['locations'] = get_option( 'aeo_local_locations', array() );
 		}
 		if ( in_array( 'templates', $sections, true ) ) {
-			$out['templates'] = Schema_Templates::all();
+			$tpl              = get_option( 'aeo_schema_templates', array() );
+			$out['templates'] = is_array( $tpl ) ? array_values( $tpl ) : array();
 		}
 		if ( in_array( 'posts', $sections, true ) ) {
 			$out['posts'] = self::export_posts();
@@ -154,22 +155,18 @@ class Import_Export {
 			}
 		}
 
+		// Schema templates are validated and saved by the Pro add-on.
 		if ( $apply( 'templates' ) && is_array( $in['templates'] ) ) {
-			$merged = array();
-			foreach ( Schema_Templates::all() as $t ) {
-				$merged[ $t['id'] ] = $t;
-			}
-			foreach ( $in['templates'] as $t ) {
-				if ( is_array( $t ) && ! empty( $t['id'] ) ) {
-					$merged[ sanitize_key( $t['id'] ) ] = $t;
+			if ( has_filter( 'aeo_import_schema_templates' ) ) {
+				$report['templates'] = count( $in['templates'] );
+				if ( ! $dry_run ) {
+					$saved = apply_filters( 'aeo_import_schema_templates', null, $in['templates'] );
+					if ( is_wp_error( $saved ) ) {
+						return $saved;
+					}
 				}
-			}
-			$report['templates'] = count( $in['templates'] );
-			if ( ! $dry_run ) {
-				$saved = Schema_Templates::save_all( array_values( $merged ) );
-				if ( is_wp_error( $saved ) ) {
-					return $saved;
-				}
+			} else {
+				$report['templates_skipped'] = __( 'Schema templates need Answer Engine Optimization Pro.', 'answer-engine-optimization' );
 			}
 		}
 

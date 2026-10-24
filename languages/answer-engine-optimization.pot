@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Answer Engine Optimization 1.2.0\n"
+"Project-Id-Version: Answer Engine Optimization 1.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aeo\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-23T17:50:07+00:00\n"
+"POT-Creation-Date: 2026-10-24T08:54:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: answer-engine-optimization\n"
@@ -22,7 +22,6 @@ msgstr ""
 #: src/Content/Blocks.php:39
 #: src/Integrations/Abilities.php:50
 #: src/Integrations/Page_Builders.php:42
-#: src/Services/Report_Service.php:71
 msgid "Answer Engine Optimization"
 msgstr ""
 
@@ -190,7 +189,6 @@ msgstr ""
 
 #: includes/admin/class-aeo-questions.php:93
 #: src/Api/Rest_Api.php:651
-#: src/Content/Meta_Service.php:134
 msgid "Post not found"
 msgstr ""
 
@@ -284,57 +282,27 @@ msgid "Tools"
 msgstr ""
 
 #: src/Admin/Admin_Menu.php:57
-msgid "Site Audit"
+msgid "License"
 msgstr ""
 
 #: src/Admin/Admin_Menu.php:58
-msgid "Content Briefs"
+msgid "Site Audit"
 msgstr ""
 
 #: src/Admin/Admin_Menu.php:59
-msgid "Settings"
+msgid "Content Briefs"
 msgstr ""
 
 #: src/Admin/Admin_Menu.php:60
+msgid "Settings"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:61
 msgid "Agency Tools"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:92
+#: src/Admin/Admin_Menu.php:94
 msgid "This page needs JavaScript enabled."
-msgstr ""
-
-#: src/Api/Mcp_Server.php:73
-msgid "The MCP endpoint is turned off in AEO settings."
-msgstr ""
-
-#: src/Api/Mcp_Server.php:76
-msgid "Authenticate with a WordPress Application Password."
-msgstr ""
-
-#: src/Api/Mcp_Server.php:141
-msgid "Tools to inspect and improve how AI answer engines read this WordPress site: scores, schema, FAQs, llms.txt, crawler rules, AI visibility and AI traffic."
-msgstr ""
-
-#: src/Api/Mcp_Server.php:204
-msgid "You do not have permission to use this tool on this item."
-msgstr ""
-
-#. translators: %s: argument name
-#: src/Api/Mcp_Server.php:243
-#, php-format
-msgid "Missing required argument: %s"
-msgstr ""
-
-#. translators: 1: argument, 2: type
-#: src/Api/Mcp_Server.php:269
-#, php-format
-msgid "Argument %1$s must be of type %2$s."
-msgstr ""
-
-#. translators: %s: argument
-#: src/Api/Mcp_Server.php:273
-#, php-format
-msgid "Argument %s has an unsupported value."
 msgstr ""
 
 #: src/Api/Rest_Api.php:446
@@ -355,11 +323,7 @@ msgstr ""
 msgid "Enter a topic."
 msgstr ""
 
-#: src/Api/Rest_Content.php:314
-msgid "Choose a post to preview."
-msgstr ""
-
-#: src/Api/Rest_Extra.php:127
+#: src/Api/Rest_Extra.php:134
 msgid "This looks like a local site, which search engines cannot reach."
 msgstr ""
 
@@ -420,8 +384,172 @@ msgstr ""
 msgid "Text refers to %s as current"
 msgstr ""
 
-#: src/Content/Meta_Service.php:198
-msgid "Image not found"
+#. translators: %s: error message
+#: src/Core/License.php:126
+#, php-format
+msgid "Could not connect to the license server: %s"
+msgstr ""
+
+#. translators: %d: HTTP status
+#: src/Core/License.php:134
+#, php-format
+msgid "The license server returned an unexpected response (HTTP %d)."
+msgstr ""
+
+#: src/Core/License.php:151
+msgid "Enter a license key."
+msgstr ""
+
+#: src/Core/License.php:183
+msgid "License activated."
+msgstr ""
+
+#: src/Core/License.php:187
+msgid "The license could not be activated."
+msgstr ""
+
+#: src/Core/License.php:208
+msgid "No license key saved."
+msgstr ""
+
+#: src/Core/License.php:241
+msgid "License is active."
+msgstr ""
+
+#: src/Core/License.php:242
+msgid "License has expired."
+msgstr ""
+
+#: src/Core/License.php:242
+msgid "License is not activated on this domain."
+msgstr ""
+
+#: src/Core/License.php:247
+msgid "License is not valid."
+msgstr ""
+
+#: src/Core/License.php:281
+msgid "License removed from this site."
+msgstr ""
+
+#: src/Core/License.php:408
+msgid "Activate your license to switch on the Pro features."
+msgstr ""
+
+#: src/Core/License.php:413
+msgid "Your license has expired. Renew it to keep the Pro features."
+msgstr ""
+
+#: src/Core/License.php:414
+msgid "Your license is not active. Pro features are switched off."
+msgstr ""
+
+#: src/Core/License.php:422
+msgid "Answer Engine Optimization Pro:"
+msgstr ""
+
+#: src/Core/License.php:425
+msgid "Manage license"
+msgstr ""
+
+#: src/Core/Pro.php:70
+msgid "This feature needs Answer Engine Optimization Pro with an active license."
+msgstr ""
+
+#: src/Core/Pro.php:86
+msgid "ChatGPT, Gemini and Claude visibility"
+msgstr ""
+
+#: src/Core/Pro.php:86
+msgid "Track citations on four AI engines instead of Perplexity only, with up to 25 prompts."
+msgstr ""
+
+#: src/Core/Pro.php:87
+msgid "Share of voice and trends"
+msgstr ""
+
+#: src/Core/Pro.php:87
+msgid "See which competitors the engines cite and how your visibility changes scan by scan."
+msgstr ""
+
+#: src/Core/Pro.php:88
+msgid "Scheduled weekly scans"
+msgstr ""
+
+#: src/Core/Pro.php:88
+msgid "Scans run automatically and the results are emailed to you."
+msgstr ""
+
+#: src/Core/Pro.php:89
+msgid "Google Search Console and GA4"
+msgstr ""
+
+#: src/Core/Pro.php:89
+msgid "Question-style searches and sessions from AI assistants, in your dashboard."
+msgstr ""
+
+#: src/Core/Pro.php:90
+msgid "Bing AI Performance import"
+msgstr ""
+
+#: src/Core/Pro.php:90
+msgid "Copilot citations per page and per day."
+msgstr ""
+
+#: src/Core/Pro.php:91
+msgid "Client reports"
+msgstr ""
+
+#: src/Core/Pro.php:91
+msgid "A printable report of scores, AI visibility and traffic."
+msgstr ""
+
+#: src/Core/Pro.php:92
+msgid "White-label"
+msgstr ""
+
+#: src/Core/Pro.php:92
+msgid "Your agency name and logo in the admin."
+msgstr ""
+
+#: src/Core/Pro.php:93
+msgid "Bulk AI tools"
+msgstr ""
+
+#: src/Core/Pro.php:93
+msgid "Draft FAQs for many pages at once, and write SEO titles, descriptions and alt text with AI."
+msgstr ""
+
+#: src/Core/Pro.php:94
+msgid "Schema templates"
+msgstr ""
+
+#: src/Core/Pro.php:94
+msgid "Reusable schema with display rules, filled from custom fields, ACF and Meta Box."
+msgstr ""
+
+#: src/Core/Pro.php:95
+msgid "MCP server for AI agents"
+msgstr ""
+
+#: src/Core/Pro.php:95
+msgid "Let Claude, ChatGPT or Cursor read and update your AEO data."
+msgstr ""
+
+#: src/Core/Pro.php:96
+msgid "Role permissions"
+msgstr ""
+
+#: src/Core/Pro.php:96
+msgid "Choose which roles can view reports, edit schema or use AI."
+msgstr ""
+
+#: src/Core/Pro.php:97
+msgid "Advanced WooCommerce schema"
+msgstr ""
+
+#: src/Core/Pro.php:97
+msgid "Return policy, shipping details and product variants (ProductGroup)."
 msgstr ""
 
 #: src/Integrations/Abilities.php:51
@@ -648,16 +776,22 @@ msgstr ""
 msgid "Invalid AI response"
 msgstr ""
 
-#: src/Services/Ai_Visibility.php:103
+#: src/Services/Ai_Visibility.php:128
 msgid "Add at least one API key (Perplexity, OpenAI, Gemini or Anthropic) in Settings to track AI citations."
 msgstr ""
 
-#: src/Services/Ai_Visibility.php:107
+#: src/Services/Ai_Visibility.php:132
 msgid "Add tracked prompts in Settings first."
 msgstr ""
 
-#: src/Services/Ai_Visibility.php:400
+#: src/Services/Ai_Visibility.php:500
 msgid "No API key"
+msgstr ""
+
+#. translators: %s: engine name
+#: src/Services/Ai_Visibility.php:516
+#, php-format
+msgid "%s tracking needs Answer Engine Optimization Pro."
 msgstr ""
 
 #: src/Services/Audit_Service.php:110
@@ -744,47 +878,18 @@ msgstr ""
 msgid "Setup wizard not completed"
 msgstr ""
 
-#: src/Services/Bing_Import.php:32
-msgid "The file has no data rows."
-msgstr ""
-
-#: src/Services/Bing_Import.php:57
-msgid "Could not find a page/URL or query column. Export the AI Performance report from Bing Webmaster Tools as CSV."
-msgstr ""
-
 #. translators: %d: HTTP status
 #: src/Services/Citation_Service.php:206
 #, php-format
 msgid "Homepage returned HTTP %d"
 msgstr ""
 
-#: src/Services/Google_Service.php:98
-#: src/Services/Report_Service.php:66
-msgid "Not allowed."
-msgstr ""
-
-#: src/Services/Google_Service.php:102
-msgid "The link expired. Start the connection again."
-msgstr ""
-
-#: src/Services/Google_Service.php:185
-msgid "Google is not connected."
-msgstr ""
-
-#: src/Services/Google_Service.php:205
-msgid "Could not refresh the Google connection. Connect again."
-msgstr ""
-
-#: src/Services/Google_Service.php:295
-msgid "Choose a Search Console property."
-msgstr ""
-
-#: src/Services/Google_Service.php:355
-msgid "Choose a GA4 property."
-msgstr ""
-
-#: src/Services/Import_Export.php:120
+#: src/Services/Import_Export.php:121
 msgid "This is not an Answer Engine Optimization export file."
+msgstr ""
+
+#: src/Services/Import_Export.php:169
+msgid "Schema templates need Answer Engine Optimization Pro."
 msgstr ""
 
 #: src/Services/IndexNow.php:168
@@ -792,61 +897,47 @@ msgid "No URLs on this site to submit."
 msgstr ""
 
 #. translators: 1: total, 2: critical, 3: warnings, 4: opportunities
-#: src/Services/Notification_Service.php:62
+#: src/Services/Notification_Service.php:63
 #, php-format
 msgid "Site audit: %1$d issues (%2$d critical, %3$d warnings, %4$d opportunities)."
 msgstr ""
 
 #. translators: 1: keywords checked, 2: answers citing the site
-#: src/Services/Notification_Service.php:74
+#: src/Services/Notification_Service.php:75
 #, php-format
 msgid "AI citations: %1$d keywords checked on Perplexity, %2$d answers cited your site."
 msgstr ""
 
 #. translators: %s: site name
-#: src/Services/Notification_Service.php:89
+#: src/Services/Notification_Service.php:90
 #, php-format
 msgid "[%s] Weekly AEO summary"
 msgstr ""
 
-#: src/Services/Report_Service.php:114
-msgid "Print / Save as PDF"
-msgstr ""
-
-#: src/Services/Schema_Service.php:678
+#: src/Services/Schema_Service.php:679
 msgid "Schema is empty"
 msgstr ""
 
-#: src/Services/Schema_Service.php:684
+#: src/Services/Schema_Service.php:685
 msgid "Missing @type property"
 msgstr ""
 
 #. translators: %s: schema type
-#: src/Services/Schema_Service.php:690
+#: src/Services/Schema_Service.php:691
 #, php-format
 msgid "Unsupported schema type \"%s\""
 msgstr ""
 
 #. translators: 1: type, 2: property
-#: src/Services/Schema_Service.php:696
+#: src/Services/Schema_Service.php:697
 #, php-format
 msgid "%1$s is missing required property \"%2$s\""
 msgstr ""
 
 #. translators: 1: type, 2: property
-#: src/Services/Schema_Service.php:702
+#: src/Services/Schema_Service.php:703
 #, php-format
 msgid "%1$s should include \"%2$s\""
-msgstr ""
-
-#. translators: %s: template name
-#: src/Services/Schema_Templates.php:58
-#, php-format
-msgid "Template \"%s\" is not valid JSON-LD (it needs an @type)."
-msgstr ""
-
-#: src/Services/Schema_Templates.php:67
-msgid "Untitled template"
 msgstr ""
 
 #: src/Services/Score_Engine.php:170
@@ -1112,52 +1203,89 @@ msgstr ""
 msgid "Everything checks out."
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:24
+#: admin-app/src/components/ErrorBoundary.tsx:31
+msgid "This page could not be displayed."
+msgstr ""
+
+#: admin-app/src/components/ErrorBoundary.tsx:33
+#, javascript-format
+msgid "Error: %s"
+msgstr ""
+
+#: admin-app/src/components/ErrorBoundary.tsx:36
+msgid "Other pages still work. Please send this message to the plugin developer."
+msgstr ""
+
+#: admin-app/src/components/ErrorBoundary.tsx:39 admin-app/src/pages/Analytics.tsx:176
+msgid "Try again"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:28
 msgid "Overview"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:27 admin-app/src/pages/Analytics.tsx:152 admin-app/src/pages/Settings.tsx:191
+#: admin-app/src/components/Layout.tsx:31 admin-app/src/pages/Analytics.tsx:171 admin-app/src/pages/Analytics.tsx:208
 msgid "AI visibility"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:32
+#: admin-app/src/components/Layout.tsx:36
 msgid "Optimize"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:34
+#: admin-app/src/components/Layout.tsx:38
 msgid "Content"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:35 admin-app/src/pages/ContentTools.tsx:385
+#: admin-app/src/components/Layout.tsx:39 admin-app/src/pages/ContentTools.tsx:393
 msgid "Content tools"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:36
+#: admin-app/src/components/Layout.tsx:40
 msgid "Schema"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:37 admin-app/src/pages/SchemaTemplates.tsx:151 admin-app/src/pages/Tools.tsx:20
-msgid "Schema templates"
-msgstr ""
-
-#: admin-app/src/components/Layout.tsx:39
+#: admin-app/src/components/Layout.tsx:43
 msgid "Briefs"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:43
+#: admin-app/src/components/Layout.tsx:47
 msgid "Business"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:53 admin-app/src/pages/AiAccess.tsx:86
+#: admin-app/src/components/Layout.tsx:57 admin-app/src/pages/AiAccess.tsx:86
 msgid "AI access"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:56
+#: admin-app/src/components/Layout.tsx:60
 msgid "Agency"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:148
+#: admin-app/src/components/Layout.tsx:171
 msgid "View site"
+msgstr ""
+
+#: admin-app/src/components/ProGate.tsx:25 admin-app/src/components/ProGate.tsx:85 admin-app/src/pages/License.tsx:97
+msgid "Get Pro"
+msgstr ""
+
+#: admin-app/src/components/ProGate.tsx:25
+msgid "Install the Answer Engine Optimization Pro add-on and activate your license."
+msgstr ""
+
+#: admin-app/src/components/ProGate.tsx:27 admin-app/src/pages/License.tsx:170
+msgid "Activate license"
+msgstr ""
+
+#: admin-app/src/components/ProGate.tsx:27
+msgid "The Pro add-on is installed. Activate your license to switch this on."
+msgstr ""
+
+#: admin-app/src/components/ProGate.tsx:53
+msgid "Pro feature"
+msgstr ""
+
+#: admin-app/src/components/ProGate.tsx:89
+msgid "I have a license"
 msgstr ""
 
 #: admin-app/src/lib/useSettings.ts:29
@@ -1249,7 +1377,7 @@ msgstr ""
 msgid "Control which AI crawlers can read the site, and what they get: robots.txt rules, content signals, llms.txt and Markdown pages."
 msgstr ""
 
-#: admin-app/src/pages/AiAccess.tsx:90 admin-app/src/pages/SchemaTemplates.tsx:155
+#: admin-app/src/pages/AiAccess.tsx:90 admin-app/src/pages/SchemaTemplates.tsx:157
 msgid "Saving…"
 msgstr ""
 
@@ -1266,11 +1394,11 @@ msgstr ""
 msgid "%1$d of %2$d known crawlers blocked in robots.txt"
 msgstr ""
 
-#: admin-app/src/pages/AiAccess.tsx:132 admin-app/src/pages/ContentTools.tsx:252
+#: admin-app/src/pages/AiAccess.tsx:132 admin-app/src/pages/ContentTools.tsx:255
 msgid "All"
 msgstr ""
 
-#: admin-app/src/pages/AiAccess.tsx:140 admin-app/src/pages/Traffic.tsx:112
+#: admin-app/src/pages/AiAccess.tsx:140 admin-app/src/pages/Traffic.tsx:114
 msgid "Crawler"
 msgstr ""
 
@@ -1380,7 +1508,7 @@ msgstr ""
 msgid "Schema map"
 msgstr ""
 
-#: admin-app/src/pages/AiAccess.tsx:291 admin-app/src/pages/ContentTools.tsx:180 admin-app/src/pages/Hotel.tsx:165
+#: admin-app/src/pages/AiAccess.tsx:291 admin-app/src/pages/ContentTools.tsx:183 admin-app/src/pages/Hotel.tsx:165
 msgid "Include"
 msgstr ""
 
@@ -1424,464 +1552,519 @@ msgstr ""
 msgid "robots.txt rules are a request. Well-behaved crawlers follow them; they do not stop scrapers that ignore robots.txt."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:49
+#: admin-app/src/pages/Analytics.tsx:55
 msgid "Error"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:61
+#: admin-app/src/pages/Analytics.tsx:67
 msgid "View the answer"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:64
+#: admin-app/src/pages/Analytics.tsx:70
 #, javascript-format
 msgid "Cited #%d"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:64 admin-app/src/pages/Analytics.tsx:190 admin-app/src/pages/Analytics.tsx:290
+#: admin-app/src/pages/Analytics.tsx:70 admin-app/src/pages/Analytics.tsx:276 admin-app/src/pages/Analytics.tsx:383
 msgid "Cited"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:64 admin-app/src/pages/Analytics.tsx:191 admin-app/src/pages/Analytics.tsx:291
+#: admin-app/src/pages/Analytics.tsx:70 admin-app/src/pages/Analytics.tsx:277 admin-app/src/pages/Analytics.tsx:384
 msgid "Mentioned"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:64 admin-app/src/pages/Analytics.tsx:428
+#: admin-app/src/pages/Analytics.tsx:70 admin-app/src/pages/Analytics.tsx:527
 msgid "Not cited"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:107
+#: admin-app/src/pages/Analytics.tsx:117
 msgid "Tracking saved"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:123
+#: admin-app/src/pages/Analytics.tsx:151
 msgid "Scan finished"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:125
-msgid "Scan failed"
+#: admin-app/src/pages/Analytics.tsx:154
+#, javascript-format
+msgid "The scan stopped: %s. Use Resume to continue where it stopped."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:138
+#: admin-app/src/pages/Analytics.tsx:154 admin-app/src/pages/Analytics.tsx:174
+msgid "server error"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:167
 msgid "Loading AI visibility…"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:153
+#: admin-app/src/pages/Analytics.tsx:174
+#, javascript-format
+msgid "Could not load AI visibility data: %s"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:209
 msgid "Whether ChatGPT, Perplexity, Gemini and Claude cite or mention you for the questions your customers ask."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:157
+#: admin-app/src/pages/Analytics.tsx:214 admin-app/src/pages/Analytics.tsx:218
 msgid "Client report"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:163
+#: admin-app/src/pages/Analytics.tsx:217
+msgid "Client reports are a Pro feature"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:223
+#, javascript-format
+msgid "Resume (%1$d / %2$d)"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:230
 msgid "Add an API key for at least one engine in Settings"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:166
+#: admin-app/src/pages/Analytics.tsx:233
 #, javascript-format
 msgid "Scanning %1$d / %2$d"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:166
+#: admin-app/src/pages/Analytics.tsx:233
 msgid "Run scan"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:181
+#: admin-app/src/pages/Analytics.tsx:249
+#, javascript-format
+msgid "This site runs at %s, which AI engines can never link to, so every answer would count as \"not cited\". Enter the domain of your live site to measure it from here."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:254
+msgid "Live domain"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:256 admin-app/src/pages/Analytics.tsx:397 admin-app/src/pages/ContentTools.tsx:288
+msgid "Save"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:266
 msgid "Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key to start."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:184
+#: admin-app/src/pages/Analytics.tsx:267
+msgid "Scans ask Perplexity your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity API key to start. ChatGPT, Gemini and Claude tracking is in Pro."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:270
 msgid "Add a key"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:190
+#: admin-app/src/pages/Analytics.tsx:276
 #, javascript-format
-msgid "%1$d of %2$d answers link to you"
+msgid "%1$d of %2$d answers link to %3$s"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:190
+#: admin-app/src/pages/Analytics.tsx:276 admin-app/src/pages/Analytics.tsx:356
+msgid "you"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:276
 msgid "No scan yet"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:191
+#: admin-app/src/pages/Analytics.tsx:277
 msgid "Brand named, with or without a link"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:193
+#: admin-app/src/pages/Analytics.tsx:279
 msgid "Sentiment"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:195
+#: admin-app/src/pages/Analytics.tsx:281
 msgid "Positive / neutral / negative mentions"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:197
+#: admin-app/src/pages/Analytics.tsx:283
 msgid "Last scan"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:197
-#, javascript-format
-msgid "%d engines connected"
-msgstr ""
-
-#: admin-app/src/pages/Analytics.tsx:207
+#: admin-app/src/pages/Analytics.tsx:293
 msgid "Some checks failed"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:208
+#: admin-app/src/pages/Analytics.tsx:294
 #, javascript-format
 msgid "%d errors"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:214
+#: admin-app/src/pages/Analytics.tsx:303
 #, javascript-format
 msgid "%1$d/%2$d cited"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:215
+#: admin-app/src/pages/Analytics.tsx:304
 #, javascript-format
 msgid "avg. position %s"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:224
+#: admin-app/src/pages/Analytics.tsx:313
 msgid "Questions × engines"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:224
+#: admin-app/src/pages/Analytics.tsx:313
 msgid "Click a result to read the full answer and its sources."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:227
+#: admin-app/src/pages/Analytics.tsx:316
 msgid "No results yet"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:227
+#: admin-app/src/pages/Analytics.tsx:316
 msgid "Add the questions customers ask below, then run a scan."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:256
+#: admin-app/src/pages/Analytics.tsx:345
 msgid "Share of voice"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:256
+#: admin-app/src/pages/Analytics.tsx:345
 msgid "Who the engines cite for your questions"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:258
+#: admin-app/src/pages/Analytics.tsx:349
 msgid "No sources yet"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:258
+#: admin-app/src/pages/Analytics.tsx:349
 msgid "Appears after a scan."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:265
-msgid "you"
-msgstr ""
-
-#: admin-app/src/pages/Analytics.tsx:279
+#: admin-app/src/pages/Analytics.tsx:370
 msgid "Trend"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:279
+#: admin-app/src/pages/Analytics.tsx:370
 msgid "Cited and mentioned rate per scan"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:281
+#: admin-app/src/pages/Analytics.tsx:374
 msgid "Not enough scans"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:281
+#: admin-app/src/pages/Analytics.tsx:374
 msgid "The trend appears after two or more scans."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:300
+#: admin-app/src/pages/Analytics.tsx:393
 msgid "What to track"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:301
+#: admin-app/src/pages/Analytics.tsx:394
 #, javascript-format
-msgid "%d questions · up to 25 are checked per scan on each engine"
+msgid "%1$d questions · up to %2$d are checked per scan on each engine"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:304 admin-app/src/pages/ContentTools.tsx:285 admin-app/src/pages/ContentTools.tsx:367
-msgid "Save"
+#: admin-app/src/pages/Analytics.tsx:394
+msgid "Pro checks up to 25"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:310
+#: admin-app/src/pages/Analytics.tsx:403
 msgid "Questions and prompts"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:311
+#: admin-app/src/pages/Analytics.tsx:404
 msgid "One per line, phrased the way people ask an assistant"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:314
+#: admin-app/src/pages/Analytics.tsx:407
 msgid "Finding…"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:314
+#: admin-app/src/pages/Analytics.tsx:407
 msgid "Suggest prompts"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:316
+#: admin-app/src/pages/Analytics.tsx:409
 msgid "Built from your business details, FAQs and question headings."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:339
+#: admin-app/src/pages/Analytics.tsx:432
 msgid "Brand names"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:341
+#: admin-app/src/pages/Analytics.tsx:434
 msgid "Counted as a mention when an answer names you. Add local spellings too."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:344
+#: admin-app/src/pages/Analytics.tsx:437
+msgid "Your domain"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:439
+msgid "Links to this domain count as citations. Leave empty to use this site's address."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:442
 msgid "Engines"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:360
+#: admin-app/src/pages/Analytics.tsx:459
 msgid "no key"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:372
+#: admin-app/src/pages/Analytics.tsx:471
 msgid "Competitors"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:373
+#: admin-app/src/pages/Analytics.tsx:472
 msgid "Structured data on their homepage and whether they publish llms.txt"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:380
+#: admin-app/src/pages/Analytics.tsx:479
 msgid "Re-check"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:386
+#: admin-app/src/pages/Analytics.tsx:485
 msgid "Checking competitor sites…"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:388
+#: admin-app/src/pages/Analytics.tsx:487
 msgid "No competitors added"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:388
+#: admin-app/src/pages/Analytics.tsx:487
 msgid "Add up to 5 competitor domains in Settings."
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:405
+#: admin-app/src/pages/Analytics.tsx:504
 msgid "Schema types:"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:405
+#: admin-app/src/pages/Analytics.tsx:504
 msgid "none found"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:408
+#: admin-app/src/pages/Analytics.tsx:507
 msgid "They use, you don't:"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:410
+#: admin-app/src/pages/Analytics.tsx:509
 msgid "nothing"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:429
+#: admin-app/src/pages/Analytics.tsx:528
 #, javascript-format
 msgid "Position %d"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:436
+#: admin-app/src/pages/Analytics.tsx:535
 msgid "(empty answer)"
 msgstr ""
 
-#: admin-app/src/pages/Analytics.tsx:440
+#: admin-app/src/pages/Analytics.tsx:539
 msgid "Sources used"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:38
+#: admin-app/src/pages/ContentTools.tsx:41
 msgid "Marked as reviewed — the modified date is now today"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:47
+#: admin-app/src/pages/ContentTools.tsx:50
 msgid "AI engines prefer recent sources. These pages have not been updated for a while or mention a past year. Check the facts, update what changed, then mark them reviewed."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:49
+#: admin-app/src/pages/ContentTools.tsx:52
 msgid "Older than"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:50
+#: admin-app/src/pages/ContentTools.tsx:53
 #, javascript-format
 msgid "Older than %d months"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:57
+#: admin-app/src/pages/ContentTools.tsx:60
 msgid "Everything is fresh"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:57
+#: admin-app/src/pages/ContentTools.tsx:60
 msgid "No published page is past the age limit or mentions an old year."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:60 admin-app/src/pages/ContentTools.tsx:262 admin-app/src/pages/Tools.tsx:161
+#: admin-app/src/pages/ContentTools.tsx:63 admin-app/src/pages/ContentTools.tsx:265 admin-app/src/pages/Tools.tsx:163
 msgid "Page"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:60
+#: admin-app/src/pages/ContentTools.tsx:63
 msgid "Last updated"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:60
+#: admin-app/src/pages/ContentTools.tsx:63
 msgid "Why"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:69
+#: admin-app/src/pages/ContentTools.tsx:72
 #, javascript-format
 msgid "%d mo"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:73
+#: admin-app/src/pages/ContentTools.tsx:76
 msgid "Edit"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:75
+#: admin-app/src/pages/ContentTools.tsx:78
 msgid "Reviewed"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:119
+#: admin-app/src/pages/ContentTools.tsx:122
 #, javascript-format
 msgid "Drafted FAQs for %d pages"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:119
+#: admin-app/src/pages/ContentTools.tsx:122
 msgid "Every page already has FAQs"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:136
+#: admin-app/src/pages/ContentTools.tsx:139
 #, javascript-format
 msgid "Saved. The page now has %d FAQs."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:152
+#: admin-app/src/pages/ContentTools.tsx:155
 msgid "Draft FAQs with AI for every published page that has none, then approve the ones that are accurate. Nothing is published until you approve it."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:155
+#: admin-app/src/pages/ContentTools.tsx:158
 #, javascript-format
 msgid "Drafting %1$d / %2$d"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:155
+#: admin-app/src/pages/ContentTools.tsx:158
 msgid "Draft FAQs for pages without"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:159
+#: admin-app/src/pages/ContentTools.tsx:162
 msgid "Nothing to review"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:159
+#: admin-app/src/pages/ContentTools.tsx:162
 msgid "Drafted FAQs wait here for your approval."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:167
+#: admin-app/src/pages/ContentTools.tsx:170
 #, javascript-format
 msgid "%1$d drafted · %2$d already on the page"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:170
+#: admin-app/src/pages/ContentTools.tsx:173
 msgid "Discard"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:171
+#: admin-app/src/pages/ContentTools.tsx:174
 msgid "Approve selected"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:234
+#: admin-app/src/pages/ContentTools.tsx:237
 msgid "Saved"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:246
+#: admin-app/src/pages/ContentTools.tsx:249
 #, javascript-format
 msgid "Saved into %s fields, so your SEO plugin outputs them."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:247
+#: admin-app/src/pages/ContentTools.tsx:250
 msgid "No SEO plugin detected — this plugin outputs the title and description itself."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:252 admin-app/src/pages/Hotel.tsx:142
+#: admin-app/src/pages/ContentTools.tsx:255 admin-app/src/pages/Hotel.tsx:142
 msgid "Missing"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:259
+#: admin-app/src/pages/ContentTools.tsx:262
 msgid "All pages have a title and description"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:259
+#: admin-app/src/pages/ContentTools.tsx:262
 msgid "Switch to All to edit existing ones."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:262
+#: admin-app/src/pages/ContentTools.tsx:265
 msgid "SEO title"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:262
+#: admin-app/src/pages/ContentTools.tsx:265
 msgid "Meta description"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:281 admin-app/src/pages/ContentTools.tsx:363
+#: admin-app/src/pages/ContentTools.tsx:284 admin-app/src/pages/ContentTools.tsx:371
 msgid "Write with AI"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:329
+#: admin-app/src/pages/ContentTools.tsx:284 admin-app/src/pages/ContentTools.tsx:371
+msgid "Write with AI (Pro)"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:332
 msgid "Alt text saved"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:339
+#: admin-app/src/pages/ContentTools.tsx:342
 msgid "Images without alt text are invisible to AI engines and screen readers. AI writes a factual description from the image itself (needs a provider that reads images)."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:343
+#: admin-app/src/pages/ContentTools.tsx:345
+msgid "Writing with AI is in"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:351
 msgid "Every image has alt text"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:343
+#: admin-app/src/pages/ContentTools.tsx:351
 msgid "Nothing to fix in the media library."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:346
+#: admin-app/src/pages/ContentTools.tsx:354
 msgid "Image"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:346
+#: admin-app/src/pages/ContentTools.tsx:354
 msgid "Alt text"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:360
+#: admin-app/src/pages/ContentTools.tsx:368
 msgid "Describe what the image shows"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:386
+#: admin-app/src/pages/ContentTools.tsx:394
 msgid "Bulk fixes that help answer engines trust and quote your pages."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:389
+#: admin-app/src/pages/ContentTools.tsx:397
 msgid "All posts"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:397
+#: admin-app/src/pages/ContentTools.tsx:405
 msgid "Freshness"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:398
+#: admin-app/src/pages/ContentTools.tsx:406 admin-app/src/pages/ContentTools.tsx:406
 msgid "FAQ review"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:399
+#: admin-app/src/pages/ContentTools.tsx:407
 msgid "Titles & descriptions"
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:400
+#: admin-app/src/pages/ContentTools.tsx:408
 msgid "Image alt text"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:413
+msgid "Bulk FAQ drafts with review"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:413
+msgid "Draft FAQs with AI for every page that has none, then approve the accurate ones. Single-page FAQ suggestions in the editor stay free."
 msgstr ""
 
 #: admin-app/src/pages/Hotel.tsx:26
@@ -2053,153 +2236,292 @@ msgstr ""
 msgid "Questions without an answer are skipped."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:32
+#: admin-app/src/pages/License.tsx:47
+msgid "Done"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:50
+msgid "That did not work."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:60
+msgid "License is not active."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:74
+msgid "Active"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:76
+msgid "Expired"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:76
+msgid "Inactive"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:77
+msgid "No license"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:83
+msgid "Activate Answer Engine Optimization Pro on this site. The free plugin keeps working without a license."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:91
+msgid "The Pro add-on is not installed"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:93
+msgid "Pro is a separate plugin, \"Answer Engine Optimization Pro\". Buy it, upload the ZIP under Plugins → Add New, activate it, then enter your license key here. You can also activate the key first."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:104
+msgid "License key"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:105
+#, javascript-format
+msgid "Product: %1$s · Site: %2$s"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:117
+msgid "Expires"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:118
+msgid "Never (lifetime)"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:121
+msgid "Sites"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:122
+#, javascript-format
+msgid "%1$d of %2$d used"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:125
+msgid "Last checked"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:129
+msgid "Pro add-on"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:130
+#, javascript-format
+msgid "Installed (v%s)"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:130
+msgid "Not installed"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:136
+msgid "Check now"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:143
+msgid "Remove the license from this site? Pro features switch off and the activation is released so you can use it on another site."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:146
+msgid "Remove license"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:158
+msgid "Enter your license key"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:170
+msgid "Activating…"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:173
+msgid "You find the key in your purchase email and in your account on the store. One key works on the number of sites in your plan."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:180
+msgid "How licensing works"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:182
+msgid "The free plugin works fully on its own; Pro adds the features listed on the right."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:183
+msgid "The license is checked once a day. If the license server cannot be reached, Pro keeps working."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:184
+msgid "With an active license, Pro updates appear under Dashboard → Updates like any other plugin."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:185
+msgid "When a license expires, Pro features switch off; your data and settings stay."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:191
+msgid "What Pro adds"
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:212
+msgid "All Pro features are on."
+msgstr ""
+
+#: admin-app/src/pages/License.tsx:214
+msgid "License is active, but the Pro add-on is not installed yet."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:34
 msgid "Event"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:46
+#: admin-app/src/pages/SchemaTemplates.tsx:48
 msgid "Course"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:55
+#: admin-app/src/pages/SchemaTemplates.tsx:57
 msgid "Recipe"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:68
+#: admin-app/src/pages/SchemaTemplates.tsx:70
 msgid "Service"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:79
+#: admin-app/src/pages/SchemaTemplates.tsx:81
 msgid "Tour / trip"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:97
+#: admin-app/src/pages/SchemaTemplates.tsx:99
 msgid "New template"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:121
+#: admin-app/src/pages/SchemaTemplates.tsx:123
 msgid "Templates saved"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:141
+#: admin-app/src/pages/SchemaTemplates.tsx:143
 msgid "Add an @type."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:152
+#: admin-app/src/pages/SchemaTemplates.tsx:154 admin-app/src/pages/SchemaTemplates.tsx:318
 msgid "Write schema once and apply it to every page that matches: a post type, a category, or specific pages. Fill fields from custom fields, ACF or Meta Box."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:155
+#: admin-app/src/pages/SchemaTemplates.tsx:157
 msgid "Save templates"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:177 admin-app/src/pages/SchemaTemplates.tsx:211
+#: admin-app/src/pages/SchemaTemplates.tsx:179 admin-app/src/pages/SchemaTemplates.tsx:213
 msgid "Off"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:178
+#: admin-app/src/pages/SchemaTemplates.tsx:180
 #, javascript-format
 msgid "%d pages"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:178
+#: admin-app/src/pages/SchemaTemplates.tsx:180
 msgid "No rules"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:183
+#: admin-app/src/pages/SchemaTemplates.tsx:185
 msgid "Blank template"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:194
+#: admin-app/src/pages/SchemaTemplates.tsx:196
 msgid "Start from a preset"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:196
+#: admin-app/src/pages/SchemaTemplates.tsx:198
 msgid "Start from a preset…"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:203
+#: admin-app/src/pages/SchemaTemplates.tsx:205
 msgid "No templates yet"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:203
+#: admin-app/src/pages/SchemaTemplates.tsx:205
 msgid "Start from a preset or a blank template."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:209
+#: admin-app/src/pages/SchemaTemplates.tsx:211
 msgid "Template name"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:211
+#: admin-app/src/pages/SchemaTemplates.tsx:213
 msgid "On"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:212
+#: admin-app/src/pages/SchemaTemplates.tsx:214
 msgid "Enabled"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:214
+#: admin-app/src/pages/SchemaTemplates.tsx:216
 msgid "Duplicate"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:217
+#: admin-app/src/pages/SchemaTemplates.tsx:219
 msgid "Delete"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:222
+#: admin-app/src/pages/SchemaTemplates.tsx:224
 msgid "Apply to"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:222
+#: admin-app/src/pages/SchemaTemplates.tsx:224
 msgid "All filled rules must match. Within a rule, any value matches."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:225
+#: admin-app/src/pages/SchemaTemplates.tsx:227
 msgid "Post types"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:238
+#: admin-app/src/pages/SchemaTemplates.tsx:240
 msgid "Terms"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:246
+#: admin-app/src/pages/SchemaTemplates.tsx:248
 #, javascript-format
 msgid "taxonomy:slug — available: %s"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:249
+#: admin-app/src/pages/SchemaTemplates.tsx:251
 msgid "Specific page IDs"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:263
+#: admin-app/src/pages/SchemaTemplates.tsx:265
 msgid "Properties that come out empty are dropped."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:278
+#: admin-app/src/pages/SchemaTemplates.tsx:280
 msgid "detected."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:282
+#: admin-app/src/pages/SchemaTemplates.tsx:284
 msgid "Preview"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:282
+#: admin-app/src/pages/SchemaTemplates.tsx:284
 msgid "Rendered with a real page's values."
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:284
+#: admin-app/src/pages/SchemaTemplates.tsx:286
 msgid "Preview on"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:285
+#: admin-app/src/pages/SchemaTemplates.tsx:287
 msgid "Choose a page…"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:289
+#: admin-app/src/pages/SchemaTemplates.tsx:291
 msgid "Render"
 msgstr ""
 
-#: admin-app/src/pages/SchemaTemplates.tsx:299
+#: admin-app/src/pages/SchemaTemplates.tsx:301
 msgid "Pick a page to see the rendered schema with its real values."
 msgstr ""
 
@@ -2235,642 +2557,642 @@ msgstr ""
 msgid "Open AI access"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:17
+#: admin-app/src/pages/Tools.tsx:19
 msgid "API keys and Google credentials are never exported"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:18
+#: admin-app/src/pages/Tools.tsx:20
 msgid "Organization / website schema"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:19
+#: admin-app/src/pages/Tools.tsx:21
 msgid "Locations"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:21
+#: admin-app/src/pages/Tools.tsx:23
 msgid "Per-page FAQs, schema, target questions and direct answers"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:48
+#: admin-app/src/pages/Tools.tsx:50
 msgid "Import complete"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:61
+#: admin-app/src/pages/Tools.tsx:63
 msgid "That file is not valid JSON."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:89
+#: admin-app/src/pages/Tools.tsx:91
 msgid "Export"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:89
+#: admin-app/src/pages/Tools.tsx:91
 msgid "Move your setup to another site, or keep a backup before big changes."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:92
+#: admin-app/src/pages/Tools.tsx:94
 msgid "Download JSON"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:96 admin-app/src/pages/Tools.tsx:110
+#: admin-app/src/pages/Tools.tsx:98 admin-app/src/pages/Tools.tsx:112
 msgid "Import"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:96
+#: admin-app/src/pages/Tools.tsx:98
 msgid "Pages are matched by post type and slug, then by URL path, so a staging export imports into production."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:98
+#: admin-app/src/pages/Tools.tsx:100
 msgid "Choose an export file (.json)"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:103
+#: admin-app/src/pages/Tools.tsx:105
 #, javascript-format
 msgid "Exported from %1$s on %2$s"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:107
+#: admin-app/src/pages/Tools.tsx:109
 msgid "Check first"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:117
+#: admin-app/src/pages/Tools.tsx:119
 msgid "Would import:"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:117
+#: admin-app/src/pages/Tools.tsx:119
 msgid "Imported:"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:122
+#: admin-app/src/pages/Tools.tsx:124
 #, javascript-format
 msgid "No matching page for: %s"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:138
+#: admin-app/src/pages/Tools.tsx:140
 #, javascript-format
 msgid "Copied %1$d FAQs on %2$d pages"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:148
+#: admin-app/src/pages/Tools.tsx:150
 msgid "Yoast and Rank Math FAQ blocks"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:149
+#: admin-app/src/pages/Tools.tsx:151
 msgid "Copy questions from their FAQ blocks into this plugin so they join your connected schema graph, llms.txt and the AEO score. The blocks stay on the page. Turn off FAQ schema in the SEO plugin afterwards to avoid duplicates."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:152
+#: admin-app/src/pages/Tools.tsx:154
 msgid "Copy all"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:158
+#: admin-app/src/pages/Tools.tsx:160
 msgid "Nothing to migrate"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:158
+#: admin-app/src/pages/Tools.tsx:160
 msgid "No Yoast or Rank Math FAQ blocks found."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:161
+#: admin-app/src/pages/Tools.tsx:163
 msgid "In block"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:161
+#: admin-app/src/pages/Tools.tsx:163
 msgid "Already here"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:192
+#: admin-app/src/pages/Tools.tsx:194
 msgid "Copied"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:198
+#: admin-app/src/pages/Tools.tsx:200
 msgid "Connect an AI assistant"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:199
+#: admin-app/src/pages/Tools.tsx:201
 msgid "Let Claude, ChatGPT, Cursor or any MCP client read scores, schema and AI visibility, and update FAQs or direct answers — with the same permissions as the WordPress user it signs in as."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:203
+#: admin-app/src/pages/Tools.tsx:205
 msgid "Enable the MCP endpoint"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:204
+#: admin-app/src/pages/Tools.tsx:206
 msgid "Off by default. Requests must authenticate with an Application Password."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:214
+#: admin-app/src/pages/Tools.tsx:216
 msgid "Create an Application Password for a user with the right AEO role."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:215
+#: admin-app/src/pages/Tools.tsx:217
 msgid "Your profile"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:216
+#: admin-app/src/pages/Tools.tsx:218
 msgid "Application Passwords are unavailable here — WordPress requires HTTPS for them (or WP_ENVIRONMENT_TYPE set to local)."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:219
+#: admin-app/src/pages/Tools.tsx:221
 msgid "Server URL:"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:221
+#: admin-app/src/pages/Tools.tsx:223
 msgid "Copy URL"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:224
+#: admin-app/src/pages/Tools.tsx:226
 msgid "Clients that only speak stdio can use mcp-remote. Put base64 of username:application-password in AUTH:"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:226
+#: admin-app/src/pages/Tools.tsx:228
 msgid "Copy config"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:231
+#: admin-app/src/pages/Tools.tsx:233
 msgid "The same tools are registered with the WordPress Abilities API, so the official WordPress MCP adapter can expose them too."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:232
+#: admin-app/src/pages/Tools.tsx:234
 msgid "WordPress 6.9+ also exposes these tools through the Abilities API."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:236
+#: admin-app/src/pages/Tools.tsx:238
 #, javascript-format
 msgid "%d tools"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:241
+#: admin-app/src/pages/Tools.tsx:243
 msgid "Read only"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:241
+#: admin-app/src/pages/Tools.tsx:243
 msgid "Makes changes"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:260
+#: admin-app/src/pages/Tools.tsx:262
 msgid "Manage settings"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:261
+#: admin-app/src/pages/Tools.tsx:263
 msgid "View reports"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:262
+#: admin-app/src/pages/Tools.tsx:264
 msgid "Edit schema & FAQs"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:263
+#: admin-app/src/pages/Tools.tsx:265
 msgid "Use AI"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:270
+#: admin-app/src/pages/Tools.tsx:272
 msgid "Who can do what"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:271
+#: admin-app/src/pages/Tools.tsx:273
 msgid "Administrators always have every permission. AI features spend API credits, so grant them deliberately."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:282
+#: admin-app/src/pages/Tools.tsx:284
 msgid "Role"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:310
+#: admin-app/src/pages/Tools.tsx:312
 msgid "Editing schema or FAQs on a page also requires permission to edit that page."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:319
+#: admin-app/src/pages/Tools.tsx:321
 msgid "Import and export, migrate from other plugins, connect AI assistants, and set permissions."
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:324
+#: admin-app/src/pages/Tools.tsx:326
 msgid "Import / export"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:325
+#: admin-app/src/pages/Tools.tsx:327
 msgid "Migrate FAQs"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:326
+#: admin-app/src/pages/Tools.tsx:328 admin-app/src/pages/Tools.tsx:328
 msgid "MCP & AI agents"
 msgstr ""
 
-#: admin-app/src/pages/Tools.tsx:327
+#: admin-app/src/pages/Tools.tsx:329 admin-app/src/pages/Tools.tsx:329
 msgid "Roles"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:73
+#: admin-app/src/pages/Traffic.tsx:75
 msgid "Period"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:75
+#: admin-app/src/pages/Traffic.tsx:77
 #, javascript-format
 msgid "Last %d days"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:80
+#: admin-app/src/pages/Traffic.tsx:82
 msgid "AI crawler visits"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:80
+#: admin-app/src/pages/Traffic.tsx:82
 #, javascript-format
 msgid "%d different crawlers"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:81
+#: admin-app/src/pages/Traffic.tsx:83
 msgid "Visitors from AI assistants"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:81
+#: admin-app/src/pages/Traffic.tsx:83
 msgid "ChatGPT, Perplexity, Gemini, Copilot, Claude…"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:82
+#: admin-app/src/pages/Traffic.tsx:84
 msgid "Crawler errors"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:82
+#: admin-app/src/pages/Traffic.tsx:84
 msgid "4xx/5xx responses served to AI crawlers"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:83
+#: admin-app/src/pages/Traffic.tsx:85
 msgid "Top assistant"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:87
+#: admin-app/src/pages/Traffic.tsx:89
 msgid "Daily activity"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:89
+#: admin-app/src/pages/Traffic.tsx:91
 msgid "No AI traffic logged yet"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:89
+#: admin-app/src/pages/Traffic.tsx:91
 msgid "Crawler visits and AI referrals appear here as they happen. Logging can be turned off under AI access."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:98
+#: admin-app/src/pages/Traffic.tsx:100
 msgid "Crawler visits"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:99
+#: admin-app/src/pages/Traffic.tsx:101
 msgid "AI referrals"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:107
+#: admin-app/src/pages/Traffic.tsx:109
 msgid "Crawlers"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:109 admin-app/src/pages/Traffic.tsx:128
+#: admin-app/src/pages/Traffic.tsx:111 admin-app/src/pages/Traffic.tsx:130
 msgid "None yet"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:109
+#: admin-app/src/pages/Traffic.tsx:111
 msgid "No AI crawler has visited in this period."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:112 admin-app/src/pages/Traffic.tsx:131
+#: admin-app/src/pages/Traffic.tsx:114 admin-app/src/pages/Traffic.tsx:133
 msgid "Visits"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:112
+#: admin-app/src/pages/Traffic.tsx:114
 msgid "Last seen"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:126
+#: admin-app/src/pages/Traffic.tsx:128
 msgid "Visits from AI assistants"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:128
+#: admin-app/src/pages/Traffic.tsx:130
 msgid "Visitors who click a link in an AI answer are counted here (no cookies, no IP)."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:131
+#: admin-app/src/pages/Traffic.tsx:133
 msgid "Assistant"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:141
+#: admin-app/src/pages/Traffic.tsx:143
 msgid "Most crawled pages"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:152
+#: admin-app/src/pages/Traffic.tsx:154
 msgid "Pages AI visitors land on"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:189
+#: admin-app/src/pages/Traffic.tsx:191
 msgid "Credentials saved"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:217
+#: admin-app/src/pages/Traffic.tsx:219
 msgid "Connect Google Search Console and Analytics"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:218
+#: admin-app/src/pages/Traffic.tsx:220
 msgid "Uses your own Google Cloud OAuth client, so data goes straight from Google to this site. Read-only access."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:221
+#: admin-app/src/pages/Traffic.tsx:223
 msgid "In Google Cloud Console, enable the Search Console API and the Google Analytics Data and Admin APIs."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:222
+#: admin-app/src/pages/Traffic.tsx:224
 msgid "Create an OAuth client ID of type \"Web application\"."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:224
+#: admin-app/src/pages/Traffic.tsx:226
 msgid "Add this authorized redirect URI:"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:226
+#: admin-app/src/pages/Traffic.tsx:228
 msgid "Paste the client ID and secret below, save, then connect."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:230
+#: admin-app/src/pages/Traffic.tsx:232
 msgid "Client ID"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:231
+#: admin-app/src/pages/Traffic.tsx:233
 msgid "Saved (enter to replace)"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:234
+#: admin-app/src/pages/Traffic.tsx:236
 msgid "Client secret"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:240
+#: admin-app/src/pages/Traffic.tsx:242
 msgid "Save credentials"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:244
+#: admin-app/src/pages/Traffic.tsx:246
 msgid "Connect Google account"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:261
+#: admin-app/src/pages/Traffic.tsx:263
 msgid "Search Console property"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:263 admin-app/src/pages/Traffic.tsx:270
+#: admin-app/src/pages/Traffic.tsx:265 admin-app/src/pages/Traffic.tsx:272
 msgid "— Choose —"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:268
+#: admin-app/src/pages/Traffic.tsx:270
 msgid "GA4 property"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:276
+#: admin-app/src/pages/Traffic.tsx:278
 msgid "Refresh"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:279
+#: admin-app/src/pages/Traffic.tsx:281
 msgid "Disconnect"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:285
+#: admin-app/src/pages/Traffic.tsx:287
 msgid "Loading Google data…"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:290
+#: admin-app/src/pages/Traffic.tsx:292
 msgid "Question-style searches"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:290
+#: admin-app/src/pages/Traffic.tsx:292
 msgid "Long and question queries, the kind AI Overviews answer. Last 28 days."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:294
+#: admin-app/src/pages/Traffic.tsx:296
 msgid "Query"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:294 admin-app/src/pages/Traffic.tsx:321
+#: admin-app/src/pages/Traffic.tsx:296 admin-app/src/pages/Traffic.tsx:323
 msgid "Clicks"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:294
+#: admin-app/src/pages/Traffic.tsx:296
 msgid "Impr."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:294
+#: admin-app/src/pages/Traffic.tsx:296
 msgid "Pos."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:305
+#: admin-app/src/pages/Traffic.tsx:307
 msgid "Sessions from AI assistants (GA4)"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:305
+#: admin-app/src/pages/Traffic.tsx:307
 msgid "Sources such as chatgpt.com, perplexity.ai, gemini.google.com. Last 28 days."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:309
+#: admin-app/src/pages/Traffic.tsx:311
 msgid "Source"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:309
+#: admin-app/src/pages/Traffic.tsx:311
 msgid "Sessions"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:309
+#: admin-app/src/pages/Traffic.tsx:311
 msgid "Engaged"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:309
+#: admin-app/src/pages/Traffic.tsx:311
 msgid "Key events"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:319
+#: admin-app/src/pages/Traffic.tsx:321
 msgid "Top pages in Google search"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:321
+#: admin-app/src/pages/Traffic.tsx:323
 msgid "Impressions"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:321
+#: admin-app/src/pages/Traffic.tsx:323
 msgid "Position"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:342
+#: admin-app/src/pages/Traffic.tsx:344
 #, javascript-format
 msgid "Imported %d rows"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:356
+#: admin-app/src/pages/Traffic.tsx:358
 msgid "Bing Webmaster Tools: AI Performance"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:357
+#: admin-app/src/pages/Traffic.tsx:359
 msgid "Bing reports how often Copilot and Bing AI answers cite your pages, but has no API for it yet. Export the AI Performance report as CSV and import it here."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:360
+#: admin-app/src/pages/Traffic.tsx:362
 msgid "Importing…"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:360
+#: admin-app/src/pages/Traffic.tsx:362
 msgid "Import CSV"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:366
+#: admin-app/src/pages/Traffic.tsx:368
 #, javascript-format
 msgid "Last import %1$s · %2$d rows · %3$d citations"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:368
+#: admin-app/src/pages/Traffic.tsx:370
 msgid "Nothing imported yet."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:374
+#: admin-app/src/pages/Traffic.tsx:376
 msgid "Citations per day"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:381
+#: admin-app/src/pages/Traffic.tsx:383
 msgid "Citations"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:386
+#: admin-app/src/pages/Traffic.tsx:388
 msgid "Most cited pages"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:406
+#: admin-app/src/pages/Traffic.tsx:408
 msgid "Google account connected"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:407
+#: admin-app/src/pages/Traffic.tsx:409
 msgid "Google connection was not completed"
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:411
+#: admin-app/src/pages/Traffic.tsx:413
 msgid "AI crawler visits, visitors arriving from AI assistants, and Google and Bing data in one place."
 msgstr ""
 
-#: admin-app/src/pages/Traffic.tsx:416
+#: admin-app/src/pages/Traffic.tsx:418
 msgid "AI crawlers & referrals"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:12
+#: admin-app/src/pages/WooCommerce.tsx:14
 msgid "Product schema on every product page"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:13
+#: admin-app/src/pages/WooCommerce.tsx:15
 msgid "Price, currency and stock availability"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:14
+#: admin-app/src/pages/WooCommerce.tsx:16
 msgid "Aggregate rating from reviews"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:15
+#: admin-app/src/pages/WooCommerce.tsx:17
 msgid "SKU, GTIN and brand"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:16
-msgid "Return policy and shipping details (below)"
+#: admin-app/src/pages/WooCommerce.tsx:19
+msgid "Return policy and shipping details"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:17
+#: admin-app/src/pages/WooCommerce.tsx:19
 msgid "Price valid-until date for sale prices"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:65
-msgid "Product structured data for AI shopping assistants: price, stock, ratings, returns and shipping."
-msgstr ""
-
-#: admin-app/src/pages/WooCommerce.tsx:80
-msgid "WooCommerce not detected"
-msgstr ""
-
-#: admin-app/src/pages/WooCommerce.tsx:81
-msgid "Install and activate WooCommerce to add Product schema with price, stock and ratings."
-msgstr ""
-
-#: admin-app/src/pages/WooCommerce.tsx:87
-msgid "What gets added"
-msgstr ""
-
-#: admin-app/src/pages/WooCommerce.tsx:87
-msgid "Applied automatically to product pages"
-msgstr ""
-
-#: admin-app/src/pages/WooCommerce.tsx:98
+#: admin-app/src/pages/WooCommerce.tsx:19 admin-app/src/pages/WooCommerce.tsx:107
 msgid "Variable products as ProductGroup"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:99
+#: admin-app/src/pages/WooCommerce.tsx:66
+msgid "Product structured data for AI shopping assistants: price, stock, ratings, returns and shipping."
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:81
+msgid "WooCommerce not detected"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:82
+msgid "Install and activate WooCommerce to add Product schema with price, stock and ratings."
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:88
+msgid "What gets added"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:88
+msgid "Applied automatically to product pages"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:108
 msgid "Lists each variation (size, colour…) with its own price and stock, the format Google and AI shopping results read for variants."
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:108
+#: admin-app/src/pages/WooCommerce.tsx:121
 msgid "Return policy"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:108
+#: admin-app/src/pages/WooCommerce.tsx:121
 msgid "Set days to 0 to say returns are not accepted. Leave country empty to use the store country."
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:110
+#: admin-app/src/pages/WooCommerce.tsx:123
 msgid "Return window (days)"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:112
+#: admin-app/src/pages/WooCommerce.tsx:125
 msgid "Return shipping"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:114
+#: admin-app/src/pages/WooCommerce.tsx:127
 msgid "Free for the customer"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:115
+#: admin-app/src/pages/WooCommerce.tsx:128
 msgid "Customer pays"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:119
+#: admin-app/src/pages/WooCommerce.tsx:132
 msgid "How"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:121
+#: admin-app/src/pages/WooCommerce.tsx:134
 msgid "By mail / courier"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:122
+#: admin-app/src/pages/WooCommerce.tsx:135
 msgid "In store"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:123
+#: admin-app/src/pages/WooCommerce.tsx:136
 msgid "At a drop-off point"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:127
+#: admin-app/src/pages/WooCommerce.tsx:140
 msgid "Country (ISO code)"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:133
+#: admin-app/src/pages/WooCommerce.tsx:146
 msgid "Shipping"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:133
+#: admin-app/src/pages/WooCommerce.tsx:146
 msgid "A typical rate and delivery time. Leave the rate empty to skip shipping details."
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:136
+#: admin-app/src/pages/WooCommerce.tsx:149
 msgid "Ships to (ISO code)"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:140
+#: admin-app/src/pages/WooCommerce.tsx:153
 msgid "Rate (store currency)"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:143
+#: admin-app/src/pages/WooCommerce.tsx:156
 msgid "Handling, min days"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:144
+#: admin-app/src/pages/WooCommerce.tsx:157
 msgid "Handling, max days"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:145
+#: admin-app/src/pages/WooCommerce.tsx:158
 msgid "Transit, min days"
 msgstr ""
 
-#: admin-app/src/pages/WooCommerce.tsx:146
+#: admin-app/src/pages/WooCommerce.tsx:159
 msgid "Transit, max days"
 msgstr ""

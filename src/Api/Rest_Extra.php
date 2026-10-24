@@ -1,6 +1,6 @@
 <?php
 /**
- * REST routes for crawlers, traffic, AI visibility, Google, Bing and reports.
+ * REST routes for crawlers, traffic, AI visibility and prompts. (Google, Bing and reports are in the Pro add-on.)
  *
  * @package AEO
  */
@@ -9,12 +9,8 @@ namespace AEO\Api;
 
 use AEO\Core\Settings;
 use AEO\Services\Ai_Visibility;
-use AEO\Services\Bing_Import;
-use AEO\Services\Encryption;
-use AEO\Services\Google_Service;
 use AEO\Services\IndexNow;
 use AEO\Services\Prompt_Library;
-use AEO\Services\Report_Service;
 use AEO\Services\Traffic_Log;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -172,6 +168,8 @@ class Rest_Extra {
 								return array(
 									'engine' => $k,
 									'label'  => $d['label'],
+									// Engine needs Pro on this install.
+									'locked' => ! in_array( $k, Ai_Visibility::enabled_engines(), true ),
 								);
 							},
 							array_keys( Ai_Visibility::ENGINES ),
@@ -188,6 +186,7 @@ class Rest_Extra {
 						'own_host'  => Ai_Visibility::own_host(),
 						'is_local'  => Ai_Visibility::site_is_local(),
 						'domain'    => (string) Settings::get( 'visibility_domain', '' ),
+						'max_prompts' => Ai_Visibility::max_prompts(),
 					)
 				);
 			},
@@ -233,116 +232,6 @@ class Rest_Extra {
 			$get,
 			static function () {
 				return self::respond( Prompt_Library::suggest() );
-			},
-			$view
-		);
-
-		// Google.
-		self::route(
-			'/google/status',
-			$get,
-			static function () {
-				return self::respond( Google_Service::status() );
-			},
-			$view
-		);
-		self::route(
-			'/google/credentials',
-			$post,
-			static function ( WP_REST_Request $r ) {
-				$p = (array) $r->get_json_params();
-				$u = array( 'google_client_id' => sanitize_text_field( (string) ( $p['client_id'] ?? '' ) ) );
-				if ( ! empty( $p['client_secret'] ) ) {
-					$u['google_client_secret'] = Encryption::encrypt( sanitize_text_field( (string) $p['client_secret'] ) );
-				}
-				Settings::update( $u );
-				return self::respond( Google_Service::status() );
-			},
-			$manage
-		);
-		self::route(
-			'/google/sites',
-			$get,
-			static function () {
-				return self::respond(
-					array(
-						'sites'      => Google_Service::gsc_sites(),
-						'properties' => Google_Service::ga4_properties(),
-					)
-				);
-			},
-			$manage
-		);
-		self::route(
-			'/google/select',
-			$post,
-			static function ( WP_REST_Request $r ) {
-				$p = (array) $r->get_json_params();
-				Settings::update(
-					array(
-						'gsc_site'     => sanitize_text_field( (string) ( $p['gsc_site'] ?? '' ) ),
-						'ga4_property' => preg_replace( '/\D/', '', (string) ( $p['ga4_property'] ?? '' ) ),
-					)
-				);
-				delete_transient( 'aeo_gsc_report' );
-				delete_transient( 'aeo_ga4_report' );
-				return self::respond( Google_Service::status() );
-			},
-			$manage
-		);
-		self::route(
-			'/google/reports',
-			$get,
-			static function ( WP_REST_Request $r ) {
-				$refresh = (bool) $r->get_param( 'refresh' );
-				$gsc     = Settings::get( 'gsc_site', '' ) ? Google_Service::gsc_report( $refresh ) : null;
-				$ga4     = Settings::get( 'ga4_property', '' ) ? Google_Service::ga4_report( $refresh ) : null;
-				return self::respond(
-					array(
-						'gsc'       => is_wp_error( $gsc ) ? null : $gsc,
-						'gsc_error' => is_wp_error( $gsc ) ? $gsc->get_error_message() : '',
-						'ga4'       => is_wp_error( $ga4 ) ? null : $ga4,
-						'ga4_error' => is_wp_error( $ga4 ) ? $ga4->get_error_message() : '',
-					)
-				);
-			},
-			$view
-		);
-		self::route(
-			'/google/disconnect',
-			$post,
-			static function () {
-				Google_Service::disconnect();
-				return self::respond( Google_Service::status() );
-			},
-			$manage
-		);
-
-		// Bing AI Performance import.
-		self::route(
-			'/bing',
-			$get,
-			static function () {
-				return self::respond( Bing_Import::report() );
-			},
-			$view
-		);
-		self::route(
-			'/bing/import',
-			$post,
-			static function ( WP_REST_Request $r ) {
-				$p = (array) $r->get_json_params();
-				return self::respond( Bing_Import::import( (string) ( $p['csv'] ?? '' ) ) );
-			},
-			$manage
-		);
-
-		// Client report.
-		self::route(
-			'/report-url',
-			$get,
-			static function () {
-				return self::respond( array( 'url' => Report_Service::url() ) );
 			},
 			$view
 		);

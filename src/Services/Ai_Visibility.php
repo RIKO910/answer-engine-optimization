@@ -27,13 +27,18 @@ class Ai_Visibility {
 
 	const STATE        = 'aeo_visibility_scan_state';
 	const LOCK         = 'aeo_visibility_scan_lock'; // Processing lock (see lock()).
-	const MAX_KEYWORDS = 25;
+	const FREE_PROMPTS = 5;
 
+	/**
+	 * All engines the plugin knows. Only Perplexity runs in the free plugin; the
+	 * others are added by Answer Engine Optimization Pro (filters aeo_visibility_engines
+	 * and aeo_visibility_ask).
+	 */
 	const ENGINES = array(
-		'perplexity' => array( 'label' => 'Perplexity', 'key' => 'perplexity_api_key' ),
-		'openai'     => array( 'label' => 'ChatGPT', 'key' => 'openai_api_key' ),
-		'gemini'     => array( 'label' => 'Gemini', 'key' => 'gemini_api_key' ),
-		'anthropic'  => array( 'label' => 'Claude', 'key' => 'anthropic_api_key' ),
+		'perplexity' => array( 'label' => 'Perplexity', 'key' => 'perplexity_api_key', 'pro' => false ),
+		'openai'     => array( 'label' => 'ChatGPT', 'key' => 'openai_api_key', 'pro' => true ),
+		'gemini'     => array( 'label' => 'Gemini', 'key' => 'gemini_api_key', 'pro' => true ),
+		'anthropic'  => array( 'label' => 'Claude', 'key' => 'anthropic_api_key', 'pro' => true ),
 	);
 
 	const POSITIVE = array( 'best', 'excellent', 'great', 'top', 'recommended', 'recommend', 'popular', 'highly rated', 'well-reviewed', 'friendly', 'clean', 'comfortable', 'beautiful', 'stunning', 'affordable', 'good value', 'trusted', 'reliable', 'favorite', 'favourite', 'outstanding', 'luxury', 'convenient', 'helpful', 'praised', 'loved' );
@@ -45,11 +50,12 @@ class Ai_Visibility {
 	 * @return string[]
 	 */
 	public static function available_engines() {
-		$chosen = Settings::get( 'citation_engines', array() );
-		$chosen = is_array( $chosen ) && $chosen ? $chosen : array_keys( self::ENGINES );
-		$out    = array();
+		$chosen  = Settings::get( 'citation_engines', array() );
+		$chosen  = is_array( $chosen ) && $chosen ? $chosen : array_keys( self::ENGINES );
+		$enabled = self::enabled_engines();
+		$out     = array();
 		foreach ( self::ENGINES as $engine => $def ) {
-			if ( in_array( $engine, $chosen, true ) && '' !== self::key( $engine ) ) {
+			if ( in_array( $engine, $enabled, true ) && in_array( $engine, $chosen, true ) && '' !== self::key( $engine ) ) {
 				$out[] = $engine;
 			}
 		}
@@ -57,13 +63,31 @@ class Ai_Visibility {
 	}
 
 	/**
-	 * Decrypted key for an engine.
+	 * Engines this install can run (Perplexity; Pro adds ChatGPT, Gemini, Claude).
+	 *
+	 * @return string[]
+	 */
+	public static function enabled_engines() {
+		return array_values( array_intersect( (array) apply_filters( 'aeo_visibility_engines', array( 'perplexity' ) ), array_keys( self::ENGINES ) ) );
+	}
+
+	/**
+	 * Prompts checked per scan (5 free, 25 with Pro).
+	 *
+	 * @return int
+	 */
+	public static function max_prompts() {
+		return max( 1, min( 50, (int) apply_filters( 'aeo_visibility_max_prompts', self::FREE_PROMPTS ) ) );
+	}
+
+	/**
+	 * Decrypted key for an engine (public so the Pro add-on can call engines).
 	 *
 	 * @param string $engine Engine.
 	 * @return string
 	 */
-	private static function key( $engine ) {
-		return (string) Encryption::decrypt( Settings::get( self::ENGINES[ $engine ]['key'], '' ) );
+	public static function key( $engine ) {
+		return isset( self::ENGINES[ $engine ] ) ? (string) Encryption::decrypt( Settings::get( self::ENGINES[ $engine ]['key'], '' ) ) : '';
 	}
 
 	/**
@@ -103,7 +127,7 @@ class Ai_Visibility {
 		if ( ! $engines ) {
 			return new \WP_Error( 'aeo_no_engines', __( 'Add at least one API key (Perplexity, OpenAI, Gemini or Anthropic) in Settings to track AI citations.', 'answer-engine-optimization' ) );
 		}
-		$keywords = array_slice( array_values( array_filter( (array) Settings::get( 'tracked_keywords', array() ) ) ), 0, self::MAX_KEYWORDS );
+		$keywords = array_slice( array_values( array_filter( (array) Settings::get( 'tracked_keywords', array() ) ) ), 0, self::max_prompts() );
 		if ( ! $keywords ) {
 			return new \WP_Error( 'aeo_no_keywords', __( 'Add tracked prompts in Settings first.', 'answer-engine-optimization' ) );
 		}
@@ -479,17 +503,18 @@ class Ai_Visibility {
 		if ( null !== $result ) {
 			return $result;
 		}
-		switch ( $engine ) {
-			case 'perplexity':
-				return $this->ask_perplexity( $key, $prompt );
-			case 'openai':
-				return $this->ask_openai( $key, $prompt );
-			case 'gemini':
-				return $this->ask_gemini( $key, $prompt );
-			case 'anthropic':
-				return $this->ask_anthropic( $key, $prompt );
+		if ( 'perplexity' === $engine ) {
+			return $this->ask_perplexity( $key, $prompt );
 		}
-		return new \WP_Error( 'aeo_engine', 'Unknown engine' );
+		// ChatGPT, Gemini and Claude are answered by the Pro add-on.
+		$result = apply_filters( 'aeo_visibility_ask', null, $engine, $prompt, $key );
+		if ( null !== $result ) {
+			return $result;
+		}
+		return \AEO\Core\Pro::required_error(
+			/* translators: %s: engine name */
+			sprintf( __( '%s tracking needs Answer Engine Optimization Pro.', 'answer-engine-optimization' ), self::ENGINES[ $engine ]['label'] ?? $engine )
+		);
 	}
 
 	/**
@@ -566,186 +591,9 @@ class Ai_Visibility {
 		);
 	}
 
-	/**
-	 * OpenAI Responses API with the web_search tool.
-	 *
-	 * @param string $key    Key.
-	 * @param string $prompt Prompt.
-	 * @return array<string, mixed>|\WP_Error
-	 */
-	private function ask_openai( $key, $prompt ) {
-		$data = $this->post(
-			'https://api.openai.com/v1/responses',
-			array(
-				'model' => (string) apply_filters( 'aeo_visibility_model', Settings::get_model( 'openai' ), 'openai' ),
-				'input' => $prompt,
-				'tools' => array( array( 'type' => (string) apply_filters( 'aeo_openai_web_search_tool', 'web_search' ) ) ),
-			),
-			array( 'Authorization' => 'Bearer ' . $key )
-		);
-		if ( is_wp_error( $data ) ) {
-			return $data;
-		}
-		$text    = '';
-		$sources = array();
-		foreach ( (array) ( $data['output'] ?? array() ) as $item ) {
-			if ( 'message' === ( $item['type'] ?? '' ) ) {
-				foreach ( (array) ( $item['content'] ?? array() ) as $c ) {
-					$text .= (string) ( $c['text'] ?? '' );
-					foreach ( (array) ( $c['annotations'] ?? array() ) as $a ) {
-						if ( 'url_citation' === ( $a['type'] ?? '' ) && ! empty( $a['url'] ) ) {
-							$sources[] = array(
-								'url'   => (string) $a['url'],
-								'title' => (string) ( $a['title'] ?? '' ),
-							);
-						}
-					}
-				}
-			} elseif ( 'web_search_call' === ( $item['type'] ?? '' ) ) {
-				foreach ( (array) ( $item['action']['sources'] ?? array() ) as $src ) {
-					if ( ! empty( $src['url'] ) ) {
-						$sources[] = array(
-							'url'   => (string) $src['url'],
-							'title' => '',
-						);
-					}
-				}
-			}
-		}
-		return array(
-			'text'    => $text,
-			'sources' => self::unique_sources( $sources ),
-		);
-	}
 
-	/**
-	 * Gemini with Google Search grounding.
-	 *
-	 * @param string $key    Key.
-	 * @param string $prompt Prompt.
-	 * @return array<string, mixed>|\WP_Error
-	 */
-	private function ask_gemini( $key, $prompt ) {
-		$model = (string) apply_filters( 'aeo_visibility_model', Settings::get_model( 'gemini' ), 'gemini' );
-		$data  = $this->post(
-			'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( $model ) . ':generateContent',
-			array(
-				'contents' => array(
-					array(
-						'role'  => 'user',
-						'parts' => array( array( 'text' => $prompt ) ),
-					),
-				),
-				'tools'    => array( array( 'google_search' => new \stdClass() ) ),
-			),
-			array( 'x-goog-api-key' => $key )
-		);
-		if ( is_wp_error( $data ) ) {
-			return $data;
-		}
-		$text = '';
-		foreach ( (array) ( $data['candidates'][0]['content']['parts'] ?? array() ) as $part ) {
-			$text .= (string) ( $part['text'] ?? '' );
-		}
-		$sources = array();
-		foreach ( (array) ( $data['candidates'][0]['groundingMetadata']['groundingChunks'] ?? array() ) as $chunk ) {
-			if ( ! empty( $chunk['web']['uri'] ) ) {
-				$sources[] = array(
-					'url'   => (string) $chunk['web']['uri'],
-					'title' => (string) ( $chunk['web']['title'] ?? '' ),
-				);
-			}
-		}
-		return array(
-			'text'    => $text,
-			'sources' => self::unique_sources( $sources ),
-		);
-	}
 
-	/**
-	 * Claude with the server-side web search tool.
-	 *
-	 * @param string $key    Key.
-	 * @param string $prompt Prompt.
-	 * @return array<string, mixed>|\WP_Error
-	 */
-	private function ask_anthropic( $key, $prompt ) {
-		$data = $this->post(
-			'https://api.anthropic.com/v1/messages',
-			array(
-				'model'      => (string) apply_filters( 'aeo_visibility_model', Settings::get_model( 'anthropic' ), 'anthropic' ),
-				'max_tokens' => 2048,
-				'messages'   => array(
-					array(
-						'role'    => 'user',
-						'content' => $prompt,
-					),
-				),
-				'tools'      => array(
-					array(
-						'type'     => (string) apply_filters( 'aeo_anthropic_web_search_tool', 'web_search_20250305' ),
-						'name'     => 'web_search',
-						'max_uses' => 3,
-					),
-				),
-			),
-			array(
-				'x-api-key'         => $key,
-				'anthropic-version' => '2023-06-01',
-			)
-		);
-		if ( is_wp_error( $data ) ) {
-			return $data;
-		}
-		$text    = '';
-		$sources = array();
-		foreach ( (array) ( $data['content'] ?? array() ) as $block ) {
-			$type = $block['type'] ?? '';
-			if ( 'text' === $type ) {
-				$text .= (string) ( $block['text'] ?? '' );
-				foreach ( (array) ( $block['citations'] ?? array() ) as $c ) {
-					if ( ! empty( $c['url'] ) ) {
-						$sources[] = array(
-							'url'   => (string) $c['url'],
-							'title' => (string) ( $c['title'] ?? '' ),
-						);
-					}
-				}
-			} elseif ( 'web_search_tool_result' === $type ) {
-				foreach ( (array) ( $block['content'] ?? array() ) as $r ) {
-					if ( ! empty( $r['url'] ) ) {
-						$sources[] = array(
-							'url'   => (string) $r['url'],
-							'title' => (string) ( $r['title'] ?? '' ),
-						);
-					}
-				}
-			}
-		}
-		return array(
-			'text'    => $text,
-			'sources' => self::unique_sources( $sources ),
-		);
-	}
 
-	/**
-	 * De-duplicate sources by URL, keeping order.
-	 *
-	 * @param array<int, array<string, string>> $sources Sources.
-	 * @return array<int, array<string, string>>
-	 */
-	private static function unique_sources( array $sources ) {
-		$seen = array();
-		$out  = array();
-		foreach ( $sources as $s ) {
-			if ( isset( $seen[ $s['url'] ] ) ) {
-				continue;
-			}
-			$seen[ $s['url'] ] = true;
-			$out[]             = $s;
-		}
-		return $out;
-	}
 
 	/* ------------------------------------------------------------------
 	 * Reports
@@ -779,7 +627,6 @@ class Ai_Visibility {
 
 		$engines   = array();
 		$keywords  = array();
-		$sov       = array( 'you' => 0 );
 		$sentiment = array(
 			'positive' => 0,
 			'neutral'  => 0,
@@ -814,7 +661,6 @@ class Ai_Visibility {
 				if ( (int) $r['cited'] ) {
 					$engines[ $e ]['cited']++;
 					$cited++;
-					$sov['you']++;
 					if ( (int) $r['position'] ) {
 						$engines[ $e ]['positions'][] = (int) $r['position'];
 					}
@@ -824,14 +670,6 @@ class Ai_Visibility {
 					$mentioned++;
 					if ( isset( $sentiment[ $r['sentiment'] ] ) ) {
 						$sentiment[ $r['sentiment'] ]++;
-					}
-				}
-				foreach ( (array) json_decode( $r['competitors'], true ) as $domain => $c ) {
-					if ( ! isset( $sov[ $domain ] ) ) {
-						$sov[ $domain ] = 0;
-					}
-					if ( ! empty( $c['cited'] ) ) {
-						$sov[ $domain ]++;
 					}
 				}
 			}
@@ -867,17 +705,6 @@ class Ai_Visibility {
 		}
 		unset( $eng );
 
-		$sov_total = array_sum( $sov );
-		$sov_rows  = array();
-		foreach ( $sov as $name => $count ) {
-			$sov_rows[] = array(
-				'name'    => 'you' === $name ? self::own_host() : $name,
-				'is_you'  => 'you' === $name,
-				'cited'   => $count,
-				'percent' => $sov_total ? (int) round( 100 * $count / $sov_total ) : 0,
-			);
-		}
-
 		$keyword_rows = array();
 		foreach ( $keywords as $k => $by_engine ) {
 			$keyword_rows[] = array(
@@ -886,7 +713,7 @@ class Ai_Visibility {
 			);
 		}
 
-		return array(
+		$summary = array(
 			'scan_id'       => $scan_id,
 			'scanned_at'    => $scanned,
 			'checked'       => $checked,
@@ -894,7 +721,7 @@ class Ai_Visibility {
 			'mentioned'     => $mentioned,
 			'engines'       => array_values( $engines ),
 			'keywords'      => $keyword_rows,
-			'share_of_voice' => $sov_rows,
+			'share_of_voice' => array(), // Filled by Pro (aeo_visibility_summary).
 			'sentiment'     => $sentiment,
 			// Back-compat with 1.1 dashboard fields.
 			'results'       => array_map(
@@ -914,30 +741,26 @@ class Ai_Visibility {
 				$keyword_rows
 			),
 		);
+
+		/**
+		 * Filter a scan summary. Pro adds share of voice from the stored rows.
+		 *
+		 * @param array $summary Summary.
+		 * @param array $rows    Stored answer rows of this scan.
+		 */
+		return apply_filters( 'aeo_visibility_summary', $summary, $rows );
 	}
 
 	/**
-	 * Cited/mentioned rate per scan, for the trend chart.
+	 * Cited/mentioned rate per scan for the trend chart (Pro).
 	 *
 	 * @param int $limit Scans.
 	 * @return array<int, array<string, mixed>>
 	 */
 	public function history( $limit = 12 ) {
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT scan_id, MIN(created_at) AS date, SUM(error = '') AS checked, SUM(cited) AS cited, SUM(mentioned) AS mentioned FROM {$wpdb->prefix}aeo_ai_answers GROUP BY scan_id ORDER BY MIN(id) DESC LIMIT %d", $limit ), ARRAY_A );
-		$out  = array();
-		foreach ( array_reverse( (array) $rows ) as $r ) {
-			$checked = max( 1, (int) $r['checked'] );
-			$out[]   = array(
-				'scan_id'        => $r['scan_id'],
-				'date'           => substr( $r['date'], 0, 10 ),
-				'cited_rate'     => (int) round( 100 * (int) $r['cited'] / $checked ),
-				'mentioned_rate' => (int) round( 100 * (int) $r['mentioned'] / $checked ),
-			);
-		}
-		return $out;
+		return (array) apply_filters( 'aeo_visibility_history', array(), $limit );
 	}
+
 
 	/**
 	 * One stored answer (for the "view answer" drawer).

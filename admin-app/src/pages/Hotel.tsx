@@ -50,7 +50,7 @@ export default function Hotel() {
   }, [data]);
 
   const addFaqs = useMutation({
-    mutationFn: () => post<{ total: number }>('/faq-queue/approve', { post_id: target, items: faqs.filter((f) => f.on && f.answer.trim()).map(({ question, answer }) => ({ question, answer })) }),
+    mutationFn: () => post<{ total: number }>('/faqs/add', { post_id: target, items: faqs.filter((f) => f.on && f.answer.trim()).map(({ question, answer }) => ({ question, answer })) }),
     onSuccess: (d) => toast.success(sprintf(__('Added. That page now has %d FAQs.'), d.total)),
     onError: (e: Error) => toast.error(e.message),
   });

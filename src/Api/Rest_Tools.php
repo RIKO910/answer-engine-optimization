@@ -1,6 +1,6 @@
 <?php
 /**
- * REST routes for Tools: import/export, FAQ migration and MCP connection info.
+ * REST routes for Tools: import/export and FAQ migration. (MCP is in the Pro add-on.)
  *
  * @package AEO
  */
@@ -91,29 +91,6 @@ class Rest_Tools {
 					},
 					'permission_callback' => $schema,
 				),
-			)
-		);
-
-		register_rest_route(
-			$ns,
-			'/tools/mcp',
-			array(
-				'methods'             => 'GET',
-				'callback'            => static function () {
-					$info              = Mcp_Server::info();
-					$info['abilities'] = array();
-					foreach ( \AEO\Integrations\Abilities::definitions() as $name => $def ) {
-						$info['abilities'][] = array(
-							'name'        => 'aeo-' . $name,
-							'label'       => $def['label'],
-							'description' => $def['description'],
-							'readonly'    => (bool) $def['readonly'],
-						);
-					}
-					$info['roles'] = \AEO\Core\Capabilities::roles();
-					return Rest_Extra::respond( $info );
-				},
-				'permission_callback' => $manage,
 			)
 		);
 	}

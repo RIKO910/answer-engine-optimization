@@ -20,6 +20,7 @@ import ContentTools from '@/pages/ContentTools';
 import SchemaTemplates from '@/pages/SchemaTemplates';
 import Hotel from '@/pages/Hotel';
 import Tools from '@/pages/Tools';
+import License from '@/pages/License';
 import { api } from '@/lib/api';
 import { pageToRoute } from '@/lib/utils';
 
@@ -61,6 +62,7 @@ function AppRoutes() {
         <Route path="templates" element={<SchemaTemplates />} />
         <Route path="hotel" element={<Hotel />} />
         <Route path="tools" element={<Tools />} />
+        <Route path="license" element={<License />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

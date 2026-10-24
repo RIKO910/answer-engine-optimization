@@ -221,7 +221,8 @@ class Schema_Service {
 		}
 
 		if ( ! $custom ) {
-			$nodes = array_merge( $nodes, Schema_Templates::nodes_for( $post_id ) );
+			// Schema templates (Pro) add their nodes here.
+			$nodes = array_merge( $nodes, (array) apply_filters( 'aeo_template_schema_nodes', array(), $post_id ) );
 		}
 
 		$has_faq_node = false;

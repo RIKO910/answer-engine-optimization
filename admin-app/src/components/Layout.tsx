@@ -1,15 +1,15 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
   LayoutDashboard, FileText, Code2, HelpCircle, MapPin,
   ShoppingCart, BarChart3, Search, Lightbulb, Settings, Building2,
-  ArrowUpRight, LucideIcon, Bot, Activity, Wrench, LayoutTemplate, Hotel, ListChecks,
+  ArrowUpRight, LucideIcon, Bot, Activity, Wrench, LayoutTemplate, Hotel, ListChecks, KeyRound,
 } from 'lucide-react';
-import { api } from '@/lib/api';
 import { cn, pageToRoute } from '@/lib/utils';
 import { useEffect } from 'react';
 import { __ } from '@/lib/i18n';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { ProBadge } from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 
 interface NavItem {
   to: string;
@@ -17,6 +17,8 @@ interface NavItem {
   icon: LucideIcon;
   /** Capability needed to see the item. */
   cap?: 'manage' | 'view' | 'schema' | 'ai';
+  /** Whole page is a Pro feature (shows a badge until licensed). */
+  pro?: boolean;
 }
 
 const caps = window.aeoGeniusData?.caps;
@@ -36,7 +38,7 @@ const allGroups: Array<{ label: string; items: NavItem[] }> = [
       { to: '/content', label: __('Content'), icon: FileText },
       { to: '/content-tools', label: __('Content tools'), icon: ListChecks },
       { to: '/schema', label: __('Schema'), icon: Code2 },
-      { to: '/templates', label: __('Schema templates'), icon: LayoutTemplate, cap: 'schema' },
+      { to: '/templates', label: __('Schema templates'), icon: LayoutTemplate, cap: 'schema', pro: true },
       { to: '/faqs', label: __('FAQs'), icon: HelpCircle },
       { to: '/briefs', label: __('Briefs'), icon: Lightbulb },
     ],
@@ -55,8 +57,9 @@ const allGroups: Array<{ label: string; items: NavItem[] }> = [
       { to: '/ai-access', label: __('AI access'), icon: Bot, cap: 'manage' },
       { to: '/audit', label: __('Site Audit'), icon: Search },
       { to: '/tools', label: __('Tools'), icon: Wrench, cap: 'manage' },
-      { to: '/agency', label: __('Agency'), icon: Building2, cap: 'manage' },
+      { to: '/agency', label: __('Agency'), icon: Building2, cap: 'manage', pro: true },
       { to: '/settings', label: __('Settings'), icon: Settings, cap: 'manage' },
+      { to: '/license', label: __('License'), icon: KeyRound, cap: 'manage' },
     ],
   },
 ];
@@ -68,11 +71,11 @@ const navGroups = allGroups
 const allItems = navGroups.flatMap((g) => g.items);
 
 function useBranding() {
-  const { data } = useQuery({ queryKey: ['settings'], queryFn: () => api.getSettings() });
-  const agency = ((data as Record<string, unknown>)?.agency || {}) as Record<string, string>;
+  // White-label is a Pro feature; the server sends empty values without a license.
+  const b = (window.aeoGeniusData as unknown as { branding?: { name?: string; logo?: string } })?.branding || {};
   return {
-    name: agency.white_label_name?.trim() || 'AEO',
-    logo: agency.white_label_logo?.trim() || '',
+    name: b.name?.trim() || 'AEO',
+    logo: b.logo?.trim() || '',
   };
 }
 
@@ -130,7 +133,7 @@ export default function Layout() {
             <div key={group.label}>
               <p className="px-2.5 mb-1 text-2xs font-medium text-slate-400">{group.label}</p>
               <div className="space-y-px">
-                {group.items.map(({ to, label, icon: Icon }) => (
+                {group.items.map(({ to, label, icon: Icon, pro }) => (
                   <NavLink
                     key={to}
                     to={to}
@@ -147,6 +150,7 @@ export default function Layout() {
                           className={isActive ? 'text-aeo-600' : 'text-slate-400'}
                         />
                         {label}
+                        {pro && !isPro() && <ProBadge className="ml-auto" />}
                       </>
                     )}
                   </NavLink>

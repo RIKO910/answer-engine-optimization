@@ -72,6 +72,11 @@
   margin: 0;
 }
 
+#aeo-genius-root dl,
+#aeo-genius-root dd {
+  margin: 0;
+}
+
 #aeo-genius-root code {
   background: transparent;
   padding: 0;

@@ -9,9 +9,12 @@ import { Card } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import EmptyState from '@/components/ui/EmptyState';
 import Tabs from '@/components/ui/Tabs';
+import ProGate, { ProBadge } from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 import { cn } from '@/lib/utils';
 
-const canAi = () => window.aeoGeniusData?.caps?.ai !== false;
+// AI writing (titles, descriptions, alt text) is a Pro feature.
+const canAi = () => window.aeoGeniusData?.caps?.ai !== false && isPro();
 
 /* ---------------------------------------------------------------- Freshness */
 
@@ -278,7 +281,7 @@ function MetaEditor() {
                       <p className={cn('text-2xs mt-1 tabular-nums', e.description.length > 155 ? 'text-amber-600' : 'text-slate-400')}>{e.description.length}/155</p>
                     </td>
                     <td className="align-top text-right whitespace-nowrap">
-                      <button type="button" className="aeo-btn-ghost aeo-btn-sm" disabled={busy === r.id || !canAi()} onClick={() => suggest(r.id)} title={__('Write with AI')}>
+                      <button type="button" className="aeo-btn-ghost aeo-btn-sm" disabled={busy === r.id || !canAi()} onClick={() => suggest(r.id)} title={isPro() ? __('Write with AI') : __('Write with AI (Pro)')}>
                         <Sparkles size={12} className={busy === r.id ? 'animate-pulse' : ''} />
                       </button>
                       <button type="button" className="aeo-btn-secondary aeo-btn-sm ml-1" disabled={!changed || save.isPending} onClick={() => save.mutate(r.id)}>
@@ -337,6 +340,11 @@ function AltText() {
     <>
       <p className="text-[13px] text-slate-500 max-w-2xl mb-4">
         {__('Images without alt text are invisible to AI engines and screen readers. AI writes a factual description from the image itself (needs a provider that reads images).')}
+        {!isPro() && (
+          <span className="ml-1 inline-flex items-center gap-1">
+            {__('Writing with AI is in')} <ProBadge />
+          </span>
+        )}
       </p>
       <Card padding={false}>
         {!data || data.length === 0 ? (
@@ -360,7 +368,7 @@ function AltText() {
                     <input className="aeo-input text-xs" value={alts[r.id] ?? ''} placeholder={__('Describe what the image shows')} onChange={(e) => setAlts((a) => ({ ...a, [r.id]: e.target.value }))} />
                   </td>
                   <td className="text-right whitespace-nowrap">
-                    <button type="button" className="aeo-btn-ghost aeo-btn-sm" disabled={busy === r.id || !canAi()} onClick={() => suggest(r.id)} title={__('Write with AI')}>
+                    <button type="button" className="aeo-btn-ghost aeo-btn-sm" disabled={busy === r.id || !canAi()} onClick={() => suggest(r.id)} title={isPro() ? __('Write with AI') : __('Write with AI (Pro)')}>
                       <Sparkles size={12} className={busy === r.id ? 'animate-pulse' : ''} />
                     </button>
                     <button type="button" className="aeo-btn-secondary aeo-btn-sm ml-1" disabled={!alts[r.id]?.trim() || save.isPending} onClick={() => save.mutate(r.id)}>
@@ -395,13 +403,17 @@ export default function ContentTools() {
         onChange={setTab}
         tabs={[
           { id: 'fresh', label: __('Freshness') },
-          { id: 'faq', label: __('FAQ review') },
+          { id: 'faq', label: isPro() ? __('FAQ review') : `${__('FAQ review')} · Pro` },
           { id: 'meta', label: __('Titles & descriptions') },
           { id: 'alt', label: __('Image alt text') },
         ]}
       />
       {tab === 'fresh' && <Freshness />}
-      {tab === 'faq' && <FaqQueue />}
+      {tab === 'faq' && (
+        <ProGate feature="bulk_ai" title={__('Bulk FAQ drafts with review')} description={__('Draft FAQs with AI for every page that has none, then approve the accurate ones. Single-page FAQ suggestions in the editor stay free.')}>
+          <FaqQueue />
+        </ProGate>
+      )}
       {tab === 'meta' && <MetaEditor />}
       {tab === 'alt' && <AltText />}
     </div>

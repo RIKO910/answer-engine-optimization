@@ -40,6 +40,13 @@ function aeo_uninstall_site() {
 		'aeo_indexnow_key',
 		'aeo_indexnow_last',
 		'aeo_indexnow_queue',
+		// License (Pro).
+		'aeo_license_key',
+		'aeo_license_status',
+		'aeo_license_data',
+		'aeo_license_expiry',
+		'aeo_license_last_check',
+		'aeo_license_last_error',
 	);
 	foreach ( $options as $option ) {
 		delete_option( $option );
@@ -80,6 +87,7 @@ function aeo_uninstall_site() {
 
 	wp_clear_scheduled_hook( 'aeo_weekly_maintenance' );
 	wp_clear_scheduled_hook( 'aeo_indexnow_ping' );
+	wp_clear_scheduled_hook( 'aeo_daily_license_check' );
 }
 
 if ( is_multisite() ) {

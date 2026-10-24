@@ -9,6 +9,8 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import EmptyState from '@/components/ui/EmptyState';
 import Switch from '@/components/ui/Switch';
+import ProGate from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 import { cn } from '@/lib/utils';
 
 interface Template {
@@ -100,7 +102,7 @@ const blank = (): Template => ({
   rules: { post_types: [], terms: [], post_ids: [] },
 });
 
-export default function SchemaTemplates() {
+function SchemaTemplatesInner() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ['schema-templates'], queryFn: () => get<TemplatesResponse>('/schema-templates') });
   const posts = useQuery({ queryKey: ['content-posts'], queryFn: () => api.getContentPosts() });
@@ -303,6 +305,19 @@ export default function SchemaTemplates() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+export default function SchemaTemplates() {
+  if (isPro()) return <SchemaTemplatesInner />;
+  return (
+    <div>
+      <PageHeader
+        title={__('Schema templates')}
+        description={__('Write schema once and apply it to every page that matches: a post type, a category, or specific pages. Fill fields from custom fields, ACF or Meta Box.')}
+      />
+      <ProGate feature="templates" />
     </div>
   );
 }

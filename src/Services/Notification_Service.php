@@ -32,8 +32,9 @@ class Notification_Service {
 			$summary['audit']   = $audit['summary'] ?? null;
 		}
 
+		// Scheduled AI visibility scans are a Pro feature (filter set by the Pro add-on).
 		$citations = new Citation_Service();
-		if ( Settings::is_module_enabled( 'analytics' ) && $citations->is_available() && Settings::get( 'tracked_keywords', array() ) ) {
+		if ( apply_filters( 'aeo_scheduled_visibility_scan', false ) && Settings::is_module_enabled( 'analytics' ) && $citations->is_available() && Settings::get( 'tracked_keywords', array() ) ) {
 			$result = $citations->scan_citations();
 			if ( ! is_wp_error( $result ) ) {
 				$summary['citations'] = $result;

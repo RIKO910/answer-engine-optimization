@@ -5,6 +5,8 @@ import { Building2, Save, Terminal, Code, Layers, Users } from 'lucide-react';
 import { api } from '@/lib/api';
 import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
+import ProGate from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 
 const agencyFeatures = [
   { icon: Building2, label: 'White-label admin branding' },
@@ -48,6 +50,7 @@ export default function AgencyTools() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {isPro() ? (
         <Card>
           <CardHeader title="White-label" description="Shown in the sidebar instead of the plugin name" />
           <div className="space-y-4">
@@ -77,6 +80,9 @@ export default function AgencyTools() {
             </button>
           </div>
         </Card>
+        ) : (
+          <ProGate feature="white_label" />
+        )}
 
         <Card>
           <CardHeader title="Developer access" />

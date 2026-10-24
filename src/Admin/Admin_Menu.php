@@ -27,8 +27,8 @@ class Admin_Menu {
 	 * @return void
 	 */
 	public function register_menu() {
-		$agency     = \AEO\Core\Settings::get( 'agency', array() );
-		$brand_name = is_array( $agency ) && ! empty( $agency['white_label_name'] ) ? $agency['white_label_name'] : '';
+		$brand      = \AEO\Core\Settings::branding();
+		$brand_name = $brand['name'];
 
 		add_menu_page(
 			$brand_name ? $brand_name : __( 'Answer Engine Optimization', 'answer-engine-optimization' ),
@@ -54,6 +54,7 @@ class Admin_Menu {
 			'aeo-hotel'         => __( 'Hotel', 'answer-engine-optimization' ),
 			'aeo-ai-access'     => __( 'AI Access', 'answer-engine-optimization' ),
 			'aeo-tools'         => __( 'Tools', 'answer-engine-optimization' ),
+			'aeo-license'       => __( 'License', 'answer-engine-optimization' ),
 			'aeo-audit'         => __( 'Site Audit', 'answer-engine-optimization' ),
 			'aeo-briefs'        => __( 'Content Briefs', 'answer-engine-optimization' ),
 			'aeo-settings'      => __( 'Settings', 'answer-engine-optimization' ),
@@ -64,6 +65,7 @@ class Admin_Menu {
 			'aeo-settings' => 'aeo_manage_settings',
 			'aeo-agency'   => 'aeo_manage_settings',
 			'aeo-tools'    => 'aeo_manage_settings',
+			'aeo-license'  => 'manage_options',
 			'aeo-ai-access' => 'aeo_manage_settings',
 			'aeo-templates' => 'aeo_edit_schema',
 		);

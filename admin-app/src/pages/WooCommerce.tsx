@@ -6,6 +6,8 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingState from '@/components/ui/LoadingState';
 import { SwitchRow } from '@/components/ui/Switch';
+import ProGate from '@/components/ProGate';
+import { isPro } from '@/lib/pro';
 
 // Only list what the plugin actually outputs (see WooCommerce_Integration.php).
 const features = [
@@ -13,9 +15,8 @@ const features = [
   __('Price, currency and stock availability'),
   __('Aggregate rating from reviews'),
   __('SKU, GTIN and brand'),
-  __('Return policy and shipping details (below)'),
-  __('Price valid-until date for sale prices'),
 ];
+const proFeatures = [__('Return policy and shipping details'), __('Price valid-until date for sale prices'), __('Variable products as ProductGroup')];
 
 interface Woo {
   return_days: number;
@@ -65,7 +66,7 @@ export default function WooCommerce() {
         description={__('Product structured data for AI shopping assistants: price, stock, ratings, returns and shipping.')}
         icon={ShoppingCart}
         actions={
-          active && (
+          active && isPro() && (
             <button type="button" className="aeo-btn-primary" disabled={save.isPending} onClick={() => save.mutate({ woo, woo_product_group: flag('woo_product_group') ? 1 : 0 })}>
               <Save size={14} /> {__('Save')}
             </button>
@@ -92,7 +93,15 @@ export default function WooCommerce() {
                   <span className="text-sm text-slate-800">{f}</span>
                 </li>
               ))}
+              {!isPro() &&
+                proFeatures.map((f) => (
+                  <li key={f} className="flex items-center gap-2.5 text-slate-400">
+                    <CheckCircle2 size={15} strokeWidth={1.75} className="flex-shrink-0" />
+                    <span className="text-sm">{f} · Pro</span>
+                  </li>
+                ))}
             </ul>
+            {isPro() && (
             <div className="-mx-2 mt-4 pt-3 border-t border-slate-200">
               <SwitchRow
                 label={__('Variable products as ProductGroup')}
@@ -101,8 +110,12 @@ export default function WooCommerce() {
                 onChange={() => toggle('woo_product_group')}
               />
             </div>
+            )}
           </Card>
 
+          {!isPro() ? (
+            <ProGate feature="woo" />
+          ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card>
               <CardHeader title={__('Return policy')} description={__('Set days to 0 to say returns are not accepted. Leave country empty to use the store country.')} />
@@ -147,6 +160,7 @@ export default function WooCommerce() {
               </div>
             </Card>
           </div>
+          )}
         </div>
       )}
     </div>

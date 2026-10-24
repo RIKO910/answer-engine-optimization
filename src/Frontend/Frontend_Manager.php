@@ -56,7 +56,6 @@ class Frontend_Manager {
 				foreach ( array_values( $locations ) as $i => $location ) {
 					if ( is_array( $location ) ) {
 						$nodes[] = $service->build_location_node( $location, $i );
-						$nodes   = array_merge( $nodes, \AEO\Integrations\Hotel::attraction_nodes( $location ) );
 					}
 				}
 			}

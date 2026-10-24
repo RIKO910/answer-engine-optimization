@@ -34,7 +34,6 @@ It adds clean structured data, a visible FAQ and direct-answer block, an `llms.t
 * **Content tools** - stale-content finder, SEO titles and descriptions (written into Yoast/Rank Math/SEOPress fields when present) and image alt text. Bulk AI FAQ drafts and writing with AI are in Pro.
 * **Schema templates (Pro)** - reusable JSON-LD with display rules (post type, term, page) and placeholders for custom fields, ACF and Meta Box.
 * **Author profiles** - job title, credentials, expertise and profile links as Person schema, with an optional author box.
-* **Hotels (Quotel Hotel Booking)** - Hotel schema with check-in/out, stars, amenities, nearby attractions and guest rating; HotelRoom/Suite with an Offer for each room; a hotel FAQ starter.
 * **Competitor check** - reads competitors' homepage structured data and checks for an llms.txt file, and shows schema types they use that you don't.
 * **Local business** - multiple locations with PostalAddress, opening hours, geo coordinates and business type (Hotel, Restaurant, Store and more).
 * **WooCommerce** - adds brand and GTIN to WooCommerce's own Product schema. Pro adds return policy, shipping details, price-valid-until and ProductGroup for variable products.
@@ -204,6 +203,7 @@ Yes. Set an agency name and logo under Agency; they replace the plugin name in t
 * New: License page (AEO → License) for the optional Answer Engine Optimization Pro add-on, with daily license checks through the QueueCommerce license server.
 * Changed: ChatGPT, Gemini and Claude visibility tracking, share of voice, trends, scheduled scans, Google Search Console/GA4, Bing import, client reports, white-label, bulk AI tools, schema templates, the MCP server, role permissions and advanced WooCommerce schema moved to the Pro add-on. Your settings and data are kept and come back when Pro is active.
 * Free plugin: AI visibility on Perplexity with 5 prompts per scan.
+* Removed: the Hotel page and the Quotel Hotel Booking room integration (room schema, room review ratings, hotel FAQ starter). Hotel sites should use the Quotel Hotel Booking plugin for room and lodging schema; AEO keeps the Hotel/Resort business types without the extra lodging fields, so the two plugins never output duplicate data.
 * Fixed: AI visibility page was blank on sites that had never run a scan.
 * Fixed: clicking the plugin's own menu after opening a page from the WordPress submenu jumped back to that page.
 * Fixed: long AI scans could stop on Windows servers (PHP time limit), and could check questions twice after an interruption.

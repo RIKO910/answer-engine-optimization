@@ -18,7 +18,6 @@ import AiAccess from '@/pages/AiAccess';
 import Traffic from '@/pages/Traffic';
 import ContentTools from '@/pages/ContentTools';
 import SchemaTemplates from '@/pages/SchemaTemplates';
-import Hotel from '@/pages/Hotel';
 import Tools from '@/pages/Tools';
 import License from '@/pages/License';
 import { api } from '@/lib/api';
@@ -60,7 +59,6 @@ function AppRoutes() {
         <Route path="traffic" element={<Traffic />} />
         <Route path="content-tools" element={<ContentTools />} />
         <Route path="templates" element={<SchemaTemplates />} />
-        <Route path="hotel" element={<Hotel />} />
         <Route path="tools" element={<Tools />} />
         <Route path="license" element={<License />} />
         <Route path="*" element={<Navigate to="/" replace />} />

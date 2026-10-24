@@ -95,13 +95,6 @@ export interface Location {
   url: string;
   lat: string;
   lng: string;
-  star_rating?: string;
-  checkin?: string;
-  checkout?: string;
-  pets_allowed?: string;
-  amenities?: string;
-  number_of_rooms?: string;
-  attractions?: string;
 }
 
 export interface AeoGeniusData {

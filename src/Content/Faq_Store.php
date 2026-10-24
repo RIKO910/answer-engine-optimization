@@ -2,7 +2,7 @@
 /**
  * Add FAQ items to a page (merge with existing, dedupe by question).
  *
- * Used by the hotel FAQ starter and, in Pro, by the bulk FAQ review queue.
+ * Used by the REST API (/faqs/add) and, in Pro, by the bulk FAQ review queue.
  *
  * @package AEO
  */

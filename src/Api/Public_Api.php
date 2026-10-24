@@ -94,7 +94,6 @@ class Public_Api {
 				foreach ( array_values( (array) get_option( 'aeo_local_locations', array() ) ) as $i => $location ) {
 					if ( is_array( $location ) ) {
 						$nodes[] = $service->build_location_node( $location, $i );
-						$nodes   = array_merge( $nodes, \AEO\Integrations\Hotel::attraction_nodes( $location ) );
 					}
 				}
 			}

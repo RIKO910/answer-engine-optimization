@@ -241,7 +241,7 @@ class Settings {
 				$sanitized[ $text_key ] = sanitize_textarea_field( (string) $input[ $text_key ] );
 			}
 		}
-		foreach ( array( 'llms_full', 'markdown_pages', 'indexnow', 'traffic_logging', 'author_box', 'review_ratings', 'hotel_rooms_schema', 'mcp_enabled', 'graphql' ) as $flag ) {
+		foreach ( array( 'llms_full', 'markdown_pages', 'indexnow', 'traffic_logging', 'author_box', 'mcp_enabled', 'graphql' ) as $flag ) {
 			if ( isset( $input[ $flag ] ) ) {
 				$sanitized[ $flag ] = $input[ $flag ] ? 1 : 0;
 			}

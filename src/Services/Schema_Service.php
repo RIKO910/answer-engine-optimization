@@ -89,8 +89,8 @@ class Schema_Service {
 		'NewsArticle'     => array( 'image', 'datePublished', 'author' ),
 		'Product'         => array( 'image', 'offers' ),
 		'LocalBusiness'   => array( 'telephone', 'geo', 'openingHoursSpecification' ),
-		'Hotel'           => array( 'telephone', 'geo', 'priceRange', 'checkinTime', 'checkoutTime', 'amenityFeature', 'starRating' ),
-		'LodgingBusiness' => array( 'telephone', 'geo', 'priceRange', 'checkinTime', 'checkoutTime' ),
+		'Hotel'           => array( 'telephone', 'geo', 'priceRange' ),
+		'LodgingBusiness' => array( 'telephone', 'geo', 'priceRange' ),
 		'Event'           => array( 'endDate', 'image', 'offers' ),
 	);
 

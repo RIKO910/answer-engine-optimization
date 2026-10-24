@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-24T08:54:35+00:00\n"
+"POT-Creation-Date: 2026-10-24T15:25:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: answer-engine-optimization\n"
@@ -270,38 +270,34 @@ msgid "Schema Templates"
 msgstr ""
 
 #: src/Admin/Admin_Menu.php:54
-msgid "Hotel"
-msgstr ""
-
-#: src/Admin/Admin_Menu.php:55
 msgid "AI Access"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:56
+#: src/Admin/Admin_Menu.php:55
 msgid "Tools"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:57
+#: src/Admin/Admin_Menu.php:56
 msgid "License"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:58
+#: src/Admin/Admin_Menu.php:57
 msgid "Site Audit"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:59
+#: src/Admin/Admin_Menu.php:58
 msgid "Content Briefs"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:60
+#: src/Admin/Admin_Menu.php:59
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:61
+#: src/Admin/Admin_Menu.php:60
 msgid "Agency Tools"
 msgstr ""
 
-#: src/Admin/Admin_Menu.php:94
+#: src/Admin/Admin_Menu.php:93
 msgid "This page needs JavaScript enabled."
 msgstr ""
 
@@ -385,70 +381,89 @@ msgid "Text refers to %s as current"
 msgstr ""
 
 #. translators: %s: error message
-#: src/Core/License.php:126
+#: src/Core/License.php:128
 #, php-format
 msgid "Could not connect to the license server: %s"
 msgstr ""
 
-#. translators: %d: HTTP status
-#: src/Core/License.php:134
-#, php-format
-msgid "The license server returned an unexpected response (HTTP %d)."
+#: src/Core/License.php:137
+msgid "The license server's bot protection blocked this request (it sent a \"please wait, verifying\" page instead of an answer). Nothing is wrong with your key. Please try again in a few minutes; if it keeps happening, contact support so they can allow license requests from your site."
 msgstr ""
 
-#: src/Core/License.php:151
+#. translators: %d: HTTP status
+#: src/Core/License.php:148
+#, php-format
+msgid "The license server returned an empty response (HTTP %d)."
+msgstr ""
+
+#. translators: 1: HTTP status, 2: start of the response
+#: src/Core/License.php:150
+#, php-format
+msgid "The license server returned an unexpected response (HTTP %1$d): %2$s"
+msgstr ""
+
+#: src/Core/License.php:237
 msgid "Enter a license key."
 msgstr ""
 
-#: src/Core/License.php:183
+#: src/Core/License.php:269
 msgid "License activated."
 msgstr ""
 
-#: src/Core/License.php:187
+#: src/Core/License.php:273
 msgid "The license could not be activated."
 msgstr ""
 
-#: src/Core/License.php:208
+#: src/Core/License.php:294
 msgid "No license key saved."
 msgstr ""
 
-#: src/Core/License.php:241
+#: src/Core/License.php:336
 msgid "License is active."
 msgstr ""
 
-#: src/Core/License.php:242
-msgid "License has expired."
-msgstr ""
-
-#: src/Core/License.php:242
-msgid "License is not activated on this domain."
-msgstr ""
-
-#: src/Core/License.php:247
+#: src/Core/License.php:349
+#: src/Core/License.php:379
 msgid "License is not valid."
 msgstr ""
 
-#: src/Core/License.php:281
+#: src/Core/License.php:368
+msgid "This license has been suspended. Contact support or check your order."
+msgstr ""
+
+#: src/Core/License.php:371
+msgid "License has expired. Renew it to keep Pro features and updates."
+msgstr ""
+
+#: src/Core/License.php:374
+msgid "This key belongs to a different product."
+msgstr ""
+
+#: src/Core/License.php:377
+msgid "License is not activated on this domain. Activate it again, or free a slot on another site."
+msgstr ""
+
+#: src/Core/License.php:406
 msgid "License removed from this site."
 msgstr ""
 
-#: src/Core/License.php:408
+#: src/Core/License.php:533
 msgid "Activate your license to switch on the Pro features."
 msgstr ""
 
-#: src/Core/License.php:413
+#: src/Core/License.php:538
 msgid "Your license has expired. Renew it to keep the Pro features."
 msgstr ""
 
-#: src/Core/License.php:414
+#: src/Core/License.php:539
 msgid "Your license is not active. Pro features are switched off."
 msgstr ""
 
-#: src/Core/License.php:422
+#: src/Core/License.php:547
 msgid "Answer Engine Optimization Pro:"
 msgstr ""
 
-#: src/Core/License.php:425
+#: src/Core/License.php:550
 msgid "Manage license"
 msgstr ""
 
@@ -671,48 +686,6 @@ msgstr ""
 
 #: src/Integrations/Graphql.php:136
 msgid "Clean Markdown version of the content, as served to AI agents."
-msgstr ""
-
-#. translators: 1: distance, 2: hotel name
-#: src/Integrations/Hotel.php:225
-#, php-format
-msgid "%1$s from %2$s"
-msgstr ""
-
-#. translators: %s: view
-#: src/Integrations/Hotel.php:336
-#, php-format
-msgid "%s view"
-msgstr ""
-
-#: src/Integrations/Hotel.php:339
-msgid "Smoking allowed"
-msgstr ""
-
-#: src/Integrations/Hotel.php:378
-msgid "per night"
-msgstr ""
-
-#: src/Integrations/Hotel.php:506
-msgid "Your rating"
-msgstr ""
-
-#: src/Integrations/Hotel.php:506
-msgid "Choose…"
-msgstr ""
-
-#. translators: %d: stars
-#: src/Integrations/Hotel.php:509
-#, php-format
-msgid "%d star"
-msgid_plural "%d stars"
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: %d: rating
-#: src/Integrations/Hotel.php:545
-#, php-format
-msgid "Rated %d out of 5"
 msgstr ""
 
 #: src/Services/AI/AI_Response.php:174
@@ -1252,15 +1225,15 @@ msgstr ""
 msgid "Business"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:57 admin-app/src/pages/AiAccess.tsx:86
+#: admin-app/src/components/Layout.tsx:56 admin-app/src/pages/AiAccess.tsx:86
 msgid "AI access"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:60
+#: admin-app/src/components/Layout.tsx:59
 msgid "Agency"
 msgstr ""
 
-#: admin-app/src/components/Layout.tsx:171
+#: admin-app/src/components/Layout.tsx:170
 msgid "View site"
 msgstr ""
 
@@ -1508,7 +1481,7 @@ msgstr ""
 msgid "Schema map"
 msgstr ""
 
-#: admin-app/src/pages/AiAccess.tsx:291 admin-app/src/pages/ContentTools.tsx:183 admin-app/src/pages/Hotel.tsx:165
+#: admin-app/src/pages/AiAccess.tsx:291 admin-app/src/pages/ContentTools.tsx:183
 msgid "Include"
 msgstr ""
 
@@ -1975,7 +1948,7 @@ msgstr ""
 msgid "No SEO plugin detected — this plugin outputs the title and description itself."
 msgstr ""
 
-#: admin-app/src/pages/ContentTools.tsx:255 admin-app/src/pages/Hotel.tsx:142
+#: admin-app/src/pages/ContentTools.tsx:255
 msgid "Missing"
 msgstr ""
 
@@ -2065,175 +2038,6 @@ msgstr ""
 
 #: admin-app/src/pages/ContentTools.tsx:413
 msgid "Draft FAQs with AI for every page that has none, then approve the accurate ones. Single-page FAQ suggestions in the editor stay free."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:26
-msgid "Description"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:27
-msgid "Photo"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:28
-msgid "Bed"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:29
-msgid "Occupancy"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:30
-msgid "Size"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:31
-msgid "Amenities"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:32
-msgid "Pets"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:33
-msgid "Smoking"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:34
-msgid "Price"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:35
-msgid "Rating"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:36
-msgid "Units"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:54
-#, javascript-format
-msgid "Added. That page now has %d FAQs."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:68
-msgid "Hotel and room schema built from Quotel Hotel Booking and your Local Business details, so AI answers can quote rooms, prices, check-in times and amenities correctly."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:85
-#, javascript-format
-msgid "%d rooms found"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:85
-msgid "Not detected"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:89
-msgid "Hotel details"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:91
-msgid "Hotel location set up"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:93
-msgid "Add a location with type Hotel"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:97
-msgid "Guest rating"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:99
-#, javascript-format
-msgid "%d reviews"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:99
-msgid "No rated reviews yet"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:105
-msgid "Output"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:108
-msgid "HotelRoom / Suite schema with an Offer on each room page"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:109
-#, javascript-format
-msgid "Price from the room base price in %s, bed, occupancy, size, view and amenities."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:114
-msgid "Star rating on room reviews"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:115
-msgid "Adds a 1–5 rating to the room comment form. Ratings feed aggregateRating on the hotel and rooms."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:124
-msgid "Rooms"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:124
-msgid "What each room page tells AI engines. Fill the missing fields in Quotel to complete them."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:127
-msgid "No rooms"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:127
-msgid "Published Quotel rooms appear here."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:130
-msgid "Room"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:130
-msgid "Type"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:130
-msgid "From"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:130
-msgid "In schema"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:158
-msgid "Hotel FAQ starter"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:159
-msgid "The questions guests ask assistants most. Answers are pre-filled where your settings know them — complete the rest, then add them to a page."
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:172
-msgid "Write the answer…"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:180
-msgid "Add to page"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:181
-msgid "Add to page…"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:185
-#, javascript-format
-msgid "Add %d FAQs"
-msgstr ""
-
-#: admin-app/src/pages/Hotel.tsx:187
-msgid "Questions without an answer are skipped."
 msgstr ""
 
 #: admin-app/src/pages/License.tsx:47

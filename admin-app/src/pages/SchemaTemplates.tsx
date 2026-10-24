@@ -242,7 +242,7 @@ function SchemaTemplatesInner() {
                     id="tpl-terms"
                     className="aeo-input text-xs font-mono"
                     value={t.rules.terms.join(', ')}
-                    placeholder="category:news, qhb_room_type:suite"
+                    placeholder="category:news, product_cat:shoes"
                     onChange={(e) => updateRules({ terms: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
                   />
                   <p className="aeo-hint">{sprintf(__('taxonomy:slug — available: %s'), data.taxonomies.map((x) => x.name).join(', '))}</p>

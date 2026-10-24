@@ -19,23 +19,6 @@ const businessTypes = [
 
 type Field = { field: keyof Location; label: string; span?: 2; placeholder?: string; multiline?: boolean };
 
-const lodging = ['Hotel', 'Resort', 'Motel', 'Hostel', 'BedAndBreakfast', 'LodgingBusiness', 'Campground'];
-
-const hotelFields: Field[] = [
-  { field: 'star_rating', label: 'Star rating', placeholder: '4' },
-  { field: 'number_of_rooms', label: 'Number of rooms', placeholder: '42' },
-  { field: 'checkin', label: 'Check-in time', placeholder: '14:00' },
-  { field: 'checkout', label: 'Check-out time', placeholder: '12:00' },
-  { field: 'amenities', label: 'Amenities', span: 2, placeholder: 'Free WiFi, Pool, Airport shuttle, Restaurant, Sea view' },
-  {
-    field: 'attractions',
-    label: 'Nearby attractions',
-    span: 2,
-    multiline: true,
-    placeholder: "One per line: Name | distance | URL\nLaboni Beach | 400 m\nHimchari National Park | 12 km | https://…",
-  },
-];
-
 const fields: Field[] = [
   { field: 'name', label: 'Business name', span: 2 },
   { field: 'address', label: 'Street address', span: 2 },
@@ -155,32 +138,6 @@ export default function LocalBusiness() {
                   )}
                 </div>
               ))}
-              {lodging.includes(loc.type) && (
-                <>
-                  <div className="md:col-span-2 pt-2 mt-2 border-t border-slate-200">
-                    <p className="text-sm font-semibold text-slate-900">Hotel details</p>
-                    <p className="text-xs text-slate-500">Used for Hotel schema, the Hotel section of llms.txt and pre-filled hotel FAQs. Check-in/out fall back to Quotel settings.</p>
-                  </div>
-                  {hotelFields.map(({ field, label, span, placeholder, multiline }) => (
-                    <div key={field} className={span === 2 ? 'md:col-span-2' : ''}>
-                      <label className="aeo-label" htmlFor={`aeo-${field}-${i}`}>{label}</label>
-                      {multiline ? (
-                        <textarea id={`aeo-${field}-${i}`} value={loc[field] ?? ''} rows={4} placeholder={placeholder} onChange={(e) => update(i, field, e.target.value)} className="aeo-textarea" />
-                      ) : (
-                        <input id={`aeo-${field}-${i}`} type="text" value={loc[field] ?? ''} placeholder={placeholder} onChange={(e) => update(i, field, e.target.value)} className="aeo-input" />
-                      )}
-                    </div>
-                  ))}
-                  <div>
-                    <label className="aeo-label" htmlFor={`aeo-pets-${i}`}>Pets</label>
-                    <select id={`aeo-pets-${i}`} className="aeo-select" value={loc.pets_allowed ?? ''} onChange={(e) => update(i, 'pets_allowed', e.target.value)}>
-                      <option value="">Not specified</option>
-                      <option value="yes">Allowed</option>
-                      <option value="no">Not allowed</option>
-                    </select>
-                  </div>
-                </>
-              )}
             </div>
           </Card>
         ))}

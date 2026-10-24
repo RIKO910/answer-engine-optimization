@@ -2,7 +2,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, Code2, HelpCircle, MapPin,
   ShoppingCart, BarChart3, Search, Lightbulb, Settings, Building2,
-  ArrowUpRight, LucideIcon, Bot, Activity, Wrench, LayoutTemplate, Hotel, ListChecks, KeyRound,
+  ArrowUpRight, LucideIcon, Bot, Activity, Wrench, LayoutTemplate, ListChecks, KeyRound,
 } from 'lucide-react';
 import { cn, pageToRoute } from '@/lib/utils';
 import { useEffect } from 'react';
@@ -47,7 +47,6 @@ const allGroups: Array<{ label: string; items: NavItem[] }> = [
     label: __('Business'),
     items: [
       { to: '/local', label: __('Local Business'), icon: MapPin },
-      { to: '/hotel', label: __('Hotel'), icon: Hotel },
       { to: '/woocommerce', label: 'WooCommerce', icon: ShoppingCart },
     ],
   },

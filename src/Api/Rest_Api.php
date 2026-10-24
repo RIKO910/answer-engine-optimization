@@ -802,7 +802,7 @@ class Rest_Api {
 	public function save_locations( WP_REST_Request $request ) {
 		$data      = $request->get_json_params();
 		$locations = array();
-		$text      = array( 'name', 'type', 'address', 'city', 'region', 'postal_code', 'country', 'phone', 'price_range', 'star_rating', 'checkin', 'checkout', 'pets_allowed', 'amenities', 'number_of_rooms' );
+		$text      = array( 'name', 'type', 'address', 'city', 'region', 'postal_code', 'country', 'phone', 'price_range' );
 
 		foreach ( is_array( $data ) ? $data : array() as $raw ) {
 			if ( ! is_array( $raw ) ) {
@@ -816,13 +816,6 @@ class Rest_Api {
 				$loc['type'] = 'LocalBusiness';
 			}
 			$loc['hours']       = sanitize_textarea_field( (string) ( $raw['hours'] ?? '' ) );
-			$loc['attractions'] = sanitize_textarea_field( (string) ( $raw['attractions'] ?? '' ) );
-			$loc['pets_allowed'] = in_array( $loc['pets_allowed'], array( 'yes', 'no' ), true ) ? $loc['pets_allowed'] : '';
-			$loc['star_rating']  = is_numeric( $loc['star_rating'] ) && (float) $loc['star_rating'] >= 1 && (float) $loc['star_rating'] <= 5 ? (string) (float) $loc['star_rating'] : '';
-			foreach ( array( 'checkin', 'checkout' ) as $time_key ) {
-				$loc[ $time_key ] = preg_match( '/^\d{1,2}:\d{2}$/', $loc[ $time_key ] ) ? $loc[ $time_key ] : '';
-			}
-			$loc['number_of_rooms'] = $loc['number_of_rooms'] ? (string) absint( $loc['number_of_rooms'] ) : '';
 			$loc['url']   = esc_url_raw( (string) ( $raw['url'] ?? '' ) );
 			$loc['lat']   = is_numeric( $raw['lat'] ?? '' ) && abs( (float) $raw['lat'] ) <= 90 ? (string) (float) $raw['lat'] : '';
 			$loc['lng']   = is_numeric( $raw['lng'] ?? '' ) && abs( (float) $raw['lng'] ) <= 180 ? (string) (float) $raw['lng'] : '';

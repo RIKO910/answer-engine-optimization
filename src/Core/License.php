@@ -130,6 +130,13 @@ class License {
 		}
 		$body = (string) wp_remote_retrieve_body( $response );
 		$data = self::parse_json( $body );
+		if ( ! is_array( $data ) && self::is_bot_challenge( $body ) ) {
+			update_option( 'aeo_license_last_response', array( 'code' => (int) wp_remote_retrieve_response_code( $response ), 'body' => substr( $body, 0, 2000 ), 'time' => time() ), false );
+			return new \WP_Error(
+				'aeo_license_blocked',
+				__( 'The license server\'s bot protection blocked this request (it sent a "please wait, verifying" page instead of an answer). Nothing is wrong with your key. Please try again in a few minutes; if it keeps happening, contact support so they can allow license requests from your site.', 'answer-engine-optimization' )
+			);
+		}
 		if ( ! is_array( $data ) ) {
 			$code    = (int) wp_remote_retrieve_response_code( $response );
 			$preview = self::preview( $body );
@@ -185,6 +192,24 @@ class License {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Is this a web-server bot check (LiteSpeed reCAPTCHA, Cloudflare, etc.) instead
+	 * of an API answer? A plugin cannot and must not pass such a check; the server
+	 * has to exempt the license API.
+	 *
+	 * @param string $body Body.
+	 * @return bool
+	 */
+	private static function is_bot_challenge( $body ) {
+		$body = strtolower( substr( (string) $body, 0, 20000 ) );
+		foreach ( array( 'request is being verified', 'lsrecaptcha', 'one moment, please', 'checking your browser', 'cf-chl', 'challenge-platform', 'just a moment...' ) as $marker ) {
+			if ( false !== strpos( $body, $marker ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -261,7 +286,7 @@ class License {
 	 *
 	 * @return array{success: bool, message: string}
 	 */
-	public static function verify() {
+	public static function verify( $retried = false ) {
 		$key = self::key();
 		if ( '' === $key ) {
 			return array(
@@ -275,6 +300,7 @@ class License {
 			array(
 				'license_key' => $key,
 				'domain'      => self::domain(),
+				'product'     => self::PRODUCT,
 			)
 		);
 		if ( is_wp_error( $data ) ) {
@@ -289,18 +315,33 @@ class License {
 
 		if ( ! empty( $data['success'] ) ) {
 			$info = is_array( $data['data'] ?? null ) ? $data['data'] : array();
+
+			// The site moved to a new domain (staging → live): claim a slot for it once.
+			if ( empty( $info['is_activated_on_domain'] ) && empty( $info['is_expired'] ) && empty( $info['problem'] ) && 'active' === ( $info['status'] ?? 'active' ) && ! $retried ) {
+				$again = self::activate( $key );
+				if ( $again['success'] ) {
+					return self::verify( true );
+				}
+			}
+
 			update_option( self::OPT_DATA, $info, false );
-			if ( isset( $info['expiry_date'] ) ) {
+			if ( array_key_exists( 'expiry_date', $info ) ) {
 				update_option( self::OPT_EXPIRY, (string) $info['expiry_date'], false );
 			}
-			$ok = empty( $info['is_expired'] ) && ! empty( $info['is_activated_on_domain'] );
+			// QC License System 2.x sends is_valid; 1.x only the separate flags.
+			$ok = isset( $info['is_valid'] )
+				? (bool) $info['is_valid']
+				: ( empty( $info['is_expired'] ) && ! empty( $info['is_activated_on_domain'] ) && 'suspended' !== ( $info['status'] ?? '' ) );
 			update_option( self::OPT_STATUS, $ok ? 'active' : 'inactive', false );
-			delete_option( self::OPT_ERROR );
+			$message = $ok ? __( 'License is active.', 'answer-engine-optimization' ) : self::problem_message( $info, (string) ( $data['message'] ?? '' ) );
+			if ( $ok ) {
+				delete_option( self::OPT_ERROR );
+			} else {
+				update_option( self::OPT_ERROR, $message, false );
+			}
 			return array(
 				'success' => $ok,
-				'message' => $ok
-					? __( 'License is active.', 'answer-engine-optimization' )
-					: ( ! empty( $info['is_expired'] ) ? __( 'License has expired.', 'answer-engine-optimization' ) : __( 'License is not activated on this domain.', 'answer-engine-optimization' ) ),
+				'message' => $message,
 			);
 		}
 
@@ -312,6 +353,30 @@ class License {
 			'success' => false,
 			'message' => $message,
 		);
+	}
+
+	/**
+	 * Explain why a license the server knows about is not usable here.
+	 *
+	 * @param array<string, mixed> $info     Status data.
+	 * @param string               $fallback Server message.
+	 * @return string
+	 */
+	private static function problem_message( array $info, $fallback ) {
+		$problem = (string) ( $info['problem'] ?? '' );
+		if ( 'suspended' === $problem || 'suspended' === ( $info['status'] ?? '' ) ) {
+			return __( 'This license has been suspended. Contact support or check your order.', 'answer-engine-optimization' );
+		}
+		if ( 'expired' === $problem || ! empty( $info['is_expired'] ) ) {
+			return __( 'License has expired. Renew it to keep Pro features and updates.', 'answer-engine-optimization' );
+		}
+		if ( 'wrong_product' === $problem ) {
+			return __( 'This key belongs to a different product.', 'answer-engine-optimization' );
+		}
+		if ( empty( $info['is_activated_on_domain'] ) ) {
+			return __( 'License is not activated on this domain. Activate it again, or free a slot on another site.', 'answer-engine-optimization' );
+		}
+		return '' !== $fallback ? $fallback : __( 'License is not valid.', 'answer-engine-optimization' );
 	}
 
 	/**

@@ -113,7 +113,6 @@ class Plugin {
 		\AEO\Content\Editor_Panel::register();
 		\AEO\Content\Author_Profile::register();
 		\AEO\Integrations\Page_Builders::register();
-		\AEO\Integrations\Hotel::register();
 		\AEO\Integrations\Abilities::register();
 		\AEO\Api\Rest_Tools::register();
 		\AEO\Integrations\Graphql::register();

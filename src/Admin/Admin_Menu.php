@@ -51,7 +51,6 @@ class Admin_Menu {
 			'aeo-traffic'       => __( 'Traffic', 'answer-engine-optimization' ),
 			'aeo-content-tools' => __( 'Content Tools', 'answer-engine-optimization' ),
 			'aeo-templates'     => __( 'Schema Templates', 'answer-engine-optimization' ),
-			'aeo-hotel'         => __( 'Hotel', 'answer-engine-optimization' ),
 			'aeo-ai-access'     => __( 'AI Access', 'answer-engine-optimization' ),
 			'aeo-tools'         => __( 'Tools', 'answer-engine-optimization' ),
 			'aeo-license'       => __( 'License', 'answer-engine-optimization' ),

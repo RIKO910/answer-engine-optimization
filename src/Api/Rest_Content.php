@@ -174,8 +174,7 @@ class Rest_Content {
 		);
 	
 
-		// Hotel.
-		// Add FAQ items to a page (hotel FAQ starter; Pro's review queue uses the same store).
+		// Add FAQ items to a page (Pro's review queue uses the same store).
 		$r(
 			'/faqs/add',
 			$post,
@@ -198,36 +197,6 @@ class Rest_Content {
 			},
 			$edit
 		);
-		$r(
-			'/hotel',
-			$get,
-			static function () {
-				$rooms = \AEO\Integrations\Hotel::has_rooms() ? get_posts( array( 'post_type' => \AEO\Integrations\Hotel::ROOM_TYPE, 'post_status' => 'publish', 'posts_per_page' => 100 ) ) : array();
-				return Rest_Extra::respond(
-					array(
-						'quotel'        => \AEO\Integrations\Hotel::has_rooms(),
-						'hotel'         => (bool) \AEO\Integrations\Hotel::hotel_location(),
-						'faq_template'  => \AEO\Integrations\Hotel::faq_template(),
-						'rating'        => \AEO\Integrations\Hotel::aggregate_rating(),
-						'rooms'         => array_map(
-							static function ( $room ) {
-								$node = \AEO\Integrations\Hotel::room_node( $room->ID );
-								return array(
-									'id'    => $room->ID,
-									'title' => wp_strip_all_tags( get_the_title( $room ) ),
-									'url'   => get_permalink( $room ),
-									'type'  => $node['@type'] ?? 'HotelRoom',
-									'price' => (float) get_post_meta( $room->ID, '_qhb_base_price', true ),
-									'props' => array_values( array_diff( array_keys( $node ), array( '@type', '@id', 'name', 'url', 'containedInPlace' ) ) ),
-								);
-							},
-							$rooms
-						),
-						'currency'      => (string) get_option( 'qhb_currency', '' ),
-					)
-				);
-			},
-			$edit
-		);
+
 	}
 }

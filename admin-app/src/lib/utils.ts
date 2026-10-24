@@ -33,7 +33,6 @@ export const pageToRoute: Record<string, string> = {
   'aeo-traffic': '/traffic',
   'aeo-content-tools': '/content-tools',
   'aeo-templates': '/templates',
-  'aeo-hotel': '/hotel',
   'aeo-tools': '/tools',
   'aeo-license': '/license',
 };

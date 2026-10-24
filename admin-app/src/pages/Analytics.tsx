@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 
 interface VisibilityData {
   engines: string[];
-  all: Array<{ engine: string; label: string; locked?: boolean }>;
+  all: Array<{ engine: string; label: string; locked?: boolean; via?: '' | 'direct' | 'openrouter' }>;
   max_prompts?: number;
   summary: VisibilitySummary | null;
   history: Array<{ scan_id: string; date: string; cited_rate: number; mentioned_rate: number }>;
@@ -263,8 +263,8 @@ export default function Analytics() {
         <div className="aeo-card-muted mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-[13px] text-slate-600">
             {isPro()
-              ? __('Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key to start.')
-              : __('Scans ask Perplexity your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity API key to start. ChatGPT, Gemini and Claude tracking is in Pro.')}
+              ? __('Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key, or one OpenRouter key for all of them, to start.')
+              : __('Scans ask Perplexity your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity or OpenRouter API key to start. ChatGPT, Gemini and Claude tracking is in Pro.')}
           </p>
           <Link to="/settings" className="aeo-btn-secondary aeo-btn-sm self-start sm:self-center">
             {__('Add a key')}
@@ -442,7 +442,7 @@ export default function Analytics() {
               <p className="aeo-label">{__('Engines')}</p>
               <div className="space-y-1.5">
                 {(data?.all || []).map((e) => {
-                  const hasKey = available.includes(e.engine) || (engines.length > 0 && engines.includes(e.engine));
+                  const hasKey = !!e.via || available.includes(e.engine);
                   const on = !e.locked && (engines.length === 0 ? available.includes(e.engine) : engines.includes(e.engine));
                   return (
                     <label key={e.engine} className={cn('flex items-center gap-2 text-sm', e.locked ? 'text-slate-400' : 'text-slate-700')}>
@@ -456,7 +456,7 @@ export default function Analytics() {
                         }}
                       />
                       {e.label}
-                      {e.locked ? <ProBadge /> : !hasKey && <span className="text-2xs text-slate-400">· {__('no key')}</span>}
+                      {e.locked ? <ProBadge /> : !hasKey ? <span className="text-2xs text-slate-400">· {__('no key')}</span> : e.via === 'openrouter' && <span className="text-2xs text-slate-400">· {__('via OpenRouter')}</span>}
                     </label>
                   );
                 })}

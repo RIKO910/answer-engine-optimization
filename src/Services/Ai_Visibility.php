@@ -41,6 +41,18 @@ class Ai_Visibility {
 		'anthropic'  => array( 'label' => 'Claude', 'key' => 'anthropic_api_key', 'pro' => true ),
 	);
 
+	/**
+	 * OpenRouter models used when an engine has no key of its own but an
+	 * OpenRouter key is saved. ":online" turns on OpenRouter's web search, so
+	 * the answers carry the sources the engine used, as in a direct scan.
+	 */
+	const OPENROUTER_MODELS = array(
+		'perplexity' => 'perplexity/sonar',
+		'openai'     => 'openai/gpt-4o-mini:online',
+		'gemini'     => 'google/gemini-2.5-flash:online',
+		'anthropic'  => 'anthropic/claude-haiku-4.5:online',
+	);
+
 	const POSITIVE = array( 'best', 'excellent', 'great', 'top', 'recommended', 'recommend', 'popular', 'highly rated', 'well-reviewed', 'friendly', 'clean', 'comfortable', 'beautiful', 'stunning', 'affordable', 'good value', 'trusted', 'reliable', 'favorite', 'favourite', 'outstanding', 'luxury', 'convenient', 'helpful', 'praised', 'loved' );
 	const NEGATIVE = array( 'worst', 'bad', 'poor', 'dirty', 'noisy', 'overpriced', 'expensive', 'rude', 'complaint', 'complaints', 'avoid', 'disappointing', 'negative', 'scam', 'unreliable', 'outdated', 'mixed reviews', 'issues', 'problem', 'problems', 'closed' );
 
@@ -55,7 +67,7 @@ class Ai_Visibility {
 		$enabled = self::enabled_engines();
 		$out     = array();
 		foreach ( self::ENGINES as $engine => $def ) {
-			if ( in_array( $engine, $enabled, true ) && in_array( $engine, $chosen, true ) && '' !== self::key( $engine ) ) {
+			if ( in_array( $engine, $enabled, true ) && in_array( $engine, $chosen, true ) && self::has_access( $engine ) ) {
 				$out[] = $engine;
 			}
 		}
@@ -88,6 +100,38 @@ class Ai_Visibility {
 	 */
 	public static function key( $engine ) {
 		return isset( self::ENGINES[ $engine ] ) ? (string) Encryption::decrypt( Settings::get( self::ENGINES[ $engine ]['key'], '' ) ) : '';
+	}
+
+	/**
+	 * Saved OpenRouter key ('' when none).
+	 *
+	 * @return string
+	 */
+	public static function openrouter_key() {
+		return (string) Encryption::decrypt( Settings::get( 'openrouter_api_key', '' ) );
+	}
+
+	/**
+	 * Can this engine be asked: its own key, or the OpenRouter key.
+	 *
+	 * @param string $engine Engine.
+	 * @return bool
+	 */
+	public static function has_access( $engine ) {
+		return '' !== self::key( $engine ) || ( isset( self::OPENROUTER_MODELS[ $engine ] ) && '' !== self::openrouter_key() );
+	}
+
+	/**
+	 * How an engine is reached: 'direct', 'openrouter' or '' (no key).
+	 *
+	 * @param string $engine Engine.
+	 * @return string
+	 */
+	public static function route( $engine ) {
+		if ( '' !== self::key( $engine ) ) {
+			return 'direct';
+		}
+		return self::has_access( $engine ) ? 'openrouter' : '';
 	}
 
 	/**
@@ -496,12 +540,22 @@ class Ai_Visibility {
 	 */
 	public function ask( $engine, $prompt ) {
 		$key = self::key( $engine );
-		if ( '' === $key ) {
+		if ( '' === $key && ! self::has_access( $engine ) ) {
 			return new \WP_Error( 'aeo_no_key', __( 'No API key', 'answer-engine-optimization' ) );
 		}
 		$result = apply_filters( 'aeo_visibility_pre_ask', null, $engine, $prompt );
 		if ( null !== $result ) {
 			return $result;
+		}
+		if ( '' === $key ) {
+			// Only the OpenRouter key: ChatGPT, Gemini and Claude still need Pro.
+			if ( ! in_array( $engine, self::enabled_engines(), true ) ) {
+				return \AEO\Core\Pro::required_error(
+					/* translators: %s: engine name */
+					sprintf( __( '%s tracking needs Answer Engine Optimization Pro.', 'answer-engine-optimization' ), self::ENGINES[ $engine ]['label'] ?? $engine )
+				);
+			}
+			return $this->ask_openrouter( $engine, $prompt );
 		}
 		if ( 'perplexity' === $engine ) {
 			return $this->ask_perplexity( $key, $prompt );
@@ -544,6 +598,61 @@ class Ai_Visibility {
 			return new \WP_Error( 'aeo_http_' . $code, trim( sprintf( 'HTTP %d %s', $code, $msg ) ) );
 		}
 		return $data;
+	}
+
+	/**
+	 * Ask an engine through OpenRouter (one key for every engine).
+	 *
+	 * @param string $engine Engine.
+	 * @param string $prompt Prompt.
+	 * @return array<string, mixed>|\WP_Error
+	 */
+	private function ask_openrouter( $engine, $prompt ) {
+		$model = (string) apply_filters( 'aeo_visibility_openrouter_model', self::OPENROUTER_MODELS[ $engine ], $engine );
+		$data  = $this->post(
+			'https://openrouter.ai/api/v1/chat/completions',
+			array(
+				'model'    => $model,
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => $prompt,
+					),
+				),
+			),
+			array(
+				'Authorization' => 'Bearer ' . self::openrouter_key(),
+				'HTTP-Referer'  => home_url( '/' ),
+				'X-Title'       => 'Answer Engine Optimization',
+			)
+		);
+		if ( is_wp_error( $data ) ) {
+			return new \WP_Error( $data->get_error_code(), 'OpenRouter (' . $model . '): ' . $data->get_error_message() );
+		}
+		$sources = array();
+		foreach ( (array) ( $data['choices'][0]['message']['annotations'] ?? array() ) as $a ) {
+			if ( is_array( $a ) && ! empty( $a['url_citation']['url'] ) ) {
+				$sources[ (string) $a['url_citation']['url'] ] = (string) ( $a['url_citation']['title'] ?? '' );
+			}
+		}
+		foreach ( Citation_Service::extract_source_urls( $data ) as $url ) {
+			if ( ! isset( $sources[ $url ] ) ) {
+				$sources[ $url ] = '';
+			}
+		}
+		$list = array();
+		foreach ( $sources as $url => $title ) {
+			if ( false !== filter_var( $url, FILTER_VALIDATE_URL ) ) {
+				$list[] = array(
+					'url'   => $url,
+					'title' => $title,
+				);
+			}
+		}
+		return array(
+			'text'    => (string) ( $data['choices'][0]['message']['content'] ?? '' ),
+			'sources' => $list,
+		);
 	}
 
 	/**

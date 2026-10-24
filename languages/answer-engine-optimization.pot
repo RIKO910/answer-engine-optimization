@@ -3000,3 +3000,15 @@ msgstr ""
 #: admin-app/src/pages/WooCommerce.tsx:159
 msgid "Transit, max days"
 msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:266
+msgid "Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key, or one OpenRouter key for all of them, to start."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:267
+msgid "Scans ask Perplexity your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity or OpenRouter API key to start. ChatGPT, Gemini and Claude tracking is in Pro."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:459
+msgid "via OpenRouter"
+msgstr ""

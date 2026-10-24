@@ -170,6 +170,8 @@ class Rest_Extra {
 									'label'  => $d['label'],
 									// Engine needs Pro on this install.
 									'locked' => ! in_array( $k, Ai_Visibility::enabled_engines(), true ),
+									// 'direct', 'openrouter' or '' (no key).
+									'via'    => Ai_Visibility::route( $k ),
 								);
 							},
 							array_keys( Ai_Visibility::ENGINES ),

@@ -14,6 +14,12 @@ import SiteAudit from '@/pages/SiteAudit';
 import ContentBriefs from '@/pages/ContentBriefs';
 import Settings from '@/pages/Settings';
 import AgencyTools from '@/pages/AgencyTools';
+import AiAccess from '@/pages/AiAccess';
+import Traffic from '@/pages/Traffic';
+import ContentTools from '@/pages/ContentTools';
+import SchemaTemplates from '@/pages/SchemaTemplates';
+import Hotel from '@/pages/Hotel';
+import Tools from '@/pages/Tools';
 import { api } from '@/lib/api';
 import { pageToRoute } from '@/lib/utils';
 
@@ -41,6 +47,12 @@ function AppRoutes() {
         <Route path="briefs" element={<ContentBriefs />} />
         <Route path="settings" element={<Settings />} />
         <Route path="agency" element={<AgencyTools />} />
+        <Route path="ai-access" element={<AiAccess />} />
+        <Route path="traffic" element={<Traffic />} />
+        <Route path="content-tools" element={<ContentTools />} />
+        <Route path="templates" element={<SchemaTemplates />} />
+        <Route path="hotel" element={<Hotel />} />
+        <Route path="tools" element={<Tools />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

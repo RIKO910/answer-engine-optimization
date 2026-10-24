@@ -31,7 +31,7 @@ class Citation_Service {
 	 * @return bool
 	 */
 	public function is_available() {
-		return '' !== $this->api_key();
+		return (bool) Ai_Visibility::available_engines();
 	}
 
 	/**
@@ -64,9 +64,17 @@ class Citation_Service {
 		);
 		// phpcs:enable
 
-		$last = get_option( self::LAST_SCAN, array() );
+		$visibility = new Ai_Visibility();
+		$last       = $visibility->scan_summary();
 
 		return array(
+			'engines'   => Ai_Visibility::available_engines(),
+			'history'   => $visibility->history(),
+			'progress'  => $visibility->state() ? array(
+				'done'     => (int) ( $visibility->state()['done'] ?? 0 ),
+				'total'    => count( (array) ( $visibility->state()['items'] ?? array() ) ),
+				'finished' => (string) ( $visibility->state()['finished'] ?? '' ),
+			) : null,
 			'total'     => $total,
 			'by_engine' => $by_engine ? $by_engine : array(),
 			'recent'    => $recent ? $recent : array(),
@@ -77,142 +85,12 @@ class Citation_Service {
 	}
 
 	/**
-	 * Ask Perplexity each tracked keyword and record answers that cite this site.
+	 * Run a full scan across every configured engine (cron / WP-CLI).
 	 *
 	 * @return array<string, mixed>|\WP_Error
 	 */
 	public function scan_citations() {
-		if ( ! $this->is_available() ) {
-			return new \WP_Error( 'aeo_no_perplexity_key', __( 'Add a Perplexity API key in Settings to scan real AI citations.', 'answer-engine-optimization' ) );
-		}
-
-		$keywords = array_slice( (array) Settings::get( 'tracked_keywords', array() ), 0, self::MAX_PER_SCAN );
-		if ( empty( $keywords ) ) {
-			return new \WP_Error( 'aeo_no_keywords', __( 'Add tracked keywords in Settings first.', 'answer-engine-optimization' ) );
-		}
-
-		$own_host = $this->host( home_url() );
-		$results  = array();
-		$cited    = 0;
-		$errors   = 0;
-
-		global $wpdb;
-		$table = $wpdb->prefix . 'aeo_citations';
-
-		foreach ( $keywords as $keyword ) {
-			$sources = $this->ask_perplexity( $keyword );
-			if ( is_wp_error( $sources ) ) {
-				$errors++;
-				$results[] = array(
-					'keyword' => $keyword,
-					'cited'   => false,
-					'urls'    => array(),
-					'sources' => array(),
-					'error'   => $sources->get_error_message(),
-				);
-				// Stop early on auth/billing errors; they will fail for every keyword.
-				if ( in_array( $sources->get_error_code(), array( 'aeo_http_401', 'aeo_http_402', 'aeo_http_403' ), true ) ) {
-					break;
-				}
-				continue;
-			}
-
-			$own = array();
-			foreach ( $sources as $url ) {
-				if ( $own_host && $this->host( $url ) === $own_host ) {
-					$own[] = $url;
-				}
-			}
-			$own = array_values( array_unique( $own ) );
-
-			foreach ( $own as $url ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$exists = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE keyword = %s AND citation_url = %s AND engine = %s AND DATE(detected_at) = CURDATE()", $keyword, $url, self::ENGINE ) );
-				if ( ! $exists ) {
-					$wpdb->insert(
-						$table,
-						array(
-							'keyword'      => $keyword,
-							'page_url'     => $url,
-							'engine'       => self::ENGINE,
-							'citation_url' => $url,
-							'detected_at'  => current_time( 'mysql' ),
-						),
-						array( '%s', '%s', '%s', '%s', '%s' )
-					);
-				}
-			}
-
-			if ( $own ) {
-				$cited++;
-			}
-
-			$results[] = array(
-				'keyword' => $keyword,
-				'cited'   => ! empty( $own ),
-				'urls'    => $own,
-				'sources' => array_slice( array_values( array_unique( array_map( array( $this, 'host' ), $sources ) ) ), 0, 5 ),
-			);
-		}
-
-		if ( $errors && $errors === count( $results ) ) {
-			return new \WP_Error( 'aeo_scan_failed', $results[0]['error'] ?? __( 'Citation scan failed.', 'answer-engine-optimization' ) );
-		}
-
-		$summary = array(
-			'scanned_at' => current_time( 'mysql' ),
-			'engine'     => self::ENGINE,
-			'checked'    => count( $results ),
-			'cited'      => $cited,
-			'results'    => $results,
-		);
-		update_option( self::LAST_SCAN, $summary, false );
-
-		return $summary;
-	}
-
-	/**
-	 * Ask Perplexity and return every source URL it used.
-	 *
-	 * @param string $keyword Question or keyword.
-	 * @return string[]|\WP_Error
-	 */
-	private function ask_perplexity( $keyword ) {
-		$response = wp_remote_post(
-			self::ENDPOINT,
-			array(
-				'timeout' => 60,
-				'headers' => array(
-					'Authorization' => 'Bearer ' . $this->api_key(),
-					'Content-Type'  => 'application/json',
-				),
-				'body'    => wp_json_encode(
-					array(
-						'model'    => Settings::get_model( 'perplexity' ),
-						'messages' => array(
-							array(
-								'role'    => 'user',
-								'content' => $keyword,
-							),
-						),
-					)
-				),
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$code = (int) wp_remote_retrieve_response_code( $response );
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-		if ( $code < 200 || $code >= 300 || ! is_array( $body ) ) {
-			$message = is_array( $body ) ? (string) ( $body['error']['message'] ?? '' ) : '';
-			/* translators: 1: HTTP status, 2: API message */
-			return new \WP_Error( 'aeo_http_' . $code, sprintf( __( 'Perplexity returned HTTP %1$d. %2$s', 'answer-engine-optimization' ), $code, $message ) );
-		}
-
-		return self::extract_source_urls( $body );
+		return ( new Ai_Visibility() )->run_all();
 	}
 
 	/**

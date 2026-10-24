@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Upgrader {
 
-	const DB_VERSION     = '1.1.0';
+	const DB_VERSION     = '1.2.0';
 	const VERSION_OPTION = 'aeo_db_version';
 	const CRON_HOOK      = 'aeo_weekly_maintenance';
 
@@ -41,6 +41,14 @@ class Upgrader {
 			if ( ! isset( $settings['defer_to_seo_plugin'] ) ) {
 				Settings::update( array( 'defer_to_seo_plugin' => 1 ) );
 			}
+		}
+
+		if ( version_compare( $installed, '1.2.0', '<' ) ) {
+			// New rewrite rules: llms-full.txt, *.md, IndexNow key file.
+			\AEO\Plugin::register_rewrites();
+			flush_rewrite_rules( false );
+			\AEO\Frontend\Llms_Txt::flush();
+			\AEO\Services\IndexNow::key();
 		}
 
 		self::schedule_events();

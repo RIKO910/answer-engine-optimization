@@ -11,10 +11,14 @@ export default defineConfig({
   },
   build: {
     outDir: 'assets/build',
+    target: 'es2022',
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
       input: path.resolve(__dirname, 'admin-app/src/main.tsx'),
+      // Loaded as a classic <script> in wp-admin: wrap it so minified top-level
+      // names never leak into window (one of them used to overwrite window.wp).
+      output: { format: 'iife' },
     },
   },
 });

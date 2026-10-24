@@ -1,11 +1,8 @@
 {
   "admin-app/src/main.tsx": {
-    "file": "assets/main-BydjeGfB.js",
+    "file": "assets/main-CrV3gc3c.js",
     "name": "main",
     "src": "admin-app/src/main.tsx",
-    "isEntry": true,
-    "css": [
-      "assets/main-DqacbZ0-.css"
-    ]
+    "isEntry": true
   }
 }

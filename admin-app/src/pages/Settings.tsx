@@ -7,7 +7,9 @@ import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import type { AeoSettings } from '@/types';
-import { cn } from '@/lib/utils';
+import Switch from '@/components/ui/Switch';
+import { Link } from 'react-router-dom';
+import { __ } from '@/lib/i18n';
 
 const moduleLabels: Record<string, string> = {
   content_optimizer: 'Content optimizer',
@@ -27,39 +29,13 @@ const providers = [
   { id: 'openai', label: 'OpenAI', keyField: 'openai_api_key', hasKey: 'has_openai_key', placeholder: 'sk-…' },
   { id: 'anthropic', label: 'Anthropic (Claude)', keyField: 'anthropic_api_key', hasKey: 'has_anthropic_key', placeholder: 'sk-ant-…' },
   { id: 'gemini', label: 'Google Gemini', keyField: 'gemini_api_key', hasKey: 'has_gemini_key', placeholder: 'AIza…' },
+  { id: 'mistral', label: 'Mistral', keyField: 'mistral_api_key', hasKey: 'has_mistral_key', placeholder: '' },
+  { id: 'deepseek', label: 'DeepSeek', keyField: 'deepseek_api_key', hasKey: 'has_deepseek_key', placeholder: 'sk-…' },
+  { id: 'openrouter', label: 'OpenRouter', keyField: 'openrouter_api_key', hasKey: 'has_openrouter_key', placeholder: 'sk-or-…' },
 ] as const;
-
-const bots = [
-  { key: 'gptbot', label: 'GPTBot', owner: 'OpenAI' },
-  { key: 'claudebot', label: 'ClaudeBot', owner: 'Anthropic' },
-  { key: 'perplexitybot', label: 'PerplexityBot', owner: 'Perplexity' },
-  { key: 'googlebot_ai', label: 'Google-Extended', owner: 'Gemini training' },
-];
 
 type Form = Partial<AeoSettings> & Record<string, unknown>;
 
-function Switch({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={onChange}
-      className={cn(
-        'relative w-8 h-[18px] p-0 m-0 border-0 rounded-full cursor-pointer transition-colors flex-shrink-0',
-        checked ? 'bg-aeo-600' : 'bg-slate-200'
-      )}
-    >
-      <span
-        className={cn(
-          'absolute top-[2px] w-[14px] h-[14px] bg-white rounded-full transition-[left] duration-150',
-          checked ? 'left-[16px]' : 'left-[2px]'
-        )}
-      />
-    </button>
-  );
-}
 
 export default function Settings() {
   const queryClient = useQueryClient();
@@ -70,14 +46,12 @@ export default function Settings() {
 
   const [form, setForm] = useState<Form>({});
   // Keep raw textarea text so Enter/new lines work while typing; parse on save.
-  const [keywordsText, setKeywordsText] = useState('');
   const [competitorsText, setCompetitorsText] = useState('');
   const [keys, setKeys] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!data) return;
     setForm(data as Form);
-    setKeywordsText((data.tracked_keywords ?? []).join('\n'));
     setCompetitorsText((data.competitors ?? []).join('\n'));
     setKeys({});
   }, [data]);
@@ -89,7 +63,6 @@ export default function Settings() {
         ai_provider: form.ai_provider,
         modules: form.modules,
         notifications: form.notifications,
-        crawler_settings: form.crawler_settings,
         defer_to_seo_plugin: form.defer_to_seo_plugin ? 1 : 0,
         aeo_enable_schema: form.aeo_enable_schema ? 1 : 0,
         aeo_voice_optimization: form.aeo_voice_optimization ? 1 : 0,
@@ -98,7 +71,10 @@ export default function Settings() {
         anthropic_model: form.anthropic_model ?? '',
         gemini_model: form.gemini_model ?? '',
         perplexity_model: form.perplexity_model ?? '',
-        tracked_keywords: lines(keywordsText),
+        mistral_model: form.mistral_model ?? '',
+        deepseek_model: form.deepseek_model ?? '',
+        openrouter_model: form.openrouter_model ?? '',
+        author_box: form.author_box ? 1 : 0,
         competitors: lines(competitorsText),
         ...keys,
         ...extra,
@@ -115,7 +91,6 @@ export default function Settings() {
   if (isLoading) return <LoadingState message="Loading settings…" />;
 
   const modules = (form.modules || {}) as Record<string, boolean>;
-  const crawlers = (form.crawler_settings || {}) as Record<string, string>;
   const notifications = (form.notifications || { email_audit: false, email_citations: false }) as {
     email_audit: boolean;
     email_citations: boolean;
@@ -203,23 +178,18 @@ export default function Settings() {
 
         <Card>
           <CardHeader
-            title="AI citation tracking"
-            description="Checks your tracked keywords on Perplexity and records answers that cite your site."
+            title={__('AI visibility engines')}
+            description={__('Scans use each engine with live web search. Perplexity needs its own key; ChatGPT, Gemini and Claude reuse the keys above.')}
           />
           <div className="space-y-4">
             {keyInput('perplexity_api_key', 'Perplexity API key', !!form.has_perplexity_key, 'pplx-…')}
-            <div>
-              <label className="aeo-label" htmlFor="aeo-keywords">Tracked keywords</label>
-              <textarea
-                id="aeo-keywords"
-                value={keywordsText}
-                onChange={(e) => setKeywordsText(e.target.value)}
-                rows={4}
-                placeholder={'One question or keyword per line\nbest hotel near cox\'s bazar beach'}
-                className="aeo-textarea"
-              />
-              <p className="aeo-hint">Up to 10 are checked per scan.</p>
-            </div>
+            {providers
+              .filter((p) => ['openai', 'anthropic', 'gemini'].includes(p.id) && p.id !== provider.id)
+              .map((p) => keyInput(p.keyField, `${p.label} API key`, !!form[p.hasKey], p.placeholder))}
+            <p className="aeo-hint">
+              {__('Questions to track, brand names and engine choice live on the')}{' '}
+              <Link to="/analytics" className="text-aeo-700">{__('AI visibility')}</Link> {__('page.')}
+            </p>
           </div>
         </Card>
 
@@ -246,6 +216,7 @@ export default function Settings() {
               { key: 'aeo_enable_schema', label: 'Structured data (JSON-LD)' },
               { key: 'aeo_voice_optimization', label: 'Show direct answer + Speakable schema' },
               { key: 'aeo_auto_questions', label: '"Suggest questions" in the post editor' },
+              { key: 'author_box', label: __('Author box with credentials under posts (E-E-A-T)') },
             ].map(({ key, label }) => (
               <div key={key} className="flex items-center justify-between gap-4 px-2 h-10 rounded-md hover:bg-slate-50">
                 <span className="text-sm text-slate-800">{label}</span>
@@ -271,29 +242,8 @@ export default function Settings() {
         </Card>
 
         <Card>
-          <CardHeader title="AI crawlers" description="Blocked crawlers get a Disallow rule in robots.txt" />
-          <div className="-mx-2">
-            {bots.map(({ key, label, owner }) => {
-              const allowed = (crawlers[key] ?? 'allow') !== 'block';
-              return (
-                <div key={key} className="flex items-center justify-between gap-4 px-2 h-10 rounded-md hover:bg-slate-50">
-                  <span className="text-sm text-slate-800">
-                    {label} <span className="text-slate-400">· {owner}</span>
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <span className={cn('text-xs', allowed ? 'text-slate-500' : 'text-red-600')}>
-                      {allowed ? 'Allowed' : 'Blocked'}
-                    </span>
-                    <Switch
-                      checked={allowed}
-                      label={`Allow ${label}`}
-                      onChange={() => set({ crawler_settings: { ...crawlers, [key]: allowed ? 'block' : 'allow' } as Record<string, 'allow' | 'block'> })}
-                    />
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          <CardHeader title={__('AI crawlers & llms.txt')} description={__('28 AI crawlers, presets, content signals, llms.txt and Markdown pages.')} />
+          <Link to="/ai-access" className="aeo-btn-secondary">{__('Open AI access')}</Link>
         </Card>
 
         <Card>

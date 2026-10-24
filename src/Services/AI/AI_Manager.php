@@ -24,25 +24,19 @@ class AI_Manager {
 	public function get_provider() {
 		$provider = Settings::get( 'ai_provider', 'openai' );
 
-		switch ( $provider ) {
-			case 'openai':
-				$instance = new OpenAI_Provider();
-				if ( $instance->is_configured() ) {
-					return $instance;
-				}
-				break;
-			case 'anthropic':
-				$instance = new Anthropic_Provider();
-				if ( $instance->is_configured() ) {
-					return $instance;
-				}
-				break;
-			case 'gemini':
-				$instance = new Gemini_Provider();
-				if ( $instance->is_configured() ) {
-					return $instance;
-				}
-				break;
+		$map = array(
+			'openai'     => OpenAI_Provider::class,
+			'anthropic'  => Anthropic_Provider::class,
+			'gemini'     => Gemini_Provider::class,
+			'mistral'    => Mistral_Provider::class,
+			'deepseek'   => DeepSeek_Provider::class,
+			'openrouter' => OpenRouter_Provider::class,
+		);
+		if ( isset( $map[ $provider ] ) ) {
+			$instance = new $map[ $provider ]();
+			if ( $instance->is_configured() ) {
+				return $instance;
+			}
 		}
 
 		return new Local_AI_Provider();

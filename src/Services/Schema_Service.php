@@ -220,6 +220,10 @@ class Schema_Service {
 			}
 		}
 
+		if ( ! $custom ) {
+			$nodes = array_merge( $nodes, Schema_Templates::nodes_for( $post_id ) );
+		}
+
 		$has_faq_node = false;
 		foreach ( $nodes as $node ) {
 			if ( isset( $node['@type'] ) && 'FAQPage' === $node['@type'] ) {
@@ -231,6 +235,18 @@ class Schema_Service {
 			$faq = $this->build_faq_node( $post_id );
 			if ( $faq ) {
 				$nodes[] = $faq;
+			}
+		}
+
+		if ( Settings::is_module_enabled( 'faq_automation' ) ) {
+			$nodes = array_merge( $nodes, $this->build_howto_nodes( $post_id ) );
+		}
+
+		// Author (E-E-A-T) node when this plugin outputs the Article.
+		if ( ! $skip_base && ! $custom && 'post' === get_post_type( $post_id ) ) {
+			$person = $this->build_person_node( (int) get_post_field( 'post_author', $post_id ) );
+			if ( $person ) {
+				$nodes[] = $person;
 			}
 		}
 
@@ -310,7 +326,7 @@ class Schema_Service {
 			'url'           => $url,
 			'datePublished' => get_the_date( 'c', $post_id ),
 			'dateModified'  => get_the_modified_date( 'c', $post_id ),
-			'inLanguage'    => get_bloginfo( 'language' ),
+			'inLanguage'    => \AEO\Support\Lang::post_language( $post_id ),
 			'isPartOf'      => array( '@id' => self::website_id() ),
 		);
 
@@ -319,11 +335,7 @@ class Schema_Service {
 			$schema['headline']         = mb_substr( $title, 0, 110 );
 			$schema['mainEntityOfPage'] = array( '@id' => $url );
 			$schema['publisher']        = array( '@id' => self::organization_id() );
-			$schema['author']           = array(
-				'@type' => 'Person',
-				'name'  => get_the_author_meta( 'display_name', $post->post_author ),
-				'url'   => get_author_posts_url( $post->post_author ),
-			);
+			$schema['author']           = array( '@id' => self::person_id( (int) $post->post_author ) );
 		} else {
 			$schema['name'] = $title;
 		}
@@ -360,18 +372,19 @@ class Schema_Service {
 	 */
 	public function build_faq_node( $post_id ) {
 		$faqs = get_post_meta( $post_id, '_aeo_faq_items', true );
-		if ( empty( $faqs ) || ! is_array( $faqs ) ) {
-			return array();
-		}
+		$faqs = is_array( $faqs ) ? $faqs : array();
+		$faqs = array_merge( $faqs, \AEO\Content\Content_Extractor::extract( $post_id )['faqs'] );
 
 		$questions = array();
+		$seen      = array();
 		foreach ( $faqs as $faq ) {
 			$q = isset( $faq['question'] ) ? trim( wp_strip_all_tags( $faq['question'] ) ) : '';
 			$a = isset( $faq['answer'] ) ? trim( wp_strip_all_tags( $faq['answer'] ) ) : '';
-			if ( '' === $q || '' === $a ) {
+			if ( '' === $q || '' === $a || isset( $seen[ strtolower( $q ) ] ) ) {
 				continue;
 			}
-			$questions[] = array(
+			$seen[ strtolower( $q ) ] = true;
+			$questions[]              = array(
 				'@type'          => 'Question',
 				'name'           => $q,
 				'acceptedAnswer' => array(
@@ -394,6 +407,109 @@ class Schema_Service {
 	}
 
 	/**
+	 * HowTo nodes from HowTo blocks.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function build_howto_nodes( $post_id ) {
+		$nodes = array();
+		foreach ( \AEO\Content\Content_Extractor::extract( $post_id )['howtos'] as $i => $howto ) {
+			$node = array(
+				'@type' => 'HowTo',
+				'@id'   => get_permalink( $post_id ) . '#howto-' . ( $i + 1 ),
+				'name'  => $howto['title'] ? $howto['title'] : wp_strip_all_tags( get_the_title( $post_id ) ),
+				'step'  => array(),
+			);
+			if ( $howto['description'] ) {
+				$node['description'] = $howto['description'];
+			}
+			if ( $howto['minutes'] > 0 ) {
+				$node['totalTime'] = 'PT' . (int) $howto['minutes'] . 'M';
+			}
+			if ( $howto['supplies'] ) {
+				foreach ( array_filter( array_map( 'trim', explode( ',', $howto['supplies'] ) ) ) as $supply ) {
+					$node['supply'][] = array(
+						'@type' => 'HowToSupply',
+						'name'  => wp_strip_all_tags( $supply ),
+					);
+				}
+			}
+			foreach ( $howto['steps'] as $n => $step ) {
+				$item = array(
+					'@type'    => 'HowToStep',
+					'position' => $n + 1,
+					'text'     => $step['text'],
+				);
+				if ( $step['name'] ) {
+					$item['name'] = $step['name'];
+				}
+				$node['step'][] = $item;
+			}
+			$nodes[] = $node;
+		}
+		return $nodes;
+	}
+
+	/**
+	 * Stable @id for an author.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string
+	 */
+	public static function person_id( $user_id ) {
+		return get_author_posts_url( $user_id ) . '#person';
+	}
+
+	/**
+	 * Person node for an author, with E-E-A-T fields from the user profile.
+	 *
+	 * @param int $user_id User ID.
+	 * @return array<string, mixed>
+	 */
+	public function build_person_node( $user_id ) {
+		$user = get_userdata( $user_id );
+		if ( ! $user ) {
+			return array();
+		}
+		$node = array(
+			'@type' => 'Person',
+			'@id'   => self::person_id( $user_id ),
+			'name'  => $user->display_name,
+			'url'   => get_author_posts_url( $user_id ),
+		);
+		$bio = trim( (string) get_user_meta( $user_id, 'description', true ) );
+		if ( $bio ) {
+			$node['description'] = wp_strip_all_tags( $bio );
+		}
+		$avatar = get_avatar_url( $user_id, array( 'size' => 256 ) );
+		if ( $avatar ) {
+			$node['image'] = $avatar;
+		}
+		foreach ( array( 'aeo_job_title' => 'jobTitle', 'aeo_credentials' => 'honorificSuffix' ) as $meta => $prop ) {
+			$value = trim( (string) get_user_meta( $user_id, $meta, true ) );
+			if ( '' !== $value ) {
+				$node[ $prop ] = $value;
+			}
+		}
+		$knows = array_filter( array_map( 'trim', explode( ',', (string) get_user_meta( $user_id, 'aeo_knows_about', true ) ) ) );
+		if ( $knows ) {
+			$node['knowsAbout'] = array_values( $knows );
+		}
+		$same = array_filter( array_map( 'esc_url_raw', array_map( 'trim', preg_split( '/[\r\n]+/', (string) get_user_meta( $user_id, 'aeo_same_as', true ) ) ) ) );
+		if ( $user->user_url ) {
+			$same[] = esc_url_raw( $user->user_url );
+		}
+		if ( $same ) {
+			$node['sameAs'] = array_values( array_unique( $same ) );
+		}
+		$employer = trim( (string) get_user_meta( $user_id, 'aeo_works_for', true ) );
+		$node['worksFor'] = '' !== $employer ? array( '@type' => 'Organization', 'name' => $employer ) : array( '@id' => self::organization_id() );
+
+		return (array) apply_filters( 'aeo_person_schema', $node, $user_id );
+	}
+
+	/**
 	 * Speakable specification pointing at the visible direct answer.
 	 *
 	 * @param int $post_id Post ID.
@@ -403,12 +519,20 @@ class Schema_Service {
 		if ( ! Settings::get( 'aeo_voice_optimization', 1 ) ) {
 			return array();
 		}
-		if ( '' === trim( (string) get_post_meta( $post_id, '_aeo_direct_answer', true ) ) ) {
+		$found     = \AEO\Content\Content_Extractor::extract( $post_id );
+		$selectors = array();
+		if ( $found['direct_answer'] || '' !== trim( (string) get_post_meta( $post_id, '_aeo_direct_answer', true ) ) ) {
+			$selectors[] = '.aeo-direct-answer';
+		}
+		if ( $found['takeaways'] ) {
+			$selectors[] = '.aeo-key-takeaways';
+		}
+		if ( ! $selectors ) {
 			return array();
 		}
 		return array(
 			'@type'       => 'SpeakableSpecification',
-			'cssSelector' => array( '.aeo-direct-answer' ),
+			'cssSelector' => $selectors,
 		);
 	}
 

@@ -77,3 +77,21 @@ export const api = {
       body: JSON.stringify({ post_ids: postIds, template }),
     }),
 };
+
+/* Generic helpers for the newer endpoints. */
+export const get = <T = Record<string, unknown>>(endpoint: string) => request<T>(endpoint);
+export const post = <T = Record<string, unknown>>(endpoint: string, body: unknown = {}) =>
+  request<T>(endpoint, { method: 'POST', body: JSON.stringify(body) });
+
+/** Turn an object into a downloaded JSON file. */
+export function downloadJson(data: unknown, filename: string) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

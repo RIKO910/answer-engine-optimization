@@ -150,4 +150,58 @@ class AI_Response {
 		}
 		return $content;
 	}
+
+	/**
+	 * Single clean line, trimmed to a length.
+	 *
+	 * @param string $text Text.
+	 * @param int    $max  Max characters.
+	 * @return string
+	 */
+	public static function clean_line( $text, $max ) {
+		$text = trim( preg_replace( '/\s+/u', ' ', wp_strip_all_tags( (string) $text ) ), " \t\n\r\0\x0B\"'" );
+		return mb_strlen( $text ) > $max ? rtrim( mb_substr( $text, 0, $max - 1 ) ) . '…' : $text;
+	}
+
+	/**
+	 * Base64 payload for an image, downscaled to 1024px for cost and size limits.
+	 *
+	 * @param string $file Path.
+	 * @return array{mime: string, data: string}|\WP_Error
+	 */
+	public static function image_payload( $file ) {
+		if ( ! is_readable( $file ) ) {
+			return new \WP_Error( 'aeo_image', __( 'Image file not found.', 'answer-engine-optimization' ) );
+		}
+		$mime = (string) wp_check_filetype( $file )['type'];
+		if ( ! in_array( $mime, array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif' ), true ) ) {
+			return new \WP_Error( 'aeo_image_type', __( 'Unsupported image type.', 'answer-engine-optimization' ) );
+		}
+		$path   = $file;
+		$editor = wp_get_image_editor( $file );
+		if ( ! is_wp_error( $editor ) ) {
+			$size = $editor->get_size();
+			if ( $size['width'] > 1024 || $size['height'] > 1024 ) {
+				$editor->resize( 1024, 1024, false );
+				$tmp   = wp_tempnam( 'aeo-alt' );
+				$saved = $editor->save( $tmp . '.jpg', 'image/jpeg' );
+				if ( ! is_wp_error( $saved ) ) {
+					$path = $saved['path'];
+					$mime = 'image/jpeg';
+				}
+				@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			}
+		}
+		$data = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( $path !== $file ) {
+			@unlink( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+		if ( false === $data || strlen( $data ) > 5 * MB_IN_BYTES ) {
+			return new \WP_Error( 'aeo_image_size', __( 'Image is too large.', 'answer-engine-optimization' ) );
+		}
+		return array(
+			'mime' => $mime,
+			'data' => base64_encode( $data ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		);
+	}
 }

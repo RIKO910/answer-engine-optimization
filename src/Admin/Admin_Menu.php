@@ -33,7 +33,7 @@ class Admin_Menu {
 		add_menu_page(
 			$brand_name ? $brand_name : __( 'Answer Engine Optimization', 'answer-engine-optimization' ),
 			$brand_name ? $brand_name : __( 'AEO', 'answer-engine-optimization' ),
-			'manage_options',
+			'aeo_view_reports',
 			'aeo-dashboard',
 			array( $this, 'render_app' ),
 			'dashicons-chart-area',
@@ -47,11 +47,25 @@ class Admin_Menu {
 			'aeo-faqs'          => __( 'FAQ Manager', 'answer-engine-optimization' ),
 			'aeo-local'         => __( 'Local Business', 'answer-engine-optimization' ),
 			'aeo-woocommerce'   => __( 'WooCommerce AEO', 'answer-engine-optimization' ),
-			'aeo-analytics'     => __( 'Analytics', 'answer-engine-optimization' ),
+			'aeo-analytics'     => __( 'AI Visibility', 'answer-engine-optimization' ),
+			'aeo-traffic'       => __( 'Traffic', 'answer-engine-optimization' ),
+			'aeo-content-tools' => __( 'Content Tools', 'answer-engine-optimization' ),
+			'aeo-templates'     => __( 'Schema Templates', 'answer-engine-optimization' ),
+			'aeo-hotel'         => __( 'Hotel', 'answer-engine-optimization' ),
+			'aeo-ai-access'     => __( 'AI Access', 'answer-engine-optimization' ),
+			'aeo-tools'         => __( 'Tools', 'answer-engine-optimization' ),
 			'aeo-audit'         => __( 'Site Audit', 'answer-engine-optimization' ),
 			'aeo-briefs'        => __( 'Content Briefs', 'answer-engine-optimization' ),
 			'aeo-settings'      => __( 'Settings', 'answer-engine-optimization' ),
 			'aeo-agency'        => __( 'Agency Tools', 'answer-engine-optimization' ),
+		);
+
+		$caps = array(
+			'aeo-settings' => 'aeo_manage_settings',
+			'aeo-agency'   => 'aeo_manage_settings',
+			'aeo-tools'    => 'aeo_manage_settings',
+			'aeo-ai-access' => 'aeo_manage_settings',
+			'aeo-templates' => 'aeo_edit_schema',
 		);
 
 		foreach ( $pages as $slug => $title ) {
@@ -62,7 +76,7 @@ class Admin_Menu {
 				'aeo-dashboard',
 				$title,
 				$title,
-				'manage_options',
+				$caps[ $slug ] ?? 'aeo_view_reports',
 				$slug,
 				array( $this, 'render_app' )
 			);

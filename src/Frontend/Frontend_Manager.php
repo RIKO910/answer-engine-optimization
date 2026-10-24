@@ -19,22 +19,11 @@ defined( 'ABSPATH' ) || exit;
 class Frontend_Manager {
 
 	/**
-	 * AI crawler user agents managed in robots.txt.
-	 */
-	const BOTS = array(
-		'gptbot'        => 'GPTBot',
-		'perplexitybot' => 'PerplexityBot',
-		'claudebot'     => 'ClaudeBot',
-		'googlebot_ai'  => 'Google-Extended',
-	);
-
-	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		add_action( 'wp_head', array( $this, 'output_schema' ), 2 );
 		add_action( 'wp_head', array( $this, 'output_open_graph' ), 5 );
-		add_action( 'template_redirect', array( $this, 'serve_llms_txt' ), 0 );
 
 		if ( class_exists( 'WooCommerce' ) && Settings::is_module_enabled( 'woocommerce' ) ) {
 			new WooCommerce_Integration();
@@ -67,6 +56,7 @@ class Frontend_Manager {
 				foreach ( array_values( $locations ) as $i => $location ) {
 					if ( is_array( $location ) ) {
 						$nodes[] = $service->build_location_node( $location, $i );
+						$nodes   = array_merge( $nodes, \AEO\Integrations\Hotel::attraction_nodes( $location ) );
 					}
 				}
 			}
@@ -143,128 +133,22 @@ class Frontend_Manager {
 	}
 
 	/**
-	 * Serve /llms.txt (rewrite rule registered in Plugin::register_rewrites()).
-	 *
-	 * @return void
-	 */
-	public function serve_llms_txt() {
-		if ( ! get_query_var( 'aeo_llms_txt' ) ) {
-			return;
-		}
-
-		if ( ! Settings::is_module_enabled( 'technical' ) ) {
-			status_header( 404 );
-			nocache_headers();
-			exit;
-		}
-
-		$body = get_transient( 'aeo_llms_txt' );
-		if ( false === $body ) {
-			$body = self::build_llms_txt();
-			set_transient( 'aeo_llms_txt', $body, DAY_IN_SECONDS );
-		}
-
-		status_header( 200 );
-		header( 'Content-Type: text/plain; charset=utf-8' );
-		header( 'X-Robots-Tag: noindex' );
-		echo $body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plain text document.
-		exit;
-	}
-
-	/**
-	 * Build the llms.txt document (https://llmstxt.org format).
+	 * Back-compat wrapper.
 	 *
 	 * @return string
 	 */
 	public static function build_llms_txt() {
-		$business = Settings::get( 'business_info', array() );
-		$name     = ! empty( $business['name'] ) ? $business['name'] : get_bloginfo( 'name' );
-		$summary  = ! empty( $business['description'] ) ? $business['description'] : get_bloginfo( 'description' );
-		$limit    = (int) apply_filters( 'aeo_llms_txt_limit', 100 );
-
-		$clean = static function ( $text ) {
-			return trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( (string) $text ) ) );
-		};
-
-		$out = '# ' . $clean( $name ) . "\n\n";
-		if ( $summary ) {
-			$out .= '> ' . $clean( $summary ) . "\n\n";
-		}
-
-		foreach ( Settings::get_post_types() as $post_type ) {
-			$object = get_post_type_object( $post_type );
-			if ( ! $object ) {
-				continue;
-			}
-
-			$posts = get_posts(
-				array(
-					'post_type'        => $post_type,
-					'post_status'      => 'publish',
-					'posts_per_page'   => $limit,
-					'orderby'          => 'page' === $post_type ? 'menu_order' : 'modified',
-					'order'            => 'page' === $post_type ? 'ASC' : 'DESC',
-					'has_password'     => false,
-					'suppress_filters' => false,
-				)
-			);
-
-			$lines = array();
-			foreach ( $posts as $post ) {
-				if ( Seo_Compat::is_noindex( $post->ID ) ) {
-					continue;
-				}
-				$title = $clean( get_the_title( $post ) );
-				if ( '' === $title ) {
-					continue;
-				}
-				$desc = has_excerpt( $post )
-					? $clean( get_the_excerpt( $post ) )
-					: $clean( get_post_meta( $post->ID, '_aeo_direct_answer', true ) );
-				$line = '- [' . str_replace( array( '[', ']' ), '', $title ) . '](' . esc_url_raw( get_permalink( $post ) ) . ')';
-				if ( $desc ) {
-					$line .= ': ' . wp_html_excerpt( $desc, 200, '…' );
-				}
-				$lines[] = $line;
-			}
-
-			if ( $lines ) {
-				$out .= '## ' . $clean( $object->labels->name ) . "\n\n" . implode( "\n", $lines ) . "\n\n";
-			}
-		}
-
-		return (string) apply_filters( 'aeo_llms_txt', rtrim( $out ) . "\n" );
+		return Llms_Txt::build_index();
 	}
 
 	/**
-	 * Add AI crawler rules to robots.txt.
+	 * Back-compat wrapper.
 	 *
-	 * Only blocked bots get their own group: a group like "User-agent: GPTBot / Allow: /"
-	 * would make that bot ignore the site's "User-agent: *" rules (e.g. Disallow: /wp-admin/).
-	 *
-	 * @param string $output Existing robots.txt.
-	 * @param bool   $public Whether the site is public.
+	 * @param string $output Robots.
+	 * @param bool   $public Public.
 	 * @return string
 	 */
 	public static function filter_robots_txt( $output, $public ) {
-		if ( ! $public || ! Settings::is_module_enabled( 'technical' ) ) {
-			return $output;
-		}
-
-		$crawlers = Settings::get( 'crawler_settings', array() );
-		$blocked  = array();
-		foreach ( self::BOTS as $key => $bot ) {
-			if ( 'block' === ( $crawlers[ $key ] ?? 'allow' ) ) {
-				$blocked[] = $bot;
-			}
-		}
-
-		$output  = rtrim( (string) $output ) . "\n\n# Answer Engine Optimization\n";
-		$output .= '# LLM-friendly site index: ' . home_url( '/llms.txt' ) . "\n";
-		foreach ( $blocked as $bot ) {
-			$output .= "User-agent: {$bot}\nDisallow: /\n\n";
-		}
-
-		return $output;
+		return Ai_Crawlers::filter_robots_txt( $output, $public );
 	}
 }

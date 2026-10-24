@@ -1,111 +1,273 @@
+import { useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import { Link } from 'react-router-dom';
-import { RefreshCw, BarChart3, Users, Check, X } from 'lucide-react';
-import { api } from '@/lib/api';
+import { RefreshCw, BarChart3, Users, Check, Minus, AlertTriangle, Plus, Sparkles, Save, FileDown } from 'lucide-react';
+import { api, get, post } from '@/lib/api';
+import { __, sprintf } from '@/lib/i18n';
 import PageHeader from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import EmptyState from '@/components/ui/EmptyState';
-import type { CitationScan } from '@/types';
+import Stat from '@/components/ui/Stat';
+import Modal from '@/components/ui/Modal';
+import type { EngineResult, ScanProgress, VisibilitySummary } from '@/types';
 import { cn } from '@/lib/utils';
 
+interface VisibilityData {
+  engines: string[];
+  all: Array<{ engine: string; label: string }>;
+  summary: VisibilitySummary | null;
+  history: Array<{ scan_id: string; date: string; cited_rate: number; mentioned_rate: number }>;
+  progress: ScanProgress | null;
+  brands: string[];
+}
+
+interface AnswerRow {
+  keyword: string;
+  engine: string;
+  answer: string;
+  cited: string | number;
+  mentioned: string | number;
+  position: string | number;
+  sentiment: string;
+  sources: string[] | null;
+  cited_urls: string[] | null;
+  competitors: string[] | null;
+  error: string;
+  created_at: string;
+}
+
+const pct = (a: number, b: number) => (b ? Math.round((a / b) * 100) : 0);
+
+function Cell({ r, onOpen }: { r?: EngineResult; onOpen: (id: number) => void }) {
+  if (!r) return <span className="text-slate-300">—</span>;
+  if (r.error) {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-amber-600" title={r.error}>
+        <AlertTriangle size={13} /> {__('Error')}
+      </span>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(r.id)}
+      className={cn(
+        'inline-flex items-center gap-1 h-7 px-2 m-0 rounded-md border-0 text-xs cursor-pointer',
+        r.cited ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : r.mentioned ? 'bg-aeo-50 text-aeo-700 hover:bg-aeo-100' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+      )}
+      title={__('View the answer')}
+    >
+      {r.cited ? <Check size={13} /> : <Minus size={13} />}
+      {r.cited ? (r.position ? sprintf(__('Cited #%d'), r.position) : __('Cited')) : r.mentioned ? __('Mentioned') : __('Not cited')}
+    </button>
+  );
+}
+
 export default function Analytics() {
-  const queryClient = useQueryClient();
-  const { data: overview, isLoading } = useQuery({
-    queryKey: ['analytics'],
-    queryFn: () => api.getAnalyticsOverview(),
+  const qc = useQueryClient();
+  const caps = window.aeoGeniusData?.caps;
+  const vis = useQuery({ queryKey: ['visibility'], queryFn: () => get<VisibilityData>('/visibility') });
+  const settings = useQuery({ queryKey: ['settings'], queryFn: () => api.getSettings() });
+  const competitors = useQuery({ queryKey: ['competitors'], queryFn: () => api.getCompetitorAnalysis() });
+  const [progress, setProgress] = useState<ScanProgress | null>(null);
+  const [answerId, setAnswerId] = useState<number | null>(null);
+  const running = useRef(false);
+
+  // Prompt + brand editing.
+  const s = (settings.data || {}) as Record<string, unknown>;
+  const [keywords, setKeywords] = useState<string>('');
+  const [brands, setBrands] = useState<string>('');
+  const [engines, setEngines] = useState<string[]>([]);
+  useEffect(() => {
+    if (!settings.data) return;
+    setKeywords(((s.tracked_keywords as string[]) || []).join('\n'));
+    setBrands(((s.brand_names as string[]) || []).join('\n'));
+    setEngines((s.citation_engines as string[]) || []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.data]);
+
+  const suggestions = useQuery({ queryKey: ['prompt-suggestions'], queryFn: () => get<Array<{ prompt: string; source: string }>>('/prompts/suggest'), enabled: false });
+  const answer = useQuery({
+    queryKey: ['answer', answerId],
+    queryFn: () => get<AnswerRow>(`/visibility/answer/${answerId}`),
+    enabled: answerId !== null,
   });
 
-  const competitors = useQuery({
-    queryKey: ['competitors'],
-    queryFn: () => api.getCompetitorAnalysis(),
-  });
-
-  const scanMutation = useMutation({
-    mutationFn: () => api.scanCitations(),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['analytics'] });
-      toast.success(`${data.cited} of ${data.checked} keywords cite your site`);
+  const saveTracking = useMutation({
+    mutationFn: () => {
+      const lines = (t: string) => t.split('\n').map((l) => l.trim()).filter(Boolean);
+      return api.updateSettings({ tracked_keywords: lines(keywords), brand_names: lines(brands), citation_engines: engines });
     },
-    onError: (e: Error) => toast.error(e.message || 'Citation scan failed'),
-  });
-
-  const refreshCompetitors = useMutation({
-    mutationFn: () => api.getCompetitorAnalysis(true),
-    onSuccess: (data) => queryClient.setQueryData(['competitors'], data),
+    onSuccess: (d) => {
+      qc.setQueryData(['settings'], d);
+      qc.invalidateQueries({ queryKey: ['visibility'] });
+      toast.success(__('Tracking saved'));
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (isLoading) return <LoadingState message="Loading analytics…" />;
+  const runScan = async () => {
+    if (running.current) return;
+    running.current = true;
+    try {
+      let p = await post<ScanProgress>('/visibility/start');
+      setProgress(p);
+      while (!p.finished && p.done < p.total) {
+        p = await post<ScanProgress>('/visibility/continue');
+        setProgress(p);
+      }
+      await qc.invalidateQueries({ queryKey: ['visibility'] });
+      toast.success(__('Scan finished'));
+    } catch (e) {
+      toast.error((e as Error).message || __('Scan failed'));
+    } finally {
+      running.current = false;
+      setProgress(null);
+    }
+  };
 
-  const citations = (overview?.citations || {}) as Record<string, unknown>;
-  const trend = (citations.trend || []) as Array<{ date: string; count: number }>;
-  const available = !!citations.available;
-  const lastScan = (citations.last_scan || {}) as Partial<CitationScan>;
-  const scanResults = lastScan.results || [];
+  const report = useMutation({
+    mutationFn: () => get<{ url: string }>('/report-url'),
+    onSuccess: (d) => window.open(d.url, '_blank', 'noopener'),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (vis.isLoading) return <LoadingState message={__('Loading AI visibility…')} />;
+
+  const data = vis.data;
+  const available = data?.engines || [];
+  const summary = data?.summary;
+  const history = data?.history || [];
+  const labels = Object.fromEntries((data?.all || []).map((e) => [e.engine, e.label]));
+  const scanEngines = summary?.engines?.map((e) => e.engine) || [];
   const compData = competitors.data?.competitors || [];
+  const keywordCount = keywords.split('\n').filter((l) => l.trim()).length;
 
   return (
     <div>
       <PageHeader
-        title="Analytics"
-        description="Whether AI answer engines cite your site, and how competitors are set up."
-        icon={BarChart3}
+        title={__('AI visibility')}
+        description={__('Whether ChatGPT, Perplexity, Gemini and Claude cite or mention you for the questions your customers ask.')}
         actions={
-          <button
-            onClick={() => scanMutation.mutate()}
-            disabled={scanMutation.isPending || !available}
-            className="aeo-btn-primary"
-            title={available ? '' : 'Add a Perplexity API key in Settings'}
-          >
-            <RefreshCw size={14} className={scanMutation.isPending ? 'animate-spin' : ''} />
-            {scanMutation.isPending ? 'Scanning…' : 'Scan citations'}
-          </button>
+          <>
+            <button type="button" className="aeo-btn-secondary" onClick={() => report.mutate()} disabled={report.isPending}>
+              <FileDown size={14} /> {__('Client report')}
+            </button>
+            <button
+              onClick={runScan}
+              disabled={!!progress || available.length === 0 || caps?.ai === false}
+              className="aeo-btn-primary"
+              title={available.length ? '' : __('Add an API key for at least one engine in Settings')}
+            >
+              <RefreshCw size={14} className={progress ? 'animate-spin' : ''} />
+              {progress ? sprintf(__('Scanning %1$d / %2$d'), progress.done, progress.total) : __('Run scan')}
+            </button>
+          </>
         }
       />
 
-      {!available && (
+      {progress && (
+        <div className="mb-4 h-1.5 rounded-full bg-slate-100 overflow-hidden" role="progressbar" aria-valuenow={pct(progress.done, progress.total)}>
+          <div className="h-full bg-aeo-600 transition-[width] duration-300" style={{ width: `${pct(progress.done, progress.total)}%` }} />
+        </div>
+      )}
+
+      {available.length === 0 && (
         <div className="aeo-card-muted mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-[13px] text-slate-600">
-            Citation tracking asks Perplexity your tracked keywords and records answers that link to your site.
-            It needs a Perplexity API key.
+            {__('Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key to start.')}
           </p>
           <Link to="/settings" className="aeo-btn-secondary aeo-btn-sm self-start sm:self-center">
-            Add key
+            {__('Add a key')}
           </Link>
         </div>
       )}
 
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <Stat label={__('Cited')} value={summary ? `${pct(summary.cited, summary.checked)}%` : '—'} hint={summary ? sprintf(__('%1$d of %2$d answers link to you'), summary.cited, summary.checked) : __('No scan yet')} />
+        <Stat label={__('Mentioned')} value={summary ? `${pct(summary.mentioned, summary.checked)}%` : '—'} hint={__('Brand named, with or without a link')} />
+        <Stat
+          label={__('Sentiment')}
+          value={summary ? `${summary.sentiment.positive}/${summary.sentiment.neutral}/${summary.sentiment.negative}` : '—'}
+          hint={__('Positive / neutral / negative mentions')}
+        />
+        <Stat label={__('Last scan')} value={<span className="text-base">{summary?.scanned_at?.slice(0, 16) || '—'}</span>} hint={sprintf(__('%d engines connected'), available.length)} />
+      </div>
+
+      {summary && summary.engines.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          {summary.engines.map((e) => (
+            <div key={e.engine} className="aeo-card">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-slate-900">{e.label}</p>
+                {e.errors > 0 && (
+                  <span className="text-2xs text-amber-600" title={__('Some checks failed')}>
+                    {sprintf(__('%d errors'), e.errors)}
+                  </span>
+                )}
+              </div>
+              <p className="text-2xl font-semibold tabular-nums mt-2">{pct(e.cited, e.checked)}%</p>
+              <p className="text-xs text-slate-500">
+                {sprintf(__('%1$d/%2$d cited'), e.cited, e.checked)}
+                {e.avg_position ? ` · ${sprintf(__('avg. position %s'), String(e.avg_position))}` : ''}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <Card padding={false} className="mb-4">
+        <div className="p-5 pb-0">
+          <CardHeader title={__('Questions × engines')} description={__('Click a result to read the full answer and its sources.')} />
+        </div>
+        {!summary || summary.keywords.length === 0 ? (
+          <EmptyState icon={BarChart3} title={__('No results yet')} description={__('Add the questions customers ask below, then run a scan.')} />
+        ) : (
+          <table className="aeo-table">
+            <thead>
+              <tr>
+                <th>{__('Question')}</th>
+                {scanEngines.map((e) => (
+                  <th key={e}>{labels[e] || e}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {summary.keywords.map((k) => (
+                <tr key={k.keyword}>
+                  <td className="text-slate-900 min-w-[220px]">{k.keyword}</td>
+                  {scanEngines.map((e) => (
+                    <td key={e}>
+                      <Cell r={k.engines[e]} onOpen={setAnswerId} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <Card>
-          <CardHeader
-            title="Last scan"
-            description={
-              lastScan.scanned_at
-                ? `${lastScan.cited ?? 0} of ${lastScan.checked ?? 0} keywords cited your site · ${lastScan.scanned_at}`
-                : 'No scan yet'
-            }
-          />
-          {scanResults.length === 0 ? (
-            <EmptyState
-              icon={BarChart3}
-              title="No results yet"
-              description={available ? 'Add tracked keywords in Settings, then run a scan.' : 'Add a Perplexity API key and tracked keywords in Settings.'}
-            />
+          <CardHeader title={__('Share of voice')} description={__('Who the engines cite for your questions')} />
+          {!summary || summary.share_of_voice.length === 0 ? (
+            <EmptyState icon={Users} title={__('No sources yet')} description={__('Appears after a scan.')} />
           ) : (
-            <ul className="-mx-2">
-              {scanResults.map((r) => (
-                <li key={r.keyword} className="flex items-start gap-3 px-2 py-2 rounded-md hover:bg-slate-50">
-                  <span className={cn('mt-0.5 flex-shrink-0', r.cited ? 'text-emerald-600' : 'text-slate-300')}>
-                    {r.cited ? <Check size={15} /> : <X size={15} />}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm text-slate-900">{r.keyword}</p>
-                    <p className="text-xs text-slate-500 truncate">
-                      {r.error ? r.error : r.cited ? r.urls.join(', ') : r.sources.length ? `Sources used: ${r.sources.join(', ')}` : 'No sources returned'}
-                    </p>
+            <ul className="space-y-2.5">
+              {summary.share_of_voice.slice(0, 8).map((r) => (
+                <li key={r.name}>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className={cn('truncate', r.is_you ? 'font-semibold text-aeo-700' : 'text-slate-700')}>
+                      {r.name} {r.is_you && `· ${__('you')}`}
+                    </span>
+                    <span className="tabular-nums text-slate-500">{r.percent}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                    <div className={cn('h-full rounded-full', r.is_you ? 'bg-aeo-600' : 'bg-slate-400')} style={{ width: `${r.percent}%` }} />
                   </div>
                 </li>
               ))}
@@ -114,46 +276,116 @@ export default function Analytics() {
         </Card>
 
         <Card>
-          <CardHeader title="Citations over time" description="Answers citing your site, last 30 days" />
-          {trend.length === 0 ? (
-            <EmptyState icon={BarChart3} title="No citations recorded" description="Results appear here after scans find your site." />
+          <CardHeader title={__('Trend')} description={__('Cited and mentioned rate per scan')} />
+          {history.length < 2 ? (
+            <EmptyState icon={BarChart3} title={__('Not enough scans')} description={__('The trend appears after two or more scans.')} />
           ) : (
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={trend} barSize={14} margin={{ top: 4, right: 0, left: -24, bottom: 0 }}>
+              <LineChart data={history} margin={{ top: 4, right: 8, left: -24, bottom: 0 }}>
                 <CartesianGrid vertical={false} stroke="#f4f4f5" />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#a1a1aa' }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#a1a1aa' }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  cursor={{ fill: '#fafafa' }}
-                  contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12)', fontSize: 12 }}
-                />
-                <Bar dataKey="count" name="Citations" fill="#4f46e5" radius={[3, 3, 0, 0]} />
-              </BarChart>
+                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#a1a1aa' }} axisLine={false} tickLine={false} unit="%" />
+                <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7', fontSize: 12 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Line type="monotone" dataKey="cited_rate" name={__('Cited')} stroke="#4f46e5" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="mentioned_rate" name={__('Mentioned')} stroke="#a1a1aa" strokeWidth={2} dot={false} />
+              </LineChart>
             </ResponsiveContainer>
           )}
         </Card>
       </div>
 
+      <Card className="mb-4">
+        <CardHeader
+          title={__('What to track')}
+          description={sprintf(__('%d questions · up to 25 are checked per scan on each engine'), keywordCount)}
+          action={
+            <button type="button" className="aeo-btn-primary aeo-btn-sm" onClick={() => saveTracking.mutate()} disabled={saveTracking.isPending || caps?.manage === false}>
+              <Save size={12} /> {__('Save')}
+            </button>
+          }
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <label className="aeo-label" htmlFor="aeo-track">{__('Questions and prompts')}</label>
+            <textarea id="aeo-track" rows={7} className="aeo-textarea" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder={__('One per line, phrased the way people ask an assistant')} />
+            <div className="mt-2 flex items-center gap-2">
+              <button type="button" className="aeo-btn-ghost aeo-btn-sm" onClick={() => suggestions.refetch()} disabled={suggestions.isFetching}>
+                <Sparkles size={12} /> {suggestions.isFetching ? __('Finding…') : __('Suggest prompts')}
+              </button>
+              <span className="text-xs text-slate-400">{__('Built from your business details, FAQs and question headings.')}</span>
+            </div>
+            {suggestions.data && suggestions.data.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {suggestions.data.map((sug) => {
+                  const added = keywords.split('\n').some((l) => l.trim().toLowerCase() === sug.prompt.toLowerCase());
+                  return (
+                    <button
+                      key={sug.prompt}
+                      type="button"
+                      disabled={added}
+                      onClick={() => setKeywords((k) => (k.trim() ? `${k.trim()}\n${sug.prompt}` : sug.prompt))}
+                      className="aeo-badge cursor-pointer disabled:opacity-40 disabled:cursor-default m-0"
+                    >
+                      <Plus size={11} /> {sug.prompt}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="aeo-label" htmlFor="aeo-brands">{__('Brand names')}</label>
+              <textarea id="aeo-brands" rows={3} className="aeo-textarea" value={brands} onChange={(e) => setBrands(e.target.value)} placeholder={String(data?.brands?.[0] || '')} />
+              <p className="aeo-hint">{__('Counted as a mention when an answer names you. Add local spellings too.')}</p>
+            </div>
+            <div>
+              <p className="aeo-label">{__('Engines')}</p>
+              <div className="space-y-1.5">
+                {(data?.all || []).map((e) => {
+                  const hasKey = available.includes(e.engine) || (engines.length > 0 && engines.includes(e.engine));
+                  const on = engines.length === 0 ? available.includes(e.engine) : engines.includes(e.engine);
+                  return (
+                    <label key={e.engine} className="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={on}
+                        onChange={() => {
+                          const base = engines.length === 0 ? available : engines;
+                          setEngines(on ? base.filter((x) => x !== e.engine) : [...base, e.engine]);
+                        }}
+                      />
+                      {e.label}
+                      {!hasKey && <span className="text-2xs text-slate-400">· {__('no key')}</span>}
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
       <Card>
         <CardHeader
-          title="Competitors"
-          description="Structured data on their homepage and whether they publish llms.txt"
+          title={__('Competitors')}
+          description={__('Structured data on their homepage and whether they publish llms.txt')}
           action={
             compData.length > 0 && (
               <button
-                onClick={() => refreshCompetitors.mutate()}
-                disabled={refreshCompetitors.isPending}
+                onClick={() => api.getCompetitorAnalysis(true).then((d) => qc.setQueryData(['competitors'], d)).catch((e: Error) => toast.error(e.message))}
                 className="aeo-btn-ghost aeo-btn-sm"
               >
-                <RefreshCw size={12} className={refreshCompetitors.isPending ? 'animate-spin' : ''} /> Re-check
+                <RefreshCw size={12} /> {__('Re-check')}
               </button>
             )
           }
         />
         {competitors.isLoading ? (
-          <LoadingState message="Checking competitor sites…" />
+          <LoadingState message={__('Checking competitor sites…')} />
         ) : compData.length === 0 ? (
-          <EmptyState icon={Users} title="No competitors added" description="Add up to 5 competitor domains in Settings." />
+          <EmptyState icon={Users} title={__('No competitors added')} description={__('Add up to 5 competitor domains in Settings.')} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {compData.map((comp) => (
@@ -170,12 +402,12 @@ export default function Analytics() {
                 ) : (
                   <>
                     <p className="text-xs text-slate-500 mt-2">
-                      Schema types: {comp.schema_types.length ? comp.schema_types.join(', ') : 'none found'}
+                      {__('Schema types:')} {comp.schema_types.length ? comp.schema_types.join(', ') : __('none found')}
                     </p>
                     <p className="text-xs mt-1">
-                      <span className="text-slate-500">They use, you don't: </span>
+                      <span className="text-slate-500">{__("They use, you don't:")} </span>
                       <span className={comp.missing_types.length ? 'text-slate-900' : 'text-slate-500'}>
-                        {comp.missing_types.length ? comp.missing_types.join(', ') : 'nothing'}
+                        {comp.missing_types.length ? comp.missing_types.join(', ') : __('nothing')}
                       </span>
                     </p>
                   </>
@@ -185,6 +417,38 @@ export default function Analytics() {
           </div>
         )}
       </Card>
+
+      {answerId !== null && (
+        <Modal title={answer.data ? `${labels[answer.data.engine] || answer.data.engine} · ${answer.data.keyword}` : __('Answer')} onClose={() => setAnswerId(null)} wide>
+          {answer.isLoading || !answer.data ? (
+            <LoadingState />
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-1.5">
+                <span className={cn('aeo-badge', Number(answer.data.cited) ? 'text-emerald-700' : '')}>{Number(answer.data.cited) ? __('Cited') : __('Not cited')}</span>
+                {Number(answer.data.position) > 0 && <span className="aeo-badge">{sprintf(__('Position %d'), Number(answer.data.position))}</span>}
+                {Number(answer.data.mentioned) > 0 && <span className="aeo-badge">{__('Mentioned')}</span>}
+                {answer.data.sentiment && <span className="aeo-badge">{answer.data.sentiment}</span>}
+                <span className="aeo-badge">{answer.data.created_at}</span>
+              </div>
+              {answer.data.error && <p className="text-sm text-amber-700">{answer.data.error}</p>}
+              <div className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed bg-slate-50 rounded-lg p-4 max-h-[40vh] overflow-y-auto">
+                {answer.data.answer || __('(empty answer)')}
+              </div>
+              {(answer.data.sources || []).length > 0 && (
+                <div>
+                  <p className="aeo-label">{__('Sources used')}</p>
+                  <ol className="text-xs text-slate-600 space-y-1 list-decimal pl-5" style={{ listStyle: 'decimal' }}>
+                    {(answer.data.sources || []).map((src, i) => (
+                      <li key={i} className="break-all">{src}</li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </div>
+          )}
+        </Modal>
+      )}
     </div>
   );
 }

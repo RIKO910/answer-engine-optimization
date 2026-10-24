@@ -1,0 +1,2876 @@
+# Copyright (C) 2026 Tarikul Islam Riko
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Answer Engine Optimization 1.2.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aeo\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-23T17:50:07+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: answer-engine-optimization\n"
+
+#. Plugin Name of the plugin
+#: answer-engine-optimization.php
+#: includes/admin/class-aeo-admin.php:29
+#: includes/admin/class-aeo-meta-box.php:35
+#: src/Admin/Admin_Menu.php:34
+#: src/Content/Blocks.php:39
+#: src/Integrations/Abilities.php:50
+#: src/Integrations/Page_Builders.php:42
+#: src/Services/Report_Service.php:71
+msgid "Answer Engine Optimization"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: answer-engine-optimization.php
+msgid "https://tarikul.top/plugins/answer-engine-optimization/"
+msgstr ""
+
+#. Description of the plugin
+#: answer-engine-optimization.php
+msgid "AI-Powered Answer Engine Optimization — optimize for ChatGPT, Perplexity, Google SGE, and all AI answer engines."
+msgstr ""
+
+#. Author of the plugin
+#: answer-engine-optimization.php
+msgid "Tarikul Islam Riko"
+msgstr ""
+
+#. Author URI of the plugin
+#: answer-engine-optimization.php
+msgid "https://tarikul.top/"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:30
+msgid "AEO Settings"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:54
+msgid "General Settings"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:61
+msgid "Enable Schema Markup"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:65
+msgid "Add structured data to your content"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:70
+msgid "Auto-generate Questions"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:74
+msgid "Automatically suggest questions from your content"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:79
+msgid "Target Questions"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:83
+msgid "Enter questions you want to target (one per line)"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:88
+msgid "Voice Search Optimization"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:92
+msgid "Optimize for voice search and assistants"
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:136
+msgid "Configure how your content is optimized for answer engines."
+msgstr ""
+
+#: includes/admin/class-aeo-admin.php:176
+msgid "Answer Engine Optimization Settings"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:60
+msgid "Target Question"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:62
+msgid "The specific question this content answers (e.g., \"How do I optimize for answer engines?\")"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:66
+msgid "Direct Answer"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:68
+msgid "A concise, 1-2 sentence answer to the target question"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:72
+msgid "FAQ Items"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:79
+#: includes/admin/class-aeo-meta-box.php:194
+#: includes/admin/class-aeo-questions.php:53
+#: src/Integrations/bricks/element-aeo-faq.php:35
+#: src/Integrations/elementor/class-faq-widget.php:57
+#: assets/blocks/blocks.js:60
+msgid "Question"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:80
+#: includes/admin/class-aeo-meta-box.php:195
+#: includes/admin/class-aeo-questions.php:54
+#: src/Integrations/bricks/element-aeo-faq.php:39
+#: src/Integrations/elementor/class-faq-widget.php:65
+msgid "Answer"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:81
+#: includes/admin/class-aeo-meta-box.php:196
+#: includes/admin/class-aeo-questions.php:55
+#: assets/blocks/blocks.js:38
+#: assets/blocks/blocks.js:135
+msgid "Remove"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:88
+msgid "Add FAQ item"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:90
+msgid "Suggest questions"
+msgstr ""
+
+#: includes/admin/class-aeo-meta-box.php:92
+msgid "Add questions and answers that are relevant to your content"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:49
+msgid "Generating…"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:50
+#: includes/admin/class-aeo-questions.php:75
+msgid "Suggest more"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:51
+msgid "Could not generate questions. Save the post first, then try again."
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:52
+msgid "Select at least one question."
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:69
+msgid "Suggested questions"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:70
+msgid "Close"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:73
+msgid "Questions readers are likely to ask about this content. Pick the ones you want to add to the FAQ."
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:78
+msgid "Cancel"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:79
+msgid "Add to FAQ"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:93
+#: src/Api/Rest_Api.php:651
+#: src/Content/Meta_Service.php:134
+msgid "Post not found"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:97
+msgid "Permission denied"
+msgstr ""
+
+#: includes/admin/class-aeo-questions.php:111
+msgid "No questions could be generated"
+msgstr ""
+
+#: includes/frontend/class-aeo-frontend.php:149
+#: src/Services/AI/Local_AI_Provider.php:65
+msgid "Quick answer:"
+msgstr ""
+
+#: includes/frontend/class-aeo-frontend.php:174
+msgid "Frequently asked questions"
+msgstr ""
+
+#. translators: %d is the step number in a how-to guide.
+#: includes/frontend/class-aeo-schema.php:110
+#, php-format
+msgid "Step %d"
+msgstr ""
+
+#. translators: %s is the terms defined guide.
+#: includes/frontend/class-aeo-schema.php:161
+#, php-format
+msgid "Terms defined in %s"
+msgstr ""
+
+#: includes/frontend/class-aeo-schema.php:162
+msgid "Key terms and their definitions from this article"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:35
+msgid "AEO"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:44
+msgid "Dashboard"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:45
+msgid "Content Optimizer"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:46
+msgid "Schema Builder"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:47
+msgid "FAQ Manager"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:48
+msgid "Local Business"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:49
+msgid "WooCommerce AEO"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:50
+msgid "AI Visibility"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:51
+msgid "Traffic"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:52
+msgid "Content Tools"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:53
+msgid "Schema Templates"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:54
+msgid "Hotel"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:55
+msgid "AI Access"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:56
+msgid "Tools"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:57
+msgid "Site Audit"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:58
+msgid "Content Briefs"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:59
+msgid "Settings"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:60
+msgid "Agency Tools"
+msgstr ""
+
+#: src/Admin/Admin_Menu.php:92
+msgid "This page needs JavaScript enabled."
+msgstr ""
+
+#: src/Api/Mcp_Server.php:73
+msgid "The MCP endpoint is turned off in AEO settings."
+msgstr ""
+
+#: src/Api/Mcp_Server.php:76
+msgid "Authenticate with a WordPress Application Password."
+msgstr ""
+
+#: src/Api/Mcp_Server.php:141
+msgid "Tools to inspect and improve how AI answer engines read this WordPress site: scores, schema, FAQs, llms.txt, crawler rules, AI visibility and AI traffic."
+msgstr ""
+
+#: src/Api/Mcp_Server.php:204
+msgid "You do not have permission to use this tool on this item."
+msgstr ""
+
+#. translators: %s: argument name
+#: src/Api/Mcp_Server.php:243
+#, php-format
+msgid "Missing required argument: %s"
+msgstr ""
+
+#. translators: 1: argument, 2: type
+#: src/Api/Mcp_Server.php:269
+#, php-format
+msgid "Argument %1$s must be of type %2$s."
+msgstr ""
+
+#. translators: %s: argument
+#: src/Api/Mcp_Server.php:273
+#, php-format
+msgid "Argument %s has an unsupported value."
+msgstr ""
+
+#: src/Api/Rest_Api.php:446
+#: src/Api/Rest_Api.php:586
+#: src/Content/Freshness.php:101
+msgid "You cannot edit this post."
+msgstr ""
+
+#: src/Api/Rest_Api.php:527
+msgid "Not found"
+msgstr ""
+
+#: src/Api/Rest_Api.php:594
+msgid "There is no content to generate FAQs from."
+msgstr ""
+
+#: src/Api/Rest_Api.php:762
+msgid "Enter a topic."
+msgstr ""
+
+#: src/Api/Rest_Content.php:314
+msgid "Choose a post to preview."
+msgstr ""
+
+#: src/Api/Rest_Extra.php:127
+msgid "This looks like a local site, which search engines cannot reach."
+msgstr ""
+
+#: src/Api/Rest_Tools.php:66
+msgid "The file is not valid JSON."
+msgstr ""
+
+#: src/Content/Author_Profile.php:48
+msgid "Author details for AI search (E-E-A-T)"
+msgstr ""
+
+#: src/Content/Author_Profile.php:49
+msgid "Shown in the author box and in Person structured data so AI assistants can see who wrote the content and why they are qualified."
+msgstr ""
+
+#: src/Content/Author_Profile.php:106
+msgid "About the author"
+msgstr ""
+
+#. translators: %d: minutes
+#: src/Content/Blocks.php:208
+#, php-format
+msgid "Time: %d minute"
+msgid_plural "Time: %d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: supplies
+#: src/Content/Blocks.php:212
+#, php-format
+msgid "You need: %s"
+msgstr ""
+
+#: src/Content/Blocks.php:259
+#: src/Integrations/bricks/element-aeo-key-takeaways.php:27
+#: src/Integrations/elementor/class-takeaways-widget.php:46
+#: assets/blocks/blocks.js:131
+msgid "Key takeaways"
+msgstr ""
+
+#. translators: %d: months
+#: src/Content/Freshness.php:48
+#, php-format
+msgid "Not updated for %d month"
+msgid_plural "Not updated for %d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: year
+#: src/Content/Freshness.php:56
+#, php-format
+msgid "Title mentions %s"
+msgstr ""
+
+#. translators: %s: year
+#: src/Content/Freshness.php:67
+#, php-format
+msgid "Text refers to %s as current"
+msgstr ""
+
+#: src/Content/Meta_Service.php:198
+msgid "Image not found"
+msgstr ""
+
+#: src/Integrations/Abilities.php:51
+msgid "Check and improve how AI answer engines understand and cite this site."
+msgstr ""
+
+#: src/Integrations/Abilities.php:140
+msgid "Get site AEO overview"
+msgstr ""
+
+#: src/Integrations/Abilities.php:155
+msgid "List posts by AEO score"
+msgstr ""
+
+#: src/Integrations/Abilities.php:173
+msgid "Get a post's AEO score and fixes"
+msgstr ""
+
+#: src/Integrations/Abilities.php:187
+msgid "Get a post's structured data"
+msgstr ""
+
+#: src/Integrations/Abilities.php:201
+msgid "Get a post's FAQs"
+msgstr ""
+
+#: src/Integrations/Abilities.php:216
+msgid "Replace a post's FAQs"
+msgstr ""
+
+#: src/Integrations/Abilities.php:248
+msgid "Set a post's direct answer"
+msgstr ""
+
+#: src/Integrations/Abilities.php:271
+msgid "Run the site audit"
+msgstr ""
+
+#: src/Integrations/Abilities.php:285
+msgid "Get llms.txt"
+msgstr ""
+
+#: src/Integrations/Abilities.php:295
+msgid "Get AI citation results"
+msgstr ""
+
+#: src/Integrations/Abilities.php:305
+msgid "Get AI crawler and referral traffic"
+msgstr ""
+
+#: src/Integrations/Abilities.php:318
+msgid "Get AI crawler rules"
+msgstr ""
+
+#: src/Integrations/Abilities.php:331
+msgid "Allow or block an AI crawler"
+msgstr ""
+
+#: src/Integrations/Abilities.php:356
+msgid "Suggest prompts to track"
+msgstr ""
+
+#: src/Integrations/bricks/element-aeo-faq.php:19
+#: src/Integrations/elementor/class-faq-widget.php:24
+#: assets/blocks/blocks.js:45
+msgid "FAQ (AEO)"
+msgstr ""
+
+#: src/Integrations/bricks/element-aeo-faq.php:25
+#: src/Integrations/elementor/class-faq-widget.php:48
+msgid "Heading"
+msgstr ""
+
+#: src/Integrations/bricks/element-aeo-faq.php:30
+#: src/Integrations/elementor/class-faq-widget.php:44
+msgid "Questions"
+msgstr ""
+
+#: src/Integrations/bricks/element-aeo-key-takeaways.php:19
+#: src/Integrations/elementor/class-takeaways-widget.php:24
+#: assets/blocks/blocks.js:119
+msgid "Key takeaways (AEO)"
+msgstr ""
+
+#: src/Integrations/bricks/element-aeo-key-takeaways.php:25
+#: src/Integrations/elementor/class-takeaways-widget.php:44
+msgid "Title"
+msgstr ""
+
+#: src/Integrations/bricks/element-aeo-key-takeaways.php:31
+#: src/Integrations/elementor/class-takeaways-widget.php:61
+msgid "Points"
+msgstr ""
+
+#: src/Integrations/bricks/element-aeo-key-takeaways.php:36
+#: src/Integrations/elementor/class-takeaways-widget.php:53
+msgid "Point"
+msgstr ""
+
+#: src/Integrations/elementor/class-faq-widget.php:72
+msgid "Items"
+msgstr ""
+
+#: src/Integrations/elementor/class-takeaways-widget.php:40
+msgid "Takeaways"
+msgstr ""
+
+#: src/Integrations/Graphql.php:46
+msgid "A question and answer pair."
+msgstr ""
+
+#: src/Integrations/Graphql.php:66
+msgid "AEO score (0–100)."
+msgstr ""
+
+#: src/Integrations/Graphql.php:118
+msgid "JSON-LD @graph for this item, as a JSON string."
+msgstr ""
+
+#: src/Integrations/Graphql.php:136
+msgid "Clean Markdown version of the content, as served to AI agents."
+msgstr ""
+
+#. translators: 1: distance, 2: hotel name
+#: src/Integrations/Hotel.php:225
+#, php-format
+msgid "%1$s from %2$s"
+msgstr ""
+
+#. translators: %s: view
+#: src/Integrations/Hotel.php:336
+#, php-format
+msgid "%s view"
+msgstr ""
+
+#: src/Integrations/Hotel.php:339
+msgid "Smoking allowed"
+msgstr ""
+
+#: src/Integrations/Hotel.php:378
+msgid "per night"
+msgstr ""
+
+#: src/Integrations/Hotel.php:506
+msgid "Your rating"
+msgstr ""
+
+#: src/Integrations/Hotel.php:506
+msgid "Choose…"
+msgstr ""
+
+#. translators: %d: stars
+#: src/Integrations/Hotel.php:509
+#, php-format
+msgid "%d star"
+msgid_plural "%d stars"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: rating
+#: src/Integrations/Hotel.php:545
+#, php-format
+msgid "Rated %d out of 5"
+msgstr ""
+
+#: src/Services/AI/AI_Response.php:174
+msgid "Image file not found."
+msgstr ""
+
+#: src/Services/AI/AI_Response.php:178
+msgid "Unsupported image type."
+msgstr ""
+
+#: src/Services/AI/AI_Response.php:200
+msgid "Image is too large."
+msgstr ""
+
+#: src/Services/AI/DeepSeek_Provider.php:37
+msgid "DeepSeek cannot read images. Choose another provider for alt text."
+msgstr ""
+
+#. translators: %s: topic
+#: src/Services/AI/Local_AI_Provider.php:78
+#, php-format
+msgid "What is %s?"
+msgstr ""
+
+#. translators: %s: topic
+#: src/Services/AI/Local_AI_Provider.php:80
+#, php-format
+msgid "How does %s work?"
+msgstr ""
+
+#. translators: %s: topic
+#: src/Services/AI/Local_AI_Provider.php:82
+#, php-format
+msgid "How much does %s cost?"
+msgstr ""
+
+#. translators: %s: topic
+#: src/Services/AI/Local_AI_Provider.php:84
+#, php-format
+msgid "What are the alternatives to %s?"
+msgstr ""
+
+#. translators: %s: section heading
+#: src/Services/AI/Local_AI_Provider.php:176
+#, php-format
+msgid "What should I know about %s?"
+msgstr ""
+
+#: src/Services/AI/Remote_Provider.php:67
+#: src/Services/AI/Remote_Provider.php:131
+msgid "API key not configured"
+msgstr ""
+
+#. translators: 1: HTTP status, 2: API message
+#: src/Services/AI/Remote_Provider.php:158
+#, php-format
+msgid "AI provider returned HTTP %1$d. %2$s"
+msgstr ""
+
+#: src/Services/AI/Remote_Provider.php:161
+msgid "Invalid AI response"
+msgstr ""
+
+#: src/Services/Ai_Visibility.php:103
+msgid "Add at least one API key (Perplexity, OpenAI, Gemini or Anthropic) in Settings to track AI citations."
+msgstr ""
+
+#: src/Services/Ai_Visibility.php:107
+msgid "Add tracked prompts in Settings first."
+msgstr ""
+
+#: src/Services/Ai_Visibility.php:400
+msgid "No API key"
+msgstr ""
+
+#: src/Services/Audit_Service.php:110
+msgid "Issue not found. Run the audit again."
+msgstr ""
+
+#: src/Services/Audit_Service.php:119
+msgid "You are not allowed to edit this post."
+msgstr ""
+
+#: src/Services/Audit_Service.php:123
+msgid "This issue needs a manual fix."
+msgstr ""
+
+#. translators: %d: number of FAQs
+#: src/Services/Audit_Service.php:142
+#, php-format
+msgid "Added %d FAQ from the post content. Review it in the editor."
+msgid_plural "Added %d FAQs from the post content. Review them in the editor."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Services/Audit_Service.php:144
+msgid "No FAQs could be generated from this content. Add them in the post editor, or add an AI API key in Settings."
+msgstr ""
+
+#: src/Services/Audit_Service.php:154
+msgid "Open Graph tags turned on."
+msgstr ""
+
+#: src/Services/Audit_Service.php:160
+msgid "Structured data output turned on."
+msgstr ""
+
+#: src/Services/Audit_Service.php:173
+msgid "Organization name set to the site title."
+msgstr ""
+
+#: src/Services/Audit_Service.php:173
+msgid "Set a site title first."
+msgstr ""
+
+#. translators: 1: post title, 2: word count
+#: src/Services/Audit_Service.php:215
+#, php-format
+msgid "Thin content on \"%1$s\" (%2$d words, aim for 300+)"
+msgstr ""
+
+#. translators: %s: post title
+#: src/Services/Audit_Service.php:227
+#, php-format
+msgid "No featured image on \"%s\" (used in schema and link previews)"
+msgstr ""
+
+#. translators: %s: post title
+#: src/Services/Audit_Service.php:239
+#, php-format
+msgid "No FAQs on \"%s\""
+msgstr ""
+
+#. translators: %s: post title
+#: src/Services/Audit_Service.php:251
+#, php-format
+msgid "No direct answer set for \"%s\""
+msgstr ""
+
+#: src/Services/Audit_Service.php:269
+msgid "Structured data output is turned off"
+msgstr ""
+
+#: src/Services/Audit_Service.php:273
+msgid "Organization name not configured"
+msgstr ""
+
+#: src/Services/Audit_Service.php:277
+msgid "No Open Graph tags (no SEO plugin found and the Open Graph module is off)"
+msgstr ""
+
+#: src/Services/Audit_Service.php:281
+msgid "Search engines are discouraged from indexing this site (Settings → Reading)"
+msgstr ""
+
+#: src/Services/Audit_Service.php:285
+msgid "Setup wizard not completed"
+msgstr ""
+
+#: src/Services/Bing_Import.php:32
+msgid "The file has no data rows."
+msgstr ""
+
+#: src/Services/Bing_Import.php:57
+msgid "Could not find a page/URL or query column. Export the AI Performance report from Bing Webmaster Tools as CSV."
+msgstr ""
+
+#. translators: %d: HTTP status
+#: src/Services/Citation_Service.php:206
+#, php-format
+msgid "Homepage returned HTTP %d"
+msgstr ""
+
+#: src/Services/Google_Service.php:98
+#: src/Services/Report_Service.php:66
+msgid "Not allowed."
+msgstr ""
+
+#: src/Services/Google_Service.php:102
+msgid "The link expired. Start the connection again."
+msgstr ""
+
+#: src/Services/Google_Service.php:185
+msgid "Google is not connected."
+msgstr ""
+
+#: src/Services/Google_Service.php:205
+msgid "Could not refresh the Google connection. Connect again."
+msgstr ""
+
+#: src/Services/Google_Service.php:295
+msgid "Choose a Search Console property."
+msgstr ""
+
+#: src/Services/Google_Service.php:355
+msgid "Choose a GA4 property."
+msgstr ""
+
+#: src/Services/Import_Export.php:120
+msgid "This is not an Answer Engine Optimization export file."
+msgstr ""
+
+#: src/Services/IndexNow.php:168
+msgid "No URLs on this site to submit."
+msgstr ""
+
+#. translators: 1: total, 2: critical, 3: warnings, 4: opportunities
+#: src/Services/Notification_Service.php:62
+#, php-format
+msgid "Site audit: %1$d issues (%2$d critical, %3$d warnings, %4$d opportunities)."
+msgstr ""
+
+#. translators: 1: keywords checked, 2: answers citing the site
+#: src/Services/Notification_Service.php:74
+#, php-format
+msgid "AI citations: %1$d keywords checked on Perplexity, %2$d answers cited your site."
+msgstr ""
+
+#. translators: %s: site name
+#: src/Services/Notification_Service.php:89
+#, php-format
+msgid "[%s] Weekly AEO summary"
+msgstr ""
+
+#: src/Services/Report_Service.php:114
+msgid "Print / Save as PDF"
+msgstr ""
+
+#: src/Services/Schema_Service.php:678
+msgid "Schema is empty"
+msgstr ""
+
+#: src/Services/Schema_Service.php:684
+msgid "Missing @type property"
+msgstr ""
+
+#. translators: %s: schema type
+#: src/Services/Schema_Service.php:690
+#, php-format
+msgid "Unsupported schema type \"%s\""
+msgstr ""
+
+#. translators: 1: type, 2: property
+#: src/Services/Schema_Service.php:696
+#, php-format
+msgid "%1$s is missing required property \"%2$s\""
+msgstr ""
+
+#. translators: 1: type, 2: property
+#: src/Services/Schema_Service.php:702
+#, php-format
+msgid "%1$s should include \"%2$s\""
+msgstr ""
+
+#. translators: %s: template name
+#: src/Services/Schema_Templates.php:58
+#, php-format
+msgid "Template \"%s\" is not valid JSON-LD (it needs an @type)."
+msgstr ""
+
+#: src/Services/Schema_Templates.php:67
+msgid "Untitled template"
+msgstr ""
+
+#: src/Services/Score_Engine.php:170
+msgid "Direct answer"
+msgstr ""
+
+#: src/Services/Score_Engine.php:170
+msgid "Add a 1–2 sentence direct answer near the top (meta box or Direct answer block)."
+msgstr ""
+
+#: src/Services/Score_Engine.php:171
+msgid "Short opening paragraph"
+msgstr ""
+
+#: src/Services/Score_Engine.php:171
+msgid "Open with a paragraph under 60 words that answers the main question."
+msgstr ""
+
+#: src/Services/Score_Engine.php:172
+msgid "Target question set"
+msgstr ""
+
+#: src/Services/Score_Engine.php:172
+msgid "Set the question this page answers (target question)."
+msgstr ""
+
+#: src/Services/Score_Engine.php:175
+msgid "Subheadings"
+msgstr ""
+
+#: src/Services/Score_Engine.php:175
+msgid "Break the page up with at least two H2/H3 subheadings."
+msgstr ""
+
+#: src/Services/Score_Engine.php:176
+msgid "Question-style headings"
+msgstr ""
+
+#: src/Services/Score_Engine.php:176
+msgid "Phrase some headings as the questions people ask (\"How do I…?\")."
+msgstr ""
+
+#: src/Services/Score_Engine.php:177
+msgid "Lists or tables"
+msgstr ""
+
+#: src/Services/Score_Engine.php:177
+msgid "Use a list or table for steps, options or prices."
+msgstr ""
+
+#: src/Services/Score_Engine.php:186
+msgid "Complete structured data"
+msgstr ""
+
+#: src/Services/Score_Engine.php:186
+msgid "Structured data output is turned off in Settings."
+msgstr ""
+
+#: src/Services/Score_Engine.php:186
+msgid "Add a featured image and an excerpt or direct answer so the schema is complete."
+msgstr ""
+
+#: src/Services/Score_Engine.php:186
+msgid "Add a featured image so the schema includes an image."
+msgstr ""
+
+#: src/Services/Score_Engine.php:186
+msgid "Add an excerpt or direct answer so the schema has a description."
+msgstr ""
+
+#: src/Services/Score_Engine.php:189
+msgid "FAQs"
+msgstr ""
+
+#: src/Services/Score_Engine.php:189
+msgid "Add at least three FAQs (FAQ block, meta box or \"Suggest questions\")."
+msgstr ""
+
+#: src/Services/Score_Engine.php:192
+msgid "Short sentences"
+msgstr ""
+
+#. translators: %d: words
+#: src/Services/Score_Engine.php:192
+#, php-format
+msgid "Average sentence is %d words. Aim for 20 or fewer."
+msgstr ""
+
+#. translators: %d: words
+#: src/Services/Score_Engine.php:193
+msgid "Short paragraphs"
+msgstr ""
+
+#. translators: %d: words
+#: src/Services/Score_Engine.php:193
+msgid "Keep paragraphs under about 80 words."
+msgstr ""
+
+#: src/Services/Score_Engine.php:194
+msgid "Enough depth"
+msgstr ""
+
+#. translators: %d: words
+#: src/Services/Score_Engine.php:194
+#, php-format
+msgid "%d words. Aim for 300+ so the page fully answers the question."
+msgstr ""
+
+#: src/Services/Score_Engine.php:197
+msgid "Specific facts and numbers"
+msgstr ""
+
+#: src/Services/Score_Engine.php:197
+msgid "Include concrete numbers: prices, distances, times, sizes."
+msgstr ""
+
+#: src/Services/Score_Engine.php:198
+msgid "Links to sources"
+msgstr ""
+
+#: src/Services/Score_Engine.php:198
+msgid "Link to at least one trustworthy outside source."
+msgstr ""
+
+#: src/Services/Score_Engine.php:199
+msgid "Updated in the last 12 months"
+msgstr ""
+
+#: src/Services/Score_Engine.php:199
+msgid "Review and update this page; it has not changed in over a year."
+msgstr ""
+
+#: src/Services/Score_Engine.php:202
+msgid "Featured image"
+msgstr ""
+
+#: src/Services/Score_Engine.php:202
+msgid "Set a featured image."
+msgstr ""
+
+#: src/Services/Score_Engine.php:203
+msgid "Indexable"
+msgstr ""
+
+#: src/Services/Score_Engine.php:203
+msgid "This page is set to noindex, so AI search engines will skip it."
+msgstr ""
+
+#: src/Services/Score_Engine.php:204
+msgid "Author bio"
+msgstr ""
+
+#: src/Services/Score_Engine.php:204
+msgid "Add a short bio to the author's profile (Users → Profile)."
+msgstr ""
+
+#: assets/blocks/blocks.js:36
+msgid "Move up"
+msgstr ""
+
+#: assets/blocks/blocks.js:37
+msgid "Move down"
+msgstr ""
+
+#: assets/blocks/blocks.js:46
+msgid "Questions and answers, shown on the page and marked up as FAQPage schema."
+msgstr ""
+
+#: assets/blocks/blocks.js:57
+msgid "Heading (optional), e.g. Frequently asked questions"
+msgstr ""
+
+#: assets/blocks/blocks.js:61
+msgid "Answer (1–3 sentences work best)"
+msgstr ""
+
+#: assets/blocks/blocks.js:65
+msgid "Add question"
+msgstr ""
+
+#: assets/blocks/blocks.js:74
+msgid "How-to steps (AEO)"
+msgstr ""
+
+#: assets/blocks/blocks.js:75
+msgid "Numbered steps marked up as HowTo schema."
+msgstr ""
+
+#: assets/blocks/blocks.js:94
+msgid "Details"
+msgstr ""
+
+#: assets/blocks/blocks.js:95
+msgid "Total time (minutes)"
+msgstr ""
+
+#: assets/blocks/blocks.js:96
+msgid "Supplies (comma separated)"
+msgstr ""
+
+#: assets/blocks/blocks.js:99
+msgid "How to …"
+msgstr ""
+
+#: assets/blocks/blocks.js:100
+msgid "Short description (optional)"
+msgstr ""
+
+#: assets/blocks/blocks.js:104
+msgid "Step name (optional)"
+msgstr ""
+
+#: assets/blocks/blocks.js:105
+msgid "What to do"
+msgstr ""
+
+#: assets/blocks/blocks.js:110
+msgid "Add step"
+msgstr ""
+
+#: assets/blocks/blocks.js:120
+msgid "A short TL;DR list. Marked as speakable for voice assistants."
+msgstr ""
+
+#: assets/blocks/blocks.js:134
+msgid "One short sentence"
+msgstr ""
+
+#: assets/blocks/blocks.js:138
+msgid "Add point"
+msgstr ""
+
+#: assets/blocks/blocks.js:147
+msgid "Direct answer (AEO)"
+msgstr ""
+
+#: assets/blocks/blocks.js:148
+msgid "The one- or two-sentence answer AI assistants can quote. Put it near the top."
+msgstr ""
+
+#: assets/blocks/blocks.js:159
+msgid "Question this page answers (optional)"
+msgstr ""
+
+#: assets/blocks/blocks.js:160
+msgid "Answer in 1–2 sentences (under 60 words)"
+msgstr ""
+
+#: assets/blocks/blocks.js:161
+msgid "Over 60 words. Shorter answers are easier for assistants to quote."
+msgstr ""
+
+#: assets/blocks/sidebar.js:42
+#: assets/blocks/sidebar.js:46
+msgid "AEO score"
+msgstr ""
+
+#: assets/blocks/sidebar.js:43
+msgid "Checking…"
+msgstr ""
+
+#: assets/blocks/sidebar.js:56
+msgid "Everything checks out."
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:24
+msgid "Overview"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:27 admin-app/src/pages/Analytics.tsx:152 admin-app/src/pages/Settings.tsx:191
+msgid "AI visibility"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:32
+msgid "Optimize"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:34
+msgid "Content"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:35 admin-app/src/pages/ContentTools.tsx:385
+msgid "Content tools"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:36
+msgid "Schema"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:37 admin-app/src/pages/SchemaTemplates.tsx:151 admin-app/src/pages/Tools.tsx:20
+msgid "Schema templates"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:39
+msgid "Briefs"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:43
+msgid "Business"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:53 admin-app/src/pages/AiAccess.tsx:86
+msgid "AI access"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:56
+msgid "Agency"
+msgstr ""
+
+#: admin-app/src/components/Layout.tsx:148
+msgid "View site"
+msgstr ""
+
+#: admin-app/src/lib/useSettings.ts:29
+msgid "Settings saved"
+msgstr ""
+
+#: admin-app/src/lib/useSettings.ts:31
+msgid "Could not save settings"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:16
+msgid "Allow all"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:16
+msgid "Every AI crawler can read the site."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:17
+msgid "Block training only"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:17
+msgid "Stay visible in AI search and answers, opt out of model training."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:18
+msgid "Block all"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:18
+msgid "No AI crawler may read the site. You will not be cited."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:19
+msgid "Custom"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:19
+msgid "Choose per crawler below."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:23
+msgid "Training"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:24
+msgid "AI search"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:25
+msgid "User fetch"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:29
+msgid "Search"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:29
+msgid "Show the site in search results with links"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:30
+msgid "AI answers"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:30
+msgid "Use content as input for AI answers (RAG, grounding)"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:31
+msgid "AI training"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:31
+msgid "Use content to train or fine-tune models"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:41
+#, javascript-format
+msgid "Sent %d URLs to IndexNow"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:66
+msgid "Loading…"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:87
+msgid "Control which AI crawlers can read the site, and what they get: robots.txt rules, content signals, llms.txt and Markdown pages."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:90 admin-app/src/pages/SchemaTemplates.tsx:155
+msgid "Saving…"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:90
+msgid "Save changes"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:97
+msgid "AI crawlers"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:98
+#, javascript-format
+msgid "%1$d of %2$d known crawlers blocked in robots.txt"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:132 admin-app/src/pages/ContentTools.tsx:252
+msgid "All"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:140 admin-app/src/pages/Traffic.tsx:112
+msgid "Crawler"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:141
+msgid "Company"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:142
+msgid "Purpose"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:143
+msgid "Access"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:154
+msgid "Robots.txt token only — it does not crawl, it controls use of content Google/Apple already fetched."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:155
+msgid "token"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:169
+msgid "Allowed"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:169
+msgid "Blocked"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:173
+#, javascript-format
+msgid "Allow %s"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:193
+msgid "Changing a single crawler switches the preset to Custom. Blocking search crawlers (OAI-SearchBot, PerplexityBot, Claude-SearchBot) removes you from those AI answers."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:200
+msgid "Content signals"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:201
+msgid "Added to robots.txt as a Content-Signal line (contentsignals.org). Leave unset to express no preference."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:221
+msgid "Unset"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:221
+msgid "Yes"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:221
+msgid "No"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:231
+msgid "Instant indexing"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:231
+msgid "IndexNow tells Bing, Yandex, Seznam and Naver (and through Bing, ChatGPT search and Copilot) when a page is published or updated."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:234
+msgid "Ping IndexNow on publish and update"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:235
+msgid "This looks like a local site, so nothing is sent until it is live."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:240
+msgid "Log AI crawler visits and AI referrals"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:241
+msgid "Feeds the AI traffic report. No IP addresses are stored."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:249
+#, javascript-format
+msgid "Last submission %1$s · %2$d URLs · HTTP %3$s"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:250
+msgid "Nothing submitted yet"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:258
+msgid "Sending…"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:258
+msgid "Submit recent URLs"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:267
+msgid "A Markdown index of your best pages for AI agents, plus a full-text version and a .md version of every page."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:282
+msgid "Schema map"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:291 admin-app/src/pages/ContentTools.tsx:180 admin-app/src/pages/Hotel.tsx:165
+msgid "Include"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:312
+msgid "Pages per type"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:322
+msgid "Highest-scoring pages first."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:325
+msgid "Publish llms-full.txt"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:325
+msgid "Full text of the included pages, capped at 2 MB."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:326
+msgid "Markdown version of every page"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:326
+msgid "Add .md to any URL, or request it with Accept: text/markdown."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:331
+msgid "Summary"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:337
+msgid "One or two sentences: who you are, where, and what you offer. Defaults to the site tagline."
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:342
+msgid "Extra section (Markdown)"
+msgstr ""
+
+#: admin-app/src/pages/AiAccess.tsx:357
+msgid "robots.txt rules are a request. Well-behaved crawlers follow them; they do not stop scrapers that ignore robots.txt."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:49
+msgid "Error"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:61
+msgid "View the answer"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:64
+#, javascript-format
+msgid "Cited #%d"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:64 admin-app/src/pages/Analytics.tsx:190 admin-app/src/pages/Analytics.tsx:290
+msgid "Cited"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:64 admin-app/src/pages/Analytics.tsx:191 admin-app/src/pages/Analytics.tsx:291
+msgid "Mentioned"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:64 admin-app/src/pages/Analytics.tsx:428
+msgid "Not cited"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:107
+msgid "Tracking saved"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:123
+msgid "Scan finished"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:125
+msgid "Scan failed"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:138
+msgid "Loading AI visibility…"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:153
+msgid "Whether ChatGPT, Perplexity, Gemini and Claude cite or mention you for the questions your customers ask."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:157
+msgid "Client report"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:163
+msgid "Add an API key for at least one engine in Settings"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:166
+#, javascript-format
+msgid "Scanning %1$d / %2$d"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:166
+msgid "Run scan"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:181
+msgid "Scans ask each engine your tracked questions with live web search and record whether the answer links to or names your site. Add a Perplexity, OpenAI, Gemini or Anthropic key to start."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:184
+msgid "Add a key"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:190
+#, javascript-format
+msgid "%1$d of %2$d answers link to you"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:190
+msgid "No scan yet"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:191
+msgid "Brand named, with or without a link"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:193
+msgid "Sentiment"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:195
+msgid "Positive / neutral / negative mentions"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:197
+msgid "Last scan"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:197
+#, javascript-format
+msgid "%d engines connected"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:207
+msgid "Some checks failed"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:208
+#, javascript-format
+msgid "%d errors"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:214
+#, javascript-format
+msgid "%1$d/%2$d cited"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:215
+#, javascript-format
+msgid "avg. position %s"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:224
+msgid "Questions × engines"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:224
+msgid "Click a result to read the full answer and its sources."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:227
+msgid "No results yet"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:227
+msgid "Add the questions customers ask below, then run a scan."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:256
+msgid "Share of voice"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:256
+msgid "Who the engines cite for your questions"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:258
+msgid "No sources yet"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:258
+msgid "Appears after a scan."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:265
+msgid "you"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:279
+msgid "Trend"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:279
+msgid "Cited and mentioned rate per scan"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:281
+msgid "Not enough scans"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:281
+msgid "The trend appears after two or more scans."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:300
+msgid "What to track"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:301
+#, javascript-format
+msgid "%d questions · up to 25 are checked per scan on each engine"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:304 admin-app/src/pages/ContentTools.tsx:285 admin-app/src/pages/ContentTools.tsx:367
+msgid "Save"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:310
+msgid "Questions and prompts"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:311
+msgid "One per line, phrased the way people ask an assistant"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:314
+msgid "Finding…"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:314
+msgid "Suggest prompts"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:316
+msgid "Built from your business details, FAQs and question headings."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:339
+msgid "Brand names"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:341
+msgid "Counted as a mention when an answer names you. Add local spellings too."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:344
+msgid "Engines"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:360
+msgid "no key"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:372
+msgid "Competitors"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:373
+msgid "Structured data on their homepage and whether they publish llms.txt"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:380
+msgid "Re-check"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:386
+msgid "Checking competitor sites…"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:388
+msgid "No competitors added"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:388
+msgid "Add up to 5 competitor domains in Settings."
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:405
+msgid "Schema types:"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:405
+msgid "none found"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:408
+msgid "They use, you don't:"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:410
+msgid "nothing"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:429
+#, javascript-format
+msgid "Position %d"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:436
+msgid "(empty answer)"
+msgstr ""
+
+#: admin-app/src/pages/Analytics.tsx:440
+msgid "Sources used"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:38
+msgid "Marked as reviewed — the modified date is now today"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:47
+msgid "AI engines prefer recent sources. These pages have not been updated for a while or mention a past year. Check the facts, update what changed, then mark them reviewed."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:49
+msgid "Older than"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:50
+#, javascript-format
+msgid "Older than %d months"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:57
+msgid "Everything is fresh"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:57
+msgid "No published page is past the age limit or mentions an old year."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:60 admin-app/src/pages/ContentTools.tsx:262 admin-app/src/pages/Tools.tsx:161
+msgid "Page"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:60
+msgid "Last updated"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:60
+msgid "Why"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:69
+#, javascript-format
+msgid "%d mo"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:73
+msgid "Edit"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:75
+msgid "Reviewed"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:119
+#, javascript-format
+msgid "Drafted FAQs for %d pages"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:119
+msgid "Every page already has FAQs"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:136
+#, javascript-format
+msgid "Saved. The page now has %d FAQs."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:152
+msgid "Draft FAQs with AI for every published page that has none, then approve the ones that are accurate. Nothing is published until you approve it."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:155
+#, javascript-format
+msgid "Drafting %1$d / %2$d"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:155
+msgid "Draft FAQs for pages without"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:159
+msgid "Nothing to review"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:159
+msgid "Drafted FAQs wait here for your approval."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:167
+#, javascript-format
+msgid "%1$d drafted · %2$d already on the page"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:170
+msgid "Discard"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:171
+msgid "Approve selected"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:234
+msgid "Saved"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:246
+#, javascript-format
+msgid "Saved into %s fields, so your SEO plugin outputs them."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:247
+msgid "No SEO plugin detected — this plugin outputs the title and description itself."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:252 admin-app/src/pages/Hotel.tsx:142
+msgid "Missing"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:259
+msgid "All pages have a title and description"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:259
+msgid "Switch to All to edit existing ones."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:262
+msgid "SEO title"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:262
+msgid "Meta description"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:281 admin-app/src/pages/ContentTools.tsx:363
+msgid "Write with AI"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:329
+msgid "Alt text saved"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:339
+msgid "Images without alt text are invisible to AI engines and screen readers. AI writes a factual description from the image itself (needs a provider that reads images)."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:343
+msgid "Every image has alt text"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:343
+msgid "Nothing to fix in the media library."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:346
+msgid "Image"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:346
+msgid "Alt text"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:360
+msgid "Describe what the image shows"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:386
+msgid "Bulk fixes that help answer engines trust and quote your pages."
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:389
+msgid "All posts"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:397
+msgid "Freshness"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:398
+msgid "FAQ review"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:399
+msgid "Titles & descriptions"
+msgstr ""
+
+#: admin-app/src/pages/ContentTools.tsx:400
+msgid "Image alt text"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:26
+msgid "Description"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:27
+msgid "Photo"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:28
+msgid "Bed"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:29
+msgid "Occupancy"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:30
+msgid "Size"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:31
+msgid "Amenities"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:32
+msgid "Pets"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:33
+msgid "Smoking"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:34
+msgid "Price"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:35
+msgid "Rating"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:36
+msgid "Units"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:54
+#, javascript-format
+msgid "Added. That page now has %d FAQs."
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:68
+msgid "Hotel and room schema built from Quotel Hotel Booking and your Local Business details, so AI answers can quote rooms, prices, check-in times and amenities correctly."
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:85
+#, javascript-format
+msgid "%d rooms found"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:85
+msgid "Not detected"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:89
+msgid "Hotel details"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:91
+msgid "Hotel location set up"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:93
+msgid "Add a location with type Hotel"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:97
+msgid "Guest rating"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:99
+#, javascript-format
+msgid "%d reviews"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:99
+msgid "No rated reviews yet"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:105
+msgid "Output"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:108
+msgid "HotelRoom / Suite schema with an Offer on each room page"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:109
+#, javascript-format
+msgid "Price from the room base price in %s, bed, occupancy, size, view and amenities."
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:114
+msgid "Star rating on room reviews"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:115
+msgid "Adds a 1–5 rating to the room comment form. Ratings feed aggregateRating on the hotel and rooms."
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:124
+msgid "Rooms"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:124
+msgid "What each room page tells AI engines. Fill the missing fields in Quotel to complete them."
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:127
+msgid "No rooms"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:127
+msgid "Published Quotel rooms appear here."
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:130
+msgid "Room"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:130
+msgid "Type"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:130
+msgid "From"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:130
+msgid "In schema"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:158
+msgid "Hotel FAQ starter"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:159
+msgid "The questions guests ask assistants most. Answers are pre-filled where your settings know them — complete the rest, then add them to a page."
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:172
+msgid "Write the answer…"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:180
+msgid "Add to page"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:181
+msgid "Add to page…"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:185
+#, javascript-format
+msgid "Add %d FAQs"
+msgstr ""
+
+#: admin-app/src/pages/Hotel.tsx:187
+msgid "Questions without an answer are skipped."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:32
+msgid "Event"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:46
+msgid "Course"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:55
+msgid "Recipe"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:68
+msgid "Service"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:79
+msgid "Tour / trip"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:97
+msgid "New template"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:121
+msgid "Templates saved"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:141
+msgid "Add an @type."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:152
+msgid "Write schema once and apply it to every page that matches: a post type, a category, or specific pages. Fill fields from custom fields, ACF or Meta Box."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:155
+msgid "Save templates"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:177 admin-app/src/pages/SchemaTemplates.tsx:211
+msgid "Off"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:178
+#, javascript-format
+msgid "%d pages"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:178
+msgid "No rules"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:183
+msgid "Blank template"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:194
+msgid "Start from a preset"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:196
+msgid "Start from a preset…"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:203
+msgid "No templates yet"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:203
+msgid "Start from a preset or a blank template."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:209
+msgid "Template name"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:211
+msgid "On"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:212
+msgid "Enabled"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:214
+msgid "Duplicate"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:217
+msgid "Delete"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:222
+msgid "Apply to"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:222
+msgid "All filled rules must match. Within a rule, any value matches."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:225
+msgid "Post types"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:238
+msgid "Terms"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:246
+#, javascript-format
+msgid "taxonomy:slug — available: %s"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:249
+msgid "Specific page IDs"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:263
+msgid "Properties that come out empty are dropped."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:278
+msgid "detected."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:282
+msgid "Preview"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:282
+msgid "Rendered with a real page's values."
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:284
+msgid "Preview on"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:285
+msgid "Choose a page…"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:289
+msgid "Render"
+msgstr ""
+
+#: admin-app/src/pages/SchemaTemplates.tsx:299
+msgid "Pick a page to see the rendered schema with its real values."
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:181
+msgid "AI visibility engines"
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:182
+msgid "Scans use each engine with live web search. Perplexity needs its own key; ChatGPT, Gemini and Claude reuse the keys above."
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:190
+msgid "Questions to track, brand names and engine choice live on the"
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:191
+msgid "page."
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:219
+msgid "Author box with credentials under posts (E-E-A-T)"
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:245
+msgid "AI crawlers & llms.txt"
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:245
+msgid "28 AI crawlers, presets, content signals, llms.txt and Markdown pages."
+msgstr ""
+
+#: admin-app/src/pages/Settings.tsx:246
+msgid "Open AI access"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:17
+msgid "API keys and Google credentials are never exported"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:18
+msgid "Organization / website schema"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:19
+msgid "Locations"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:21
+msgid "Per-page FAQs, schema, target questions and direct answers"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:48
+msgid "Import complete"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:61
+msgid "That file is not valid JSON."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:89
+msgid "Export"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:89
+msgid "Move your setup to another site, or keep a backup before big changes."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:92
+msgid "Download JSON"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:96 admin-app/src/pages/Tools.tsx:110
+msgid "Import"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:96
+msgid "Pages are matched by post type and slug, then by URL path, so a staging export imports into production."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:98
+msgid "Choose an export file (.json)"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:103
+#, javascript-format
+msgid "Exported from %1$s on %2$s"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:107
+msgid "Check first"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:117
+msgid "Would import:"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:117
+msgid "Imported:"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:122
+#, javascript-format
+msgid "No matching page for: %s"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:138
+#, javascript-format
+msgid "Copied %1$d FAQs on %2$d pages"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:148
+msgid "Yoast and Rank Math FAQ blocks"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:149
+msgid "Copy questions from their FAQ blocks into this plugin so they join your connected schema graph, llms.txt and the AEO score. The blocks stay on the page. Turn off FAQ schema in the SEO plugin afterwards to avoid duplicates."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:152
+msgid "Copy all"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:158
+msgid "Nothing to migrate"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:158
+msgid "No Yoast or Rank Math FAQ blocks found."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:161
+msgid "In block"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:161
+msgid "Already here"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:192
+msgid "Copied"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:198
+msgid "Connect an AI assistant"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:199
+msgid "Let Claude, ChatGPT, Cursor or any MCP client read scores, schema and AI visibility, and update FAQs or direct answers — with the same permissions as the WordPress user it signs in as."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:203
+msgid "Enable the MCP endpoint"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:204
+msgid "Off by default. Requests must authenticate with an Application Password."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:214
+msgid "Create an Application Password for a user with the right AEO role."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:215
+msgid "Your profile"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:216
+msgid "Application Passwords are unavailable here — WordPress requires HTTPS for them (or WP_ENVIRONMENT_TYPE set to local)."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:219
+msgid "Server URL:"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:221
+msgid "Copy URL"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:224
+msgid "Clients that only speak stdio can use mcp-remote. Put base64 of username:application-password in AUTH:"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:226
+msgid "Copy config"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:231
+msgid "The same tools are registered with the WordPress Abilities API, so the official WordPress MCP adapter can expose them too."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:232
+msgid "WordPress 6.9+ also exposes these tools through the Abilities API."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:236
+#, javascript-format
+msgid "%d tools"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:241
+msgid "Read only"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:241
+msgid "Makes changes"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:260
+msgid "Manage settings"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:261
+msgid "View reports"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:262
+msgid "Edit schema & FAQs"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:263
+msgid "Use AI"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:270
+msgid "Who can do what"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:271
+msgid "Administrators always have every permission. AI features spend API credits, so grant them deliberately."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:282
+msgid "Role"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:310
+msgid "Editing schema or FAQs on a page also requires permission to edit that page."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:319
+msgid "Import and export, migrate from other plugins, connect AI assistants, and set permissions."
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:324
+msgid "Import / export"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:325
+msgid "Migrate FAQs"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:326
+msgid "MCP & AI agents"
+msgstr ""
+
+#: admin-app/src/pages/Tools.tsx:327
+msgid "Roles"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:73
+msgid "Period"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:75
+#, javascript-format
+msgid "Last %d days"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:80
+msgid "AI crawler visits"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:80
+#, javascript-format
+msgid "%d different crawlers"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:81
+msgid "Visitors from AI assistants"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:81
+msgid "ChatGPT, Perplexity, Gemini, Copilot, Claude…"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:82
+msgid "Crawler errors"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:82
+msgid "4xx/5xx responses served to AI crawlers"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:83
+msgid "Top assistant"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:87
+msgid "Daily activity"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:89
+msgid "No AI traffic logged yet"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:89
+msgid "Crawler visits and AI referrals appear here as they happen. Logging can be turned off under AI access."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:98
+msgid "Crawler visits"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:99
+msgid "AI referrals"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:107
+msgid "Crawlers"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:109 admin-app/src/pages/Traffic.tsx:128
+msgid "None yet"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:109
+msgid "No AI crawler has visited in this period."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:112 admin-app/src/pages/Traffic.tsx:131
+msgid "Visits"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:112
+msgid "Last seen"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:126
+msgid "Visits from AI assistants"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:128
+msgid "Visitors who click a link in an AI answer are counted here (no cookies, no IP)."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:131
+msgid "Assistant"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:141
+msgid "Most crawled pages"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:152
+msgid "Pages AI visitors land on"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:189
+msgid "Credentials saved"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:217
+msgid "Connect Google Search Console and Analytics"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:218
+msgid "Uses your own Google Cloud OAuth client, so data goes straight from Google to this site. Read-only access."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:221
+msgid "In Google Cloud Console, enable the Search Console API and the Google Analytics Data and Admin APIs."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:222
+msgid "Create an OAuth client ID of type \"Web application\"."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:224
+msgid "Add this authorized redirect URI:"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:226
+msgid "Paste the client ID and secret below, save, then connect."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:230
+msgid "Client ID"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:231
+msgid "Saved (enter to replace)"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:234
+msgid "Client secret"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:240
+msgid "Save credentials"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:244
+msgid "Connect Google account"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:261
+msgid "Search Console property"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:263 admin-app/src/pages/Traffic.tsx:270
+msgid "— Choose —"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:268
+msgid "GA4 property"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:276
+msgid "Refresh"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:279
+msgid "Disconnect"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:285
+msgid "Loading Google data…"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:290
+msgid "Question-style searches"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:290
+msgid "Long and question queries, the kind AI Overviews answer. Last 28 days."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:294
+msgid "Query"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:294 admin-app/src/pages/Traffic.tsx:321
+msgid "Clicks"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:294
+msgid "Impr."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:294
+msgid "Pos."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:305
+msgid "Sessions from AI assistants (GA4)"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:305
+msgid "Sources such as chatgpt.com, perplexity.ai, gemini.google.com. Last 28 days."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:309
+msgid "Source"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:309
+msgid "Sessions"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:309
+msgid "Engaged"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:309
+msgid "Key events"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:319
+msgid "Top pages in Google search"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:321
+msgid "Impressions"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:321
+msgid "Position"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:342
+#, javascript-format
+msgid "Imported %d rows"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:356
+msgid "Bing Webmaster Tools: AI Performance"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:357
+msgid "Bing reports how often Copilot and Bing AI answers cite your pages, but has no API for it yet. Export the AI Performance report as CSV and import it here."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:360
+msgid "Importing…"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:360
+msgid "Import CSV"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:366
+#, javascript-format
+msgid "Last import %1$s · %2$d rows · %3$d citations"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:368
+msgid "Nothing imported yet."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:374
+msgid "Citations per day"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:381
+msgid "Citations"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:386
+msgid "Most cited pages"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:406
+msgid "Google account connected"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:407
+msgid "Google connection was not completed"
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:411
+msgid "AI crawler visits, visitors arriving from AI assistants, and Google and Bing data in one place."
+msgstr ""
+
+#: admin-app/src/pages/Traffic.tsx:416
+msgid "AI crawlers & referrals"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:12
+msgid "Product schema on every product page"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:13
+msgid "Price, currency and stock availability"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:14
+msgid "Aggregate rating from reviews"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:15
+msgid "SKU, GTIN and brand"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:16
+msgid "Return policy and shipping details (below)"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:17
+msgid "Price valid-until date for sale prices"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:65
+msgid "Product structured data for AI shopping assistants: price, stock, ratings, returns and shipping."
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:80
+msgid "WooCommerce not detected"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:81
+msgid "Install and activate WooCommerce to add Product schema with price, stock and ratings."
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:87
+msgid "What gets added"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:87
+msgid "Applied automatically to product pages"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:98
+msgid "Variable products as ProductGroup"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:99
+msgid "Lists each variation (size, colour…) with its own price and stock, the format Google and AI shopping results read for variants."
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:108
+msgid "Return policy"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:108
+msgid "Set days to 0 to say returns are not accepted. Leave country empty to use the store country."
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:110
+msgid "Return window (days)"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:112
+msgid "Return shipping"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:114
+msgid "Free for the customer"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:115
+msgid "Customer pays"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:119
+msgid "How"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:121
+msgid "By mail / courier"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:122
+msgid "In store"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:123
+msgid "At a drop-off point"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:127
+msgid "Country (ISO code)"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:133
+msgid "Shipping"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:133
+msgid "A typical rate and delivery time. Leave the rate empty to skip shipping details."
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:136
+msgid "Ships to (ISO code)"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:140
+msgid "Rate (store currency)"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:143
+msgid "Handling, min days"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:144
+msgid "Handling, max days"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:145
+msgid "Transit, min days"
+msgstr ""
+
+#: admin-app/src/pages/WooCommerce.tsx:146
+msgid "Transit, max days"
+msgstr ""

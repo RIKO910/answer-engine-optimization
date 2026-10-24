@@ -43,7 +43,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.0';
+	public $version = '1.2.0';
 
 	/**
 	 * Get singleton instance.
@@ -105,7 +105,23 @@ class Plugin {
 		add_action( 'init', array( Upgrader::class, 'maybe_upgrade' ), 20 );
 		add_action( 'save_post', array( $this, 'on_save_post' ), 20, 2 );
 		add_action( 'deleted_post', array( $this, 'flush_llms_cache' ) );
-		add_filter( 'robots_txt', array( Frontend_Manager::class, 'filter_robots_txt' ), 20, 2 );
+		add_filter( 'robots_txt', array( \AEO\Frontend\Ai_Crawlers::class, 'filter_robots_txt' ), 20, 2 );
+		\AEO\Api\Public_Api::register();
+		\AEO\Api\Rest_Extra::register();
+		\AEO\Api\Rest_Content::register();
+		\AEO\Content\Blocks::register();
+		\AEO\Content\Editor_Panel::register();
+		\AEO\Content\Author_Profile::register();
+		\AEO\Integrations\Page_Builders::register();
+		\AEO\Integrations\Hotel::register();
+		\AEO\Integrations\Abilities::register();
+		\AEO\Api\Mcp_Server::register();
+		\AEO\Api\Rest_Tools::register();
+		\AEO\Integrations\Graphql::register();
+		\AEO\Core\Capabilities::register();
+		\AEO\Services\Google_Service::register();
+		\AEO\Services\Report_Service::register();
+		\AEO\Services\IndexNow::register();
 		add_action( Upgrader::CRON_HOOK, array( $this, 'run_weekly_maintenance' ) );
 		add_action( 'wp_initialize_site', array( Activator::class, 'on_new_site' ), 20 );
 	}
@@ -117,7 +133,8 @@ class Plugin {
 	 * @return void
 	 */
 	public static function register_rewrites() {
-		add_rewrite_rule( '^llms\.txt$', 'index.php?aeo_llms_txt=1', 'top' );
+		\AEO\Frontend\Llms_Txt::rewrites();
+		\AEO\Services\IndexNow::rewrites();
 	}
 
 	/**
@@ -128,6 +145,8 @@ class Plugin {
 	 */
 	public function register_query_vars( $vars ) {
 		$vars[] = 'aeo_llms_txt';
+		$vars[] = 'aeo_md';
+		$vars[] = 'aeo_indexnow_key';
 		return $vars;
 	}
 
@@ -137,6 +156,7 @@ class Plugin {
 	 * @return void
 	 */
 	public function run_weekly_maintenance() {
+		\AEO\Services\Traffic_Log::prune( (int) apply_filters( 'aeo_traffic_retention_days', 90 ) );
 		( new Notification_Service() )->run_weekly();
 	}
 
@@ -146,7 +166,8 @@ class Plugin {
 	 * @return void
 	 */
 	public function flush_llms_cache() {
-		delete_transient( 'aeo_llms_txt' );
+		\AEO\Frontend\Llms_Txt::flush();
+		\AEO\Api\Public_Api::flush_schemamap();
 	}
 
 	/**
@@ -168,6 +189,7 @@ class Plugin {
 	 * @return void
 	 */
 	public function init() {
+		load_plugin_textdomain( 'answer-engine-optimization', false, dirname( AEO_PLUGIN_BASENAME ) . '/languages' );
 		( new Rest_Api() )->register();
 
 		if ( is_admin() ) {
@@ -178,6 +200,10 @@ class Plugin {
 		} else {
 			new Frontend_Manager();
 			new \AEO_Frontend();
+			\AEO\Frontend\Llms_Txt::register();
+			\AEO\Frontend\Ai_Crawlers::register();
+			\AEO\Frontend\Referral_Tracker::register();
+			\AEO\Content\Meta_Service::register();
 			if ( ! defined( 'AEO_NEW_SYSTEM' ) || ! AEO_NEW_SYSTEM ) {
 				new \AEO_Schema();
 			}
@@ -208,6 +234,7 @@ class Plugin {
 		}
 
 		$this->flush_llms_cache();
+		\AEO\Content\Content_Extractor::forget( $post_id );
 
 		if ( 'publish' !== $post->post_status ) {
 			return;
@@ -223,7 +250,8 @@ class Plugin {
 	 */
 	public static function deactivate() {
 		Upgrader::unschedule_events();
-		delete_transient( 'aeo_llms_txt' );
+		wp_clear_scheduled_hook( \AEO\Services\IndexNow::HOOK );
+		\AEO\Frontend\Llms_Txt::flush();
 		flush_rewrite_rules();
 	}
 }

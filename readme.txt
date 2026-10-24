@@ -5,7 +5,7 @@ Tags: seo, schema, faq, ai, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,26 +24,39 @@ It adds clean structured data, a visible FAQ and direct-answer block, an `llms.t
 * **Question suggestions** - "Suggest questions" in the editor proposes questions and answers from your content (your AI key, or the post's own headings when no key is set).
 * **AEO score (0-100)** - per post, from content structure, schema completeness, FAQs, readability and citation signals. Works with any language, including Bengali, Arabic and CJK scripts.
 * **Site audit** - flags thin content, missing images, FAQs, direct answers and configuration problems. Some issues can be fixed in one click.
-* **llms.txt** - an automatic `/llms.txt` index of your public content in the llmstxt.org format. Password-protected and noindex pages are left out.
-* **AI crawler controls** - block GPTBot, ClaudeBot, PerplexityBot or Google-Extended in robots.txt.
-* **AI citation tracking (Perplexity)** - checks your tracked keywords on Perplexity's Sonar API and records which answers link to your site. Needs your own Perplexity API key. Nothing is estimated or simulated.
+* **llms.txt, llms-full.txt and Markdown pages** - an automatic `/llms.txt` index (grouped by language with Polylang/WPML), a full-text `/llms-full.txt`, and a clean Markdown version of every page at `page-url.md` or via `Accept: text/markdown`. Password-protected and noindex pages are left out.
+* **AI crawler controls** - 28 AI crawlers grouped by purpose (training, AI search, user fetch) with one-click presets such as "block training, stay in AI search", plus Content-Signal lines in robots.txt.
+* **AI visibility tracking** - asks ChatGPT, Perplexity, Gemini and Claude your customers' questions with live web search and records whether the answer links to you, names you, at what position and with what sentiment. Share of voice against the domains they cite, a question x engine matrix, full answers and sources, and a trend over time. Uses your own API keys. Nothing is estimated or simulated.
+* **AI traffic** - logs AI crawler visits and visitors arriving from AI assistants (ChatGPT, Perplexity, Gemini, Copilot, Claude…) without cookies or IP addresses.
+* **Google Search Console and GA4** - question-style queries and AI-assistant sessions, using your own Google OAuth client. **Bing AI Performance** - import the CSV export.
+* **IndexNow** - pings Bing, Yandex, Seznam and Naver when a page is published or updated.
+* **Gutenberg blocks** - FAQ, HowTo, Key Takeaways and Direct Answer blocks with matching schema; Elementor and Bricks widgets for FAQ and Key Takeaways. Live AEO score panel in the block editor.
+* **Content tools** - stale-content finder, bulk AI FAQ drafts with an approval queue, SEO titles and descriptions (written into Yoast/Rank Math/SEOPress fields when present), and image alt text.
+* **Schema templates** - reusable JSON-LD with display rules (post type, term, page) and placeholders for custom fields, ACF and Meta Box.
+* **Author profiles** - job title, credentials, expertise and profile links as Person schema, with an optional author box.
+* **Hotels (Quotel Hotel Booking)** - Hotel schema with check-in/out, stars, amenities, nearby attractions and guest rating; HotelRoom/Suite with an Offer for each room; a hotel FAQ starter.
 * **Competitor check** - reads competitors' homepage structured data and checks for an llms.txt file, and shows schema types they use that you don't.
 * **Local business** - multiple locations with PostalAddress, opening hours, geo coordinates and business type (Hotel, Restaurant, Store and more).
-* **WooCommerce** - adds brand and GTIN to WooCommerce's own Product schema instead of printing a second Product.
+* **WooCommerce** - adds brand, GTIN, return policy, shipping details and price-valid-until to WooCommerce's own Product schema, and optionally ProductGroup for variable products.
 * **Open Graph and Twitter cards** - when no SEO plugin is handling them.
 * **Content briefs** - target questions, entities and schema type for a topic, plus an opportunity score based on how much of your own content already covers it.
 * **Weekly email** - optional audit and citation summary.
-* **White-label** - replace the plugin name and logo in the admin menu and dashboard.
+* **White-label and client reports** - replace the plugin name and logo, and print a client report.
+* **Roles** - decide which roles can view reports, edit schema, use AI or change settings.
+* **Import / export** - settings, schema, locations, templates and per-page FAQs as one JSON file; copy Yoast and Rank Math FAQ blocks into the plugin.
 
 = AI providers (optional) =
 
-Bring your own API key for OpenAI, Anthropic (Claude) or Google Gemini to improve FAQ generation, rewriting and briefs. You can pick the model in Settings. Keys are stored encrypted. Without a key, the plugin uses built-in rules based on your content.
+Bring your own API key for OpenAI, Anthropic (Claude), Google Gemini, Mistral, DeepSeek or OpenRouter to improve FAQ generation, rewriting, briefs, meta descriptions and alt text. You can pick the model in Settings. Keys are stored encrypted. Without a key, the plugin uses built-in rules based on your content.
 
-Citation tracking uses a separate Perplexity API key.
+AI visibility scans use the OpenAI, Gemini and Anthropic keys with web search, plus an optional Perplexity key.
 
 = Developers =
 
 * REST API under `/wp-json/aeo-genius/v1/` (cookie or Application Password auth).
+* **MCP server** at `/wp-json/aeo-genius/v1/mcp` (off by default) with 14 tools, and the same tools registered with the WordPress Abilities API (6.9+).
+* **WPGraphQL** fields: `aeoScore`, `aeoTargetQuestion`, `aeoDirectAnswer`, `aeoFaqs`, `aeoSchema`, `aeoMarkdown`.
+* Public schema map: `/wp-json/aeo-genius/v1/schemamap`.
 * WP-CLI: `wp aeo audit`, `wp aeo score`, `wp aeo fix <issue_id>`, `wp aeo scan`.
 * Filters: `aeo_post_types`, `aeo_post_schema_nodes`, `aeo_auto_schema`, `aeo_location_schema`, `aeo_llms_txt`, `aeo_llms_txt_limit`, `aeo_defer_to_seo_plugin`, `aeo_is_noindex`, `aeo_ai_model`, `aeo_woocommerce_product_schema`, `aeo_digest_recipient`.
 * Multisite: network activation sets up every site, including sites created later.
@@ -51,7 +64,7 @@ Citation tracking uses a separate Perplexity API key.
 
 = Privacy =
 
-The plugin adds no cookies or visitor tracking. When you use AI features, post content (never visitor data) is sent to the provider you configured. Citation scans send your tracked keywords to Perplexity. Competitor checks fetch the competitor's public homepage and llms.txt.
+The plugin sets no cookies. AI traffic logging stores the crawler or assistant name, page and time, never IP addresses; you can turn it off. When you use AI features, post content (never visitor data) is sent to the provider you configured. AI visibility scans send your tracked questions to the engines you choose. IndexNow sends page URLs to api.indexnow.org. Google reports are fetched with your own OAuth client. Competitor checks fetch the competitor's public homepage and llms.txt.
 
 == Installation ==
 
@@ -177,6 +190,19 @@ Yes. Set an agency name and logo under Agency; they replace the plugin name in t
 
 == Changelog ==
 
+= 1.2.0 =
+* New: AI access page with 28 AI crawlers, presets, Content-Signal, llms-full.txt and per-page Markdown.
+* New: multi-engine AI visibility (ChatGPT, Perplexity, Gemini, Claude) with share of voice, sentiment, position, answer viewer, prompt suggestions and trend.
+* New: AI traffic log, referral tracking, Google Search Console/GA4 connection, Bing AI Performance CSV import, client report.
+* New: IndexNow, public schema map.
+* New: FAQ, HowTo, Key Takeaways and Direct Answer blocks; Elementor and Bricks widgets; editor score panel; rewritten 100-point score.
+* New: content freshness, bulk FAQ drafts with approval, SEO titles and descriptions, image alt text.
+* New: schema templates with display rules and custom-field mapping; Person schema and author box.
+* New: Hotel and room schema for Quotel Hotel Booking, nearby attractions, room review ratings, hotel FAQ starter.
+* New: WooCommerce return policy, shipping details and ProductGroup.
+* New: MCP server, WordPress Abilities API, WPGraphQL fields.
+* New: Mistral, DeepSeek and OpenRouter providers; roles and permissions; import/export; Yoast/Rank Math FAQ migration; Polylang/WPML-aware llms.txt; translation-ready admin.
+
 = 1.1.0 =
 * Fixed: activation never ran (tables and defaults were not created) because the hook was registered too late.
 * Fixed: /llms.txt returned 404 until permalinks were re-saved.
@@ -220,6 +246,9 @@ Yes. Set an agency name and logo under Agency; they replace the plugin name in t
 * Custom database tables: schema cache, audit log, citations
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Large feature release. Adds two database tables and flushes rewrite rules on update. Review AI access: GPTBot and other training crawlers keep the rules you had.
 
 = 1.1.0 =
 Important bug and security fixes. Removes simulated citation data. Safe to update.

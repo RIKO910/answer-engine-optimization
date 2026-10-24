@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test:internal": "php tests/internal-test.php"
+    "test:internal": "php tests/internal-test.php",
+    "i18n": "wp i18n make-pot . languages/answer-engine-optimization.pot --domain=answer-engine-optimization --exclude=node_modules,assets/build,tests,vendor && node tools-i18n-extract.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

@@ -56,7 +56,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_dashboard' ),
-				'permission_callback' => array( $this, 'can_manage' ),
+				'permission_callback' => array( $this, 'can_view' ),
 			)
 		);
 
@@ -68,7 +68,7 @@ class Rest_Api {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_settings' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_view' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -91,7 +91,7 @@ class Rest_Api {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'save_schema' ),
-					'permission_callback' => array( $this, 'can_edit_posts' ),
+					'permission_callback' => array( $this, 'can_schema' ),
 				),
 			)
 		);
@@ -102,7 +102,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_schema_types' ),
-				'permission_callback' => array( $this, 'can_manage' ),
+				'permission_callback' => array( $this, 'can_view' ),
 			)
 		);
 
@@ -113,7 +113,7 @@ class Rest_Api {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_global_schema' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_view' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -151,7 +151,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'generate_faq' ),
-				'permission_callback' => array( $this, 'can_edit_posts' ),
+				'permission_callback' => array( $this, 'can_ai' ),
 			)
 		);
 
@@ -172,7 +172,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'rewrite_content' ),
-				'permission_callback' => array( $this, 'can_edit_posts' ),
+				'permission_callback' => array( $this, 'can_ai' ),
 			)
 		);
 
@@ -184,12 +184,12 @@ class Rest_Api {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_audit' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_view' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'run_audit' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_view' ),
 				),
 			)
 		);
@@ -212,12 +212,12 @@ class Rest_Api {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_citations' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_view' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'scan_citations' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_ai' ),
 				),
 			)
 		);
@@ -228,7 +228,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_analytics_overview' ),
-				'permission_callback' => array( $this, 'can_manage' ),
+				'permission_callback' => array( $this, 'can_view' ),
 			)
 		);
 
@@ -238,7 +238,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_competitor_analysis' ),
-				'permission_callback' => array( $this, 'can_manage' ),
+				'permission_callback' => array( $this, 'can_view' ),
 			)
 		);
 
@@ -249,7 +249,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_brief_opportunities' ),
-				'permission_callback' => array( $this, 'can_manage' ),
+				'permission_callback' => array( $this, 'can_view' ),
 			)
 		);
 
@@ -259,7 +259,7 @@ class Rest_Api {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'generate_brief' ),
-				'permission_callback' => array( $this, 'can_manage' ),
+				'permission_callback' => array( $this, 'can_ai' ),
 			)
 		);
 
@@ -282,12 +282,12 @@ class Rest_Api {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_locations' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_view' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'save_locations' ),
-					'permission_callback' => array( $this, 'can_manage' ),
+					'permission_callback' => array( $this, 'can_schema' ),
 				),
 			)
 		);
@@ -305,12 +305,39 @@ class Rest_Api {
 	}
 
 	/**
-	 * Permission: manage_options.
+	 * Permission: change plugin settings.
 	 *
 	 * @return bool
 	 */
 	public function can_manage() {
-		return current_user_can( 'manage_options' );
+		return current_user_can( 'aeo_manage_settings' );
+	}
+
+	/**
+	 * Permission: view reports.
+	 *
+	 * @return bool
+	 */
+	public function can_view() {
+		return current_user_can( 'aeo_view_reports' );
+	}
+
+	/**
+	 * Permission: edit schema and FAQs.
+	 *
+	 * @return bool
+	 */
+	public function can_schema() {
+		return current_user_can( 'edit_posts' ) && current_user_can( 'aeo_edit_schema' );
+	}
+
+	/**
+	 * Permission: use AI (spends credits).
+	 *
+	 * @return bool
+	 */
+	public function can_ai() {
+		return current_user_can( 'edit_posts' ) && current_user_can( 'aeo_use_ai' );
 	}
 
 	/**
@@ -383,7 +410,8 @@ class Rest_Api {
 		}
 
 		Settings::update( $sanitized );
-		delete_transient( 'aeo_llms_txt' );
+		\AEO\Frontend\Llms_Txt::flush();
+		\AEO\Api\Public_Api::flush_schemamap();
 
 		return new WP_REST_Response( Settings::get_public() );
 	}
@@ -774,7 +802,7 @@ class Rest_Api {
 	public function save_locations( WP_REST_Request $request ) {
 		$data      = $request->get_json_params();
 		$locations = array();
-		$text      = array( 'name', 'type', 'address', 'city', 'region', 'postal_code', 'country', 'phone', 'price_range' );
+		$text      = array( 'name', 'type', 'address', 'city', 'region', 'postal_code', 'country', 'phone', 'price_range', 'star_rating', 'checkin', 'checkout', 'pets_allowed', 'amenities', 'number_of_rooms' );
 
 		foreach ( is_array( $data ) ? $data : array() as $raw ) {
 			if ( ! is_array( $raw ) ) {
@@ -787,7 +815,14 @@ class Rest_Api {
 			if ( ! in_array( $loc['type'], Schema_Service::$types, true ) ) {
 				$loc['type'] = 'LocalBusiness';
 			}
-			$loc['hours'] = sanitize_textarea_field( (string) ( $raw['hours'] ?? '' ) );
+			$loc['hours']       = sanitize_textarea_field( (string) ( $raw['hours'] ?? '' ) );
+			$loc['attractions'] = sanitize_textarea_field( (string) ( $raw['attractions'] ?? '' ) );
+			$loc['pets_allowed'] = in_array( $loc['pets_allowed'], array( 'yes', 'no' ), true ) ? $loc['pets_allowed'] : '';
+			$loc['star_rating']  = is_numeric( $loc['star_rating'] ) && (float) $loc['star_rating'] >= 1 && (float) $loc['star_rating'] <= 5 ? (string) (float) $loc['star_rating'] : '';
+			foreach ( array( 'checkin', 'checkout' ) as $time_key ) {
+				$loc[ $time_key ] = preg_match( '/^\d{1,2}:\d{2}$/', $loc[ $time_key ] ) ? $loc[ $time_key ] : '';
+			}
+			$loc['number_of_rooms'] = $loc['number_of_rooms'] ? (string) absint( $loc['number_of_rooms'] ) : '';
 			$loc['url']   = esc_url_raw( (string) ( $raw['url'] ?? '' ) );
 			$loc['lat']   = is_numeric( $raw['lat'] ?? '' ) && abs( (float) $raw['lat'] ) <= 90 ? (string) (float) $raw['lat'] : '';
 			$loc['lng']   = is_numeric( $raw['lng'] ?? '' ) && abs( (float) $raw['lng'] ) <= 180 ? (string) (float) $raw['lng'] : '';

@@ -95,6 +95,13 @@ export interface Location {
   url: string;
   lat: string;
   lng: string;
+  star_rating?: string;
+  checkin?: string;
+  checkout?: string;
+  pets_allowed?: string;
+  amenities?: string;
+  number_of_rooms?: string;
+  attractions?: string;
 }
 
 export interface AeoGeniusData {
@@ -106,6 +113,46 @@ export interface AeoGeniusData {
   pluginUrl: string;
   version: string;
   currentPage: string;
+  caps?: { manage: boolean; view: boolean; schema: boolean; ai: boolean };
+}
+
+export interface BotInfo {
+  key: string;
+  name: string;
+  owner: string;
+  purpose: 'training' | 'search' | 'user';
+  rule: 'allow' | 'block';
+  token_only?: boolean;
+}
+
+export interface EngineResult {
+  cited: boolean;
+  mentioned: boolean;
+  position: number;
+  sentiment: string;
+  urls: string[];
+  sources: string[];
+  error: string;
+  id: number;
+}
+
+export interface VisibilitySummary {
+  scan_id: string;
+  scanned_at: string;
+  checked: number;
+  cited: number;
+  mentioned: number;
+  engines: Array<{ engine: string; label: string; checked: number; cited: number; mentioned: number; errors: number; avg_position: number | null }>;
+  keywords: Array<{ keyword: string; engines: Record<string, EngineResult> }>;
+  share_of_voice: Array<{ name: string; is_you: boolean; cited: number; percent: number }>;
+  sentiment: { positive: number; neutral: number; negative: number };
+}
+
+export interface ScanProgress {
+  scan_id?: string;
+  total: number;
+  done: number;
+  finished: string;
 }
 
 declare global {

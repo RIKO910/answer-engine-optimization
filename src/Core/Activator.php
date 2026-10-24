@@ -48,6 +48,7 @@ class Activator {
 		self::set_default_options();
 		\AEO\Plugin::register_rewrites();
 		flush_rewrite_rules();
+		\AEO\Services\IndexNow::key();
 		Upgrader::schedule_events();
 		update_option( Upgrader::VERSION_OPTION, Upgrader::DB_VERSION );
 	}
@@ -90,7 +91,7 @@ class Activator {
 			schema_data longtext NOT NULL,
 			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-			PRIMARY KEY (id),
+			PRIMARY KEY  (id),
 			KEY post_id (post_id),
 			KEY schema_type (schema_type)
 		) {$charset_collate};
@@ -105,7 +106,7 @@ class Activator {
 			status varchar(20) NOT NULL DEFAULT 'open',
 			fixed_at datetime DEFAULT NULL,
 			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			PRIMARY KEY (id),
+			PRIMARY KEY  (id),
 			KEY issue_id (issue_id),
 			KEY post_id (post_id),
 			KEY severity (severity)
@@ -118,10 +119,44 @@ class Activator {
 			engine varchar(50) NOT NULL DEFAULT '',
 			citation_url varchar(500) NOT NULL DEFAULT '',
 			detected_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			PRIMARY KEY (id),
+			PRIMARY KEY  (id),
 			KEY keyword (keyword),
 			KEY engine (engine),
 			KEY detected_at (detected_at)
+		) {$charset_collate};
+
+		CREATE TABLE {$wpdb->prefix}aeo_ai_traffic (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			type varchar(20) NOT NULL DEFAULT 'bot',
+			agent varchar(64) NOT NULL DEFAULT '',
+			source varchar(64) NOT NULL DEFAULT '',
+			url varchar(500) NOT NULL DEFAULT '',
+			status smallint(5) unsigned NOT NULL DEFAULT 0,
+			created_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			KEY type_created (type,created_at),
+			KEY agent (agent)
+		) {$charset_collate};
+
+		CREATE TABLE {$wpdb->prefix}aeo_ai_answers (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			scan_id varchar(32) NOT NULL DEFAULT '',
+			keyword varchar(255) NOT NULL DEFAULT '',
+			engine varchar(32) NOT NULL DEFAULT '',
+			cited tinyint(1) NOT NULL DEFAULT 0,
+			mentioned tinyint(1) NOT NULL DEFAULT 0,
+			position smallint(5) unsigned NOT NULL DEFAULT 0,
+			sentiment varchar(16) NOT NULL DEFAULT '',
+			cited_urls text NOT NULL,
+			sources text NOT NULL,
+			competitors text NOT NULL,
+			answer mediumtext NOT NULL,
+			error varchar(255) NOT NULL DEFAULT '',
+			created_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			KEY scan_id (scan_id),
+			KEY keyword (keyword(100)),
+			KEY engine_created (engine,created_at)
 		) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

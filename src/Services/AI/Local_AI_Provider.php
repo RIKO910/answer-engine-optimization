@@ -92,6 +92,42 @@ class Local_AI_Provider implements AI_Provider_Interface {
 	}
 
 	/**
+	 * Title + meta description from the content's own text.
+	 *
+	 * @param string $title   Title.
+	 * @param string $content Content.
+	 * @return array{title: string, description: string}
+	 */
+	public function generate_meta( $title, $content ) {
+		$site = get_bloginfo( 'name' );
+		$t    = trim( wp_strip_all_tags( $title ) );
+		if ( $site && mb_strlen( $t . ' | ' . $site ) <= 60 ) {
+			$t .= ' | ' . $site;
+		}
+		return array(
+			'title'       => AI_Response::clean_line( $t, 70 ),
+			'description' => AI_Response::clean_line( $this->first_sentences( $this->plain( $content ), 2 ), 155 ),
+		);
+	}
+
+	/**
+	 * Alt text without vision: humanized file name, with page context.
+	 *
+	 * @param string $file    Path.
+	 * @param string $context Context.
+	 * @return string
+	 */
+	public function describe_image( $file, $context = '' ) {
+		$name = pathinfo( (string) $file, PATHINFO_FILENAME );
+		$name = preg_replace( '/[-_]+/', ' ', $name );
+		$name = trim( preg_replace( '/\b(img|image|photo|dsc|pxl|screenshot|scaled|\d{3,}x\d{3,}|\d+)\b/i', '', $name ) );
+		if ( mb_strlen( $name ) < 3 ) {
+			return $context ? AI_Response::clean_line( $context, 125 ) : '';
+		}
+		return AI_Response::clean_line( ucfirst( $name ), 125 );
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function is_configured() {

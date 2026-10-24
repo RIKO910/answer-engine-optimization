@@ -43,6 +43,66 @@ abstract class Remote_Provider implements AI_Provider_Interface {
 	abstract protected function send( $prompt, $api_key, $model, $json );
 
 	/**
+	 * Send a prompt with one image (base64) and return the text reply.
+	 *
+	 * @param string $prompt  Prompt.
+	 * @param string $api_key Key.
+	 * @param string $model   Model.
+	 * @param string $mime    Image MIME type.
+	 * @param string $b64     Base64 image data.
+	 * @return string|\WP_Error
+	 */
+	abstract protected function send_image( $prompt, $api_key, $model, $mime, $b64 );
+
+	/**
+	 * Write alt text for an image file.
+	 *
+	 * @param string $file    Absolute path.
+	 * @param string $context Page title or caption for context.
+	 * @return string|\WP_Error
+	 */
+	public function describe_image( $file, $context = '' ) {
+		$key = $this->api_key();
+		if ( '' === $key ) {
+			return new \WP_Error( 'no_api_key', __( 'API key not configured', 'answer-engine-optimization' ) );
+		}
+		$image = AI_Response::image_payload( $file );
+		if ( is_wp_error( $image ) ) {
+			return $image;
+		}
+		$prompt = 'Write alt text for this image for a website. One sentence, under 125 characters, describe what is shown factually, no "image of" or "photo of".' . ( $context ? ' The image appears on a page titled: "' . $context . '".' : '' ) . ' Return only the alt text.';
+		$text   = $this->send_image( $prompt, $key, Settings::get_model( $this->slug ), $image['mime'], $image['data'] );
+		if ( is_wp_error( $text ) ) {
+			return $text;
+		}
+		return AI_Response::clean_line( $text, 125 );
+	}
+
+	/**
+	 * Suggest an SEO title and meta description.
+	 *
+	 * @param string $title   Current title.
+	 * @param string $content Content.
+	 * @return array{title: string, description: string}
+	 */
+	public function generate_meta( $title, $content ) {
+		$prompt   = sprintf(
+			"Write an SEO title (max 60 characters) and meta description (max 155 characters) for this page. Be specific and factual, include the main topic, no clickbait. Return only JSON: {\"title\":\"...\",\"description\":\"...\"}\n\nCurrent title: %s\n\nContent:\n%s",
+			$title,
+			wp_trim_words( wp_strip_all_tags( strip_shortcodes( $content ) ), 600 )
+		);
+		$response = $this->request( $prompt, true );
+		$data     = is_wp_error( $response ) ? null : AI_Response::extract_json( $response );
+		if ( ! is_array( $data ) || empty( $data['title'] ) ) {
+			return ( new Local_AI_Provider() )->generate_meta( $title, $content );
+		}
+		return array(
+			'title'       => AI_Response::clean_line( (string) $data['title'], 70 ),
+			'description' => AI_Response::clean_line( (string) ( $data['description'] ?? '' ), 160 ),
+		);
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function is_configured() {

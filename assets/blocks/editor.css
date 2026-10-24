@@ -1,0 +1,11 @@
+.aeo-be { border: 1px solid #e4e4e7; border-radius: 8px; padding: 16px; }
+.aeo-be-heading { font-weight: 600; margin: 0 0 12px; }
+.aeo-be-row { position: relative; padding: 10px 76px 10px 12px; border: 1px solid #f4f4f5; border-radius: 6px; margin: 0 0 8px; background: #fafafa; }
+.aeo-be-inline { display: flex; align-items: center; gap: 6px; padding-right: 8px; }
+.aeo-be-inline > span { flex: 1; }
+.aeo-be-q { font-weight: 600; margin: 0 0 4px !important; }
+.aeo-be-a { margin: 0 !important; }
+.aeo-be-tools { position: absolute; top: 6px; right: 6px; display: flex; gap: 2px; }
+.aeo-be-steps { margin: 12px 0; padding-left: 1.25em; }
+.aeo-be-warn { color: #b45309; font-size: 12px; margin: 6px 0 0 !important; }
+.aeo-be .components-button.is-secondary { margin-top: 4px; }

@@ -61,4 +61,48 @@ class Gemini_Provider extends Remote_Provider {
 		}
 		return $text;
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function send_image( $prompt, $api_key, $model, $mime, $b64 ) {
+		$data = $this->decode(
+			wp_remote_post(
+				'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( $model ) . ':generateContent',
+				array(
+					'timeout' => 90,
+					'headers' => array(
+						'x-goog-api-key' => $api_key,
+						'Content-Type'   => 'application/json',
+					),
+					'body'    => wp_json_encode(
+						array(
+							'contents' => array(
+								array(
+									'role'  => 'user',
+									'parts' => array(
+										array(
+											'inline_data' => array(
+												'mime_type' => $mime,
+												'data'      => $b64,
+											),
+										),
+										array( 'text' => $prompt ),
+									),
+								),
+							),
+						)
+					),
+				)
+			)
+		);
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
+		$text = '';
+		foreach ( (array) ( $data['candidates'][0]['content']['parts'] ?? array() ) as $part ) {
+			$text .= (string) ( $part['text'] ?? '' );
+		}
+		return $text;
+	}
 }

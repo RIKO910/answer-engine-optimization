@@ -48,3 +48,51 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
+
+.aeo-key-takeaways {
+  margin: 0 0 1.5em;
+  padding: 1em 1.25em;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.aeo-key-takeaways-title {
+  margin: 0 0 0.5em;
+}
+
+.aeo-key-takeaways ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.aeo-howto-meta {
+  opacity: 0.8;
+  font-size: 0.95em;
+}
+
+.aeo-howto-steps li {
+  margin-bottom: 0.5em;
+}
+
+.aeo-author-box {
+  display: flex;
+  gap: 1em;
+  align-items: flex-start;
+  margin: 2.5em 0 0;
+  padding: 1.25em;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.aeo-author-box img {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.aeo-author-box p {
+  margin: 0.25em 0 0;
+}
+
+.aeo-author-links a {
+  margin-right: 0.75em;
+}

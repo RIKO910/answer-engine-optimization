@@ -3,50 +3,65 @@ import { useQuery } from '@tanstack/react-query';
 import {
   LayoutDashboard, FileText, Code2, HelpCircle, MapPin,
   ShoppingCart, BarChart3, Search, Lightbulb, Settings, Building2,
-  ArrowUpRight, LucideIcon,
+  ArrowUpRight, LucideIcon, Bot, Activity, Wrench, LayoutTemplate, Hotel, ListChecks,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { __ } from '@/lib/i18n';
 
 interface NavItem {
   to: string;
   label: string;
   icon: LucideIcon;
+  /** Capability needed to see the item. */
+  cap?: 'manage' | 'view' | 'schema' | 'ai';
 }
 
-const navGroups: Array<{ label: string; items: NavItem[] }> = [
+const caps = window.aeoGeniusData?.caps;
+
+const allGroups: Array<{ label: string; items: NavItem[] }> = [
   {
-    label: 'Overview',
+    label: __('Overview'),
     items: [
-      { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-      { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+      { to: '/', label: __('Dashboard'), icon: LayoutDashboard },
+      { to: '/analytics', label: __('AI visibility'), icon: BarChart3 },
+      { to: '/traffic', label: __('Traffic'), icon: Activity },
     ],
   },
   {
-    label: 'Optimize',
+    label: __('Optimize'),
     items: [
-      { to: '/content', label: 'Content', icon: FileText },
-      { to: '/schema', label: 'Schema', icon: Code2 },
-      { to: '/faqs', label: 'FAQs', icon: HelpCircle },
-      { to: '/briefs', label: 'Briefs', icon: Lightbulb },
+      { to: '/content', label: __('Content'), icon: FileText },
+      { to: '/content-tools', label: __('Content tools'), icon: ListChecks },
+      { to: '/schema', label: __('Schema'), icon: Code2 },
+      { to: '/templates', label: __('Schema templates'), icon: LayoutTemplate, cap: 'schema' },
+      { to: '/faqs', label: __('FAQs'), icon: HelpCircle },
+      { to: '/briefs', label: __('Briefs'), icon: Lightbulb },
     ],
   },
   {
-    label: 'Business',
+    label: __('Business'),
     items: [
-      { to: '/local', label: 'Local Business', icon: MapPin },
+      { to: '/local', label: __('Local Business'), icon: MapPin },
+      { to: '/hotel', label: __('Hotel'), icon: Hotel },
       { to: '/woocommerce', label: 'WooCommerce', icon: ShoppingCart },
     ],
   },
   {
-    label: 'Tools',
+    label: __('Tools'),
     items: [
-      { to: '/audit', label: 'Site Audit', icon: Search },
-      { to: '/agency', label: 'Agency', icon: Building2 },
-      { to: '/settings', label: 'Settings', icon: Settings },
+      { to: '/ai-access', label: __('AI access'), icon: Bot, cap: 'manage' },
+      { to: '/audit', label: __('Site Audit'), icon: Search },
+      { to: '/tools', label: __('Tools'), icon: Wrench, cap: 'manage' },
+      { to: '/agency', label: __('Agency'), icon: Building2, cap: 'manage' },
+      { to: '/settings', label: __('Settings'), icon: Settings, cap: 'manage' },
     ],
   },
 ];
+
+const navGroups = allGroups
+  .map((g) => ({ ...g, items: g.items.filter((i) => !i.cap || !caps || caps[i.cap]) }))
+  .filter((g) => g.items.length > 0);
 
 const allItems = navGroups.flatMap((g) => g.items);
 
@@ -72,7 +87,7 @@ function Brand() {
       )}
       <div className="min-w-0">
         <p className="text-sm font-semibold text-slate-900 leading-tight truncate">{name}</p>
-        <p className="text-2xs text-slate-500 leading-tight truncate">Answer Engine Optimization</p>
+        <p className="text-2xs text-slate-500 leading-tight truncate">{__('Answer Engine Optimization')}</p>
       </div>
     </div>
   );
@@ -130,7 +145,7 @@ export default function Layout() {
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 transition-colors"
           >
-            View site <ArrowUpRight size={12} />
+            {__('View site')} <ArrowUpRight size={12} />
           </a>
         </div>
       </aside>

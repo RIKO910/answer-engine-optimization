@@ -186,7 +186,6 @@ class Plugin {
 	 * @return void
 	 */
 	public function init() {
-		load_plugin_textdomain( 'answer-engine-optimization', false, dirname( AEO_PLUGIN_BASENAME ) . '/languages' );
 		( new Rest_Api() )->register();
 
 		if ( is_admin() ) {

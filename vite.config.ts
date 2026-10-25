@@ -13,7 +13,7 @@ export default defineConfig({
     outDir: 'assets/build',
     target: 'es2022',
     emptyOutDir: true,
-    manifest: true,
+    manifest: 'manifest.json',
     // The bundle is enqueued as a classic <script>, not a module, so the
     // module-preload polyfill would be dead code.
     modulePreload: { polyfill: false },

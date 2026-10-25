@@ -69,7 +69,7 @@ class Takeaways_Widget extends \Elementor\Widget_Base {
 
 	protected function render() {
 		$s = $this->get_settings_for_display();
-		echo Blocks::render_takeaways( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in renderer.
+		echo wp_kses_post( Blocks::render_takeaways(
 			array(
 				'title' => $s['title'] ?? '',
 				'items' => array_map(
@@ -79,6 +79,6 @@ class Takeaways_Widget extends \Elementor\Widget_Base {
 					(array) ( $s['items'] ?? array() )
 				),
 			)
-		);
+		) );
 	}
 }

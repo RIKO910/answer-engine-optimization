@@ -189,12 +189,12 @@ class AI_Response {
 					$path = $saved['path'];
 					$mime = 'image/jpeg';
 				}
-				@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				wp_delete_file( $tmp );
 			}
 		}
 		$data = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( $path !== $file ) {
-			@unlink( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			wp_delete_file( $path );
 		}
 		if ( false === $data || strlen( $data ) > 5 * MB_IN_BYTES ) {
 			return new \WP_Error( 'aeo_image_size', __( 'Image is too large.', 'answer-engine-optimization' ) );

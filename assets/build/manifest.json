@@ -1,0 +1,11 @@
+{
+  "admin-app/src/main.tsx": {
+    "file": "assets/main-DWoy-_VY.js",
+    "name": "main",
+    "src": "admin-app/src/main.tsx",
+    "isEntry": true,
+    "css": [
+      "assets/main-sA6Nimxo.css"
+    ]
+  }
+}

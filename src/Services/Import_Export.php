@@ -84,7 +84,7 @@ class Import_Export {
 		$ids = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key IN (%s, %s, %s, %s) AND meta_value <> ''",
-				$keys
+				...$keys
 			)
 		);
 		$rows = array();

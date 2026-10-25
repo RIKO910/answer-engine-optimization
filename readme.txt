@@ -65,9 +65,37 @@ AI visibility scans use the OpenAI, Gemini and Anthropic keys with web search, p
 * Multisite: network activation sets up every site, including sites created later.
 * Deleting the plugin removes its data. Define `AEO_KEEP_DATA` as `true` to keep it.
 
+= Source code =
+
+The admin screens are a React app compiled into `assets/build/`. Its full, human-readable source is included in the plugin in `admin-app/src/`, with the build setup in `package.json`, `vite.config.ts`, `tsconfig.json`, `tailwind.config.js` and `postcss.config.js`. To rebuild: run `npm install`, then `npm run build`.
+
 = Privacy =
 
-The plugin sets no cookies. AI traffic logging stores the crawler or assistant name, page and time, never IP addresses; you can turn it off. When you use AI features, post content (never visitor data) is sent to the provider you configured. AI visibility scans send your tracked questions to the engines you choose. IndexNow sends page URLs to api.indexnow.org. Google reports are fetched with your own OAuth client. Competitor checks fetch the competitor's public homepage and llms.txt.
+The plugin sets no cookies. AI traffic logging stores the crawler or assistant name, page and time, never IP addresses; you can turn it off. When you use AI features, post content (never visitor data) is sent to the provider you configured. AI visibility scans send your tracked questions to the engines you choose. IndexNow sends page URLs to api.indexnow.org. Competitor checks fetch the competitor's public homepage and llms.txt.
+
+== External services ==
+
+The plugin works without any external service. The services below are only contacted when you turn on the feature that uses them or add an API key for them.
+
+= AI providers (OpenAI, Anthropic, Google Gemini, Mistral, DeepSeek, OpenRouter, Perplexity) =
+
+Used for the optional AI features (FAQ generation, rewriting, content briefs, meta descriptions, alt text) and for AI visibility scans. A request is sent only when you click an AI action or run a scan, and only to the providers whose API key you saved. For AI features the request contains the post title and content you are working on; for scans it contains your tracked questions. No visitor data is sent. Your API key is sent to the provider to authenticate.
+
+* OpenAI (api.openai.com): [Terms of use](https://openai.com/policies/terms-of-use), [Privacy policy](https://openai.com/policies/privacy-policy)
+* Anthropic (api.anthropic.com): [Commercial terms](https://www.anthropic.com/legal/commercial-terms), [Privacy policy](https://www.anthropic.com/legal/privacy)
+* Google Gemini (generativelanguage.googleapis.com): [Gemini API terms](https://ai.google.dev/gemini-api/terms), [Privacy policy](https://policies.google.com/privacy)
+* Mistral AI (api.mistral.ai): [Terms and privacy](https://mistral.ai/terms)
+* DeepSeek (api.deepseek.com): [Terms of use](https://cdn.deepseek.com/policies/en-US/deepseek-terms-of-use.html), [Privacy policy](https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html)
+* OpenRouter (openrouter.ai): [Terms](https://openrouter.ai/terms), [Privacy policy](https://openrouter.ai/privacy)
+* Perplexity (api.perplexity.ai): [Terms of service](https://www.perplexity.ai/hub/legal/terms-of-service), [Privacy policy](https://www.perplexity.ai/hub/legal/privacy-policy)
+
+= IndexNow =
+
+When the IndexNow option is on, the URL of a page you publish or update, your site's host name and the plugin's IndexNow key are sent to api.indexnow.org, which shares them with participating search engines (Bing, Yandex, Seznam, Naver). [Terms](https://www.indexnow.org/terms), [FAQ](https://www.indexnow.org/faq)
+
+= QueueCommerce license server =
+
+Only used if you install the separate Answer Engine Optimization Pro add-on and enter a license key on AEO → License. The license key, your site's domain and the product name are sent to www.queuecommerce.com when you activate or deactivate the key and once a day to check that it is still valid. Nothing is sent if no key is saved. [Terms](https://www.queuecommerce.com/terms-of-service/), [Privacy policy](https://www.queuecommerce.com/privacy-policy/)
 
 == Installation ==
 

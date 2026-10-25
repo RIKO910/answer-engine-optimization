@@ -33,7 +33,10 @@ class Assets {
 			return;
 		}
 
-		$manifest_path = AEO_PLUGIN_DIR . 'assets/build/.vite/manifest.json';
+		$manifest_path = AEO_PLUGIN_DIR . 'assets/build/manifest.json';
+		if ( ! file_exists( $manifest_path ) ) {
+			$manifest_path = AEO_PLUGIN_DIR . 'assets/build/.vite/manifest.json'; // Builds before 1.3.0.
+		}
 		$js_file       = 'admin-app/src/main.tsx';
 		$css_files     = array();
 

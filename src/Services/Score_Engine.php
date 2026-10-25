@@ -255,7 +255,7 @@ class Score_Engine {
 		global $wpdb;
 		$types        = Settings::get_post_types();
 		$placeholders = implode( ',', array_fill( 0, count( $types ), '%s' ) );
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- one %s per post type.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT AVG(CAST(pm.meta_value AS UNSIGNED)) AS avg_score, COUNT(*) AS total FROM {$wpdb->postmeta} pm

@@ -148,8 +148,9 @@ class Meta_Service {
 			$wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p
 				LEFT JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_wp_attachment_image_alt'
-				WHERE p.post_type = 'attachment' AND p.post_mime_type LIKE 'image/%%' AND ( m.meta_value IS NULL OR m.meta_value = '' )
+				WHERE p.post_type = 'attachment' AND p.post_mime_type LIKE %s AND ( m.meta_value IS NULL OR m.meta_value = '' )
 				ORDER BY p.ID DESC LIMIT %d",
+				$wpdb->esc_like( 'image/' ) . '%',
 				$limit
 			)
 		);
